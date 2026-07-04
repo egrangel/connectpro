@@ -1,0 +1,117 @@
+// Local development uses SQLite (no Docker available on dev machines).
+// Production target is PostgreSQL — see docs/ARCHITECTURE.md §4 and README
+// "Upgrading to PostgreSQL". The schema intentionally avoids SQLite-only or
+// Postgres-only features so the provider swap is a migration regen, not a rewrite.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// role: "USER" | "ADMIN" — string because SQLite has no enums (see src/lib/constants.ts)
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  displayName  String
+  role         String    @default("USER")
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+  reviews      Review[]
+  listings     Listing[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  listings  Listing[]
+}
+
+// status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
+// searchText: lowercase, accent-stripped title+description, maintained by the
+// listings service — the portable stand-in for Postgres tsvector.
+model Listing {
+  id              String         @id @default(uuid())
+  slug            String         @unique
+  title           String
+  description     String
+  searchText      String         @default("")
+  categoryId      String
+  category        Category       @relation(fields: [categoryId], references: [id])
+  contactPhone    String?
+  contactEmail    String?
+  contactWhatsapp String?
+  websiteUrl      String?
+  city            String?
+  status          String         @default("DRAFT")
+  ratingAvg       Float          @default(0)
+  ratingCount     Int            @default(0)
+  createdById     String
+  createdBy       User           @relation(fields: [createdById], references: [id])
+  photos          ListingPhoto[]
+  reviews         Review[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status, categoryId, createdAt])
+  @@index([status, ratingAvg])
+}
+
+model ListingPhoto {
+  id         String  @id @default(uuid())
+  listingId  String
+  listing    Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  storageKey String
+  altText    String?
+  sortOrder  Int     @default(0)
+
+  @@index([listingId, sortOrder])
+}
+
+// rating: 1..5, enforced in src/modules/reviews (SQLite CHECK not expressible in Prisma)
+// status: "VISIBLE" | "HIDDEN"
+model Review {
+  id        String   @id @default(uuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int
+  comment   String?
+  status    String   @default("VISIBLE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([listingId, userId])
+  @@index([listingId, status, createdAt])
+}
+
+// Singleton row (id always 1). JSON stored as validated strings because the
+// SQLite connector lacks a native Json type; Zod schemas in
+// src/modules/settings/schema.ts are the source of truth for their shape.
+model SiteSettings {
+  id           Int      @id @default(1)
+  bannerJson   String   @default("{}")
+  themeJson    String   @default("{}")
+  brandingJson String   @default("{}")
+  updatedAt    DateTime @updatedAt
+}
