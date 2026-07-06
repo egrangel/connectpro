@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LISTING_STATUS } from "@/lib/constants";
+import { isHttpUrl } from "@/lib/url";
 
 const optionalTrimmed = (max: number) =>
   z
@@ -9,6 +10,15 @@ const optionalTrimmed = (max: number) =>
     .transform((v) => (v === "" ? null : v))
     .nullable()
     .optional();
+
+const optionalHttpUrl = z
+  .string()
+  .trim()
+  .max(500)
+  .refine((v) => v === "" || isHttpUrl(v), "URL inválida")
+  .transform((v) => (v === "" ? null : v))
+  .nullable()
+  .optional();
 
 export const listingInputSchema = z.object({
   title: z.string().trim().min(3, "Título muito curto").max(120),
@@ -21,11 +31,7 @@ export const listingInputSchema = z.object({
     .nullable()
     .optional(),
   contactWhatsapp: optionalTrimmed(30),
-  websiteUrl: z
-    .union([z.literal(""), z.url("URL inválida")])
-    .transform((v) => (v === "" ? null : v))
-    .nullable()
-    .optional(),
+  websiteUrl: optionalHttpUrl,
   city: optionalTrimmed(80),
   status: z.enum([
     LISTING_STATUS.DRAFT,

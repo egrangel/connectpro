@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { listingInputSchema, listingQuerySchema } from "./schema";
 
 const validListing = {
-  title: "Eletricista João",
-  description: "Instalações elétricas residenciais com garantia.",
+  title: "Eletricista Joao",
+  description: "Instalacoes eletricas residenciais com garantia.",
   categoryId: "cat-1",
   status: "PUBLISHED",
 };
@@ -24,6 +24,24 @@ describe("listingInputSchema", () => {
     expect(result.contactEmail).toBeNull();
     expect(result.websiteUrl).toBeNull();
     expect(result.city).toBeNull();
+  });
+
+  test("accepts absolute HTTP(S) website URLs", () => {
+    expect(
+      listingInputSchema.safeParse({ ...validListing, websiteUrl: "https://example.com" })
+        .success,
+    ).toBe(true);
+  });
+
+  test("rejects unsafe website URL schemes", () => {
+    expect(
+      listingInputSchema.safeParse({ ...validListing, websiteUrl: "javascript:alert(1)" })
+        .success,
+    ).toBe(false);
+    expect(
+      listingInputSchema.safeParse({ ...validListing, websiteUrl: "mailto:test@example.com" })
+        .success,
+    ).toBe(false);
   });
 
   test("rejects invalid contact email and status", () => {

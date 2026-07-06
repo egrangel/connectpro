@@ -20,35 +20,37 @@ function buildHref(query: ListingQuery, overrides: Partial<ListingQuery>): strin
 /** Search + filters as GET form and links: state lives in the URL. */
 export function SearchFilters({ categories, query }: SearchFiltersProps) {
   const chipBase =
-    "shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition";
+    "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition";
 
   return (
-    <div className="flex flex-col gap-4">
-      <form action="/#listagens" method="get" className="flex gap-2">
+    <div className="card-surface rounded-[calc(var(--radius)+8px)] p-3 sm:p-4">
+      <form action="/#listagens" method="get" className="grid gap-3 sm:grid-cols-[1fr_auto]">
         {query.category && <input type="hidden" name="category" value={query.category} />}
         {query.sort !== "recent" && <input type="hidden" name="sort" value={query.sort} />}
+        <label className="sr-only" htmlFor="search-listings">Buscar profissionais</label>
         <input
+          id="search-listings"
           type="search"
           name="q"
           defaultValue={query.q ?? ""}
-          placeholder="Buscar por serviço, nome ou descrição…"
-          className="w-full rounded-[var(--radius)] border border-black/10 bg-white px-4 py-2.5 text-sm shadow-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20"
+          placeholder="Buscar por servico, nome ou descricao"
+          className="min-h-12 w-full rounded-[var(--radius)] border border-[var(--color-line)] bg-white/86 px-4 text-sm shadow-inner outline-none transition placeholder:text-[var(--color-muted)]/70 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]"
         />
         <button
           type="submit"
-          className="rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+          className="min-h-12 rounded-[var(--radius)] bg-[var(--color-primary)] px-6 text-sm font-bold text-white shadow-[0_12px_28px_color-mix(in_srgb,var(--color-primary)_24%,transparent)] transition hover:-translate-y-0.5 hover:opacity-95"
         >
           Buscar
         </button>
       </form>
 
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1">
         <Link
           href={buildHref(query, { category: undefined })}
           className={`${chipBase} ${
             !query.category
-              ? "border-transparent bg-[var(--color-primary)] text-white"
-              : "border-black/10 bg-white text-black/70 hover:border-black/25"
+              ? "border-transparent bg-[var(--color-primary)] text-white shadow-sm"
+              : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
           }`}
         >
           Todas
@@ -61,8 +63,8 @@ export function SearchFilters({ categories, query }: SearchFiltersProps) {
               href={buildHref(query, { category: isActive ? undefined : category.slug })}
               className={`${chipBase} ${
                 isActive
-                  ? "border-transparent bg-[var(--color-primary)] text-white"
-                  : "border-black/10 bg-white text-black/70 hover:border-black/25"
+                  ? "border-transparent bg-[var(--color-primary)] text-white shadow-sm"
+                  : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
               }`}
             >
               {category.name}
@@ -70,13 +72,13 @@ export function SearchFilters({ categories, query }: SearchFiltersProps) {
           );
         })}
 
-        <span className="mx-2 h-5 w-px shrink-0 bg-black/10" aria-hidden />
+        <span className="mx-2 h-6 w-px shrink-0 bg-[var(--color-line)]" aria-hidden />
         <Link
           href={buildHref(query, { sort: "recent" })}
           className={`${chipBase} ${
             query.sort === "recent"
-              ? "border-black/25 bg-black/5 text-black"
-              : "border-black/10 bg-white text-black/60 hover:border-black/25"
+              ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
+              : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
           }`}
         >
           Recentes
@@ -85,8 +87,8 @@ export function SearchFilters({ categories, query }: SearchFiltersProps) {
           href={buildHref(query, { sort: "rating" })}
           className={`${chipBase} ${
             query.sort === "rating"
-              ? "border-black/25 bg-black/5 text-black"
-              : "border-black/10 bg-white text-black/60 hover:border-black/25"
+              ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
+              : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
           }`}
         >
           Melhor avaliados

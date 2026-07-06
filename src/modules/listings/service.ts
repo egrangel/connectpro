@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { LISTING_STATUS, LISTINGS_PAGE_SIZE } from "@/lib/constants";
 import { slugify, toSearchText } from "@/lib/text";
+import { compareRatingRank } from "./ranking";
 import type { ListingInput, ListingQuery } from "./schema";
 import type { Prisma } from "@prisma/client";
 
@@ -20,9 +21,7 @@ export interface PublicListingPage {
   pageCount: number;
 }
 
-export async function searchPublishedListings(
-  query: ListingQuery,
-): Promise<PublicListingPage> {
+function listingWhere(query: ListingQuery): Prisma.ListingWhereInput {
   const where: Prisma.ListingWhereInput = { status: LISTING_STATUS.PUBLISHED };
 
   if (query.category) {
@@ -33,16 +32,66 @@ export async function searchPublishedListings(
     where.searchText = { contains: toSearchText(query.q) };
   }
 
-  const orderBy: Prisma.ListingOrderByWithRelationInput[] =
-    query.sort === "rating"
-      ? [{ ratingAvg: "desc" }, { ratingCount: "desc" }, { createdAt: "desc" }]
-      : [{ createdAt: "desc" }];
+  return where;
+}
+
+async function searchPublishedListingsByRating(
+  query: ListingQuery,
+  where: Prisma.ListingWhereInput,
+): Promise<PublicListingPage> {
+  const [total, ranked] = await prisma.$transaction([
+    prisma.listing.count({ where }),
+    prisma.listing.findMany({
+      where,
+      select: { id: true, ratingAvg: true, ratingCount: true, createdAt: true },
+    }),
+  ]);
+
+  const pageIds = ranked
+    .sort(compareRatingRank)
+    .slice((query.page - 1) * LISTINGS_PAGE_SIZE, query.page * LISTINGS_PAGE_SIZE)
+    .map((listing) => listing.id);
+
+  if (pageIds.length === 0) {
+    return {
+      items: [],
+      total,
+      page: query.page,
+      pageCount: Math.max(1, Math.ceil(total / LISTINGS_PAGE_SIZE)),
+    };
+  }
+
+  const items = await prisma.listing.findMany({
+    where: { id: { in: pageIds } },
+    include: publicListingInclude,
+  });
+  const byId = new Map(items.map((listing) => [listing.id, listing]));
+
+  return {
+    items: pageIds.flatMap((id) => {
+      const item = byId.get(id);
+      return item ? [item] : [];
+    }),
+    total,
+    page: query.page,
+    pageCount: Math.max(1, Math.ceil(total / LISTINGS_PAGE_SIZE)),
+  };
+}
+
+export async function searchPublishedListings(
+  query: ListingQuery,
+): Promise<PublicListingPage> {
+  const where = listingWhere(query);
+
+  if (query.sort === "rating") {
+    return searchPublishedListingsByRating(query, where);
+  }
 
   const [total, items] = await prisma.$transaction([
     prisma.listing.count({ where }),
     prisma.listing.findMany({
       where,
-      orderBy,
+      orderBy: { createdAt: "desc" },
       include: publicListingInclude,
       skip: (query.page - 1) * LISTINGS_PAGE_SIZE,
       take: LISTINGS_PAGE_SIZE,

@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: config.branding.siteName,
       template: `%s | ${config.branding.siteName}`,
     },
-    description: config.banner.subheadline || config.branding.footerText,
+    description: config.banner.slides[0]?.subheadline || config.branding.footerText,
   };
 }
 

@@ -34,6 +34,15 @@ const SIGNATURES: MagicSignature[] = [
       b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
       b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50,
   },
+  {
+    ext: "svg",
+    // SVG is XML text — strip optional BOM and leading whitespace then check
+    // for the opening tag. Script tags are blocked to prevent stored XSS.
+    matches: (b) => {
+      const head = new TextDecoder().decode(b.slice(0, 512)).replace(/^﻿/, "").trimStart();
+      return head.startsWith("<svg") || (head.startsWith("<?xml") && head.includes("<svg"));
+    },
+  },
 ];
 
 export interface SaveResult {
@@ -53,7 +62,14 @@ export async function saveImageUpload(file: File): Promise<SaveResult> {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const signature = SIGNATURES.find((s) => s.matches(bytes));
   if (!signature) {
-    return { ok: false, error: "Formato não suportado — use JPEG, PNG ou WebP." };
+    return { ok: false, error: "Formato não suportado — use JPEG, PNG, WebP ou SVG." };
+  }
+
+  if (signature.ext === "svg") {
+    const content = new TextDecoder().decode(bytes);
+    if (/<script/i.test(content)) {
+      return { ok: false, error: "SVG com scripts não é permitido." };
+    }
   }
 
   // Server-generated name only: user filenames never touch the filesystem.

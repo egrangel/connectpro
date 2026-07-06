@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 500" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="s1bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#061430"/>
+      <stop offset="100%" stop-color="#0E2660"/>
+    </linearGradient>
+    <radialGradient id="s1globe" cx="40%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#2060CC"/>
+      <stop offset="70%" stop-color="#0E2A78"/>
+      <stop offset="100%" stop-color="#06122E"/>
+    </radialGradient>
+    <radialGradient id="s1flare" cx="72%" cy="50%" r="38%">
+      <stop offset="0%" stop-color="#C8880A" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#C8880A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="s1flame" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#B81010"/>
+      <stop offset="40%" stop-color="#E06010"/>
+      <stop offset="80%" stop-color="#C8880A"/>
+      <stop offset="100%" stop-color="#F0C830"/>
+    </linearGradient>
+    <clipPath id="s1gc">
+      <circle cx="1052" cy="252" r="288"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="500" fill="url(#s1bg)"/>
+  <rect width="1400" height="500" fill="url(#s1flare)"/>
+
+  <!-- Scattered stars -->
+  <circle cx="80" cy="40" r="1.2" fill="white" opacity="0.4"/>
+  <circle cx="160" cy="80" r="1" fill="white" opacity="0.3"/>
+  <circle cx="230" cy="30" r="1.5" fill="white" opacity="0.35"/>
+  <circle cx="340" cy="60" r="1" fill="white" opacity="0.25"/>
+  <circle cx="420" cy="25" r="1.2" fill="white" opacity="0.3"/>
+  <circle cx="500" cy="55" r="1" fill="white" opacity="0.2"/>
+  <circle cx="120" cy="420" r="1.2" fill="white" opacity="0.25"/>
+  <circle cx="200" cy="460" r="1" fill="white" opacity="0.2"/>
+  <circle cx="70" cy="350" r="1.5" fill="white" opacity="0.3"/>
+  <circle cx="650" cy="38" r="1" fill="white" opacity="0.2"/>
+  <circle cx="710" cy="460" r="1.2" fill="white" opacity="0.2"/>
+
+  <!-- Globe fill -->
+  <circle cx="1052" cy="252" r="288" fill="url(#s1globe)"/>
+
+  <!-- Latitude grid (ellipses at 30° intervals) -->
+  <ellipse cx="1052" cy="108" rx="249" ry="49" fill="none" stroke="#4BBDD6" stroke-width="1.2" opacity="0.28" clip-path="url(#s1gc)"/>
+  <ellipse cx="1052" cy="252" rx="288" ry="57" fill="none" stroke="#4BBDD6" stroke-width="1.4" opacity="0.32" clip-path="url(#s1gc)"/>
+  <ellipse cx="1052" cy="396" rx="249" ry="49" fill="none" stroke="#4BBDD6" stroke-width="1.2" opacity="0.28" clip-path="url(#s1gc)"/>
+
+  <!-- Longitude grid (ellipses at 30°/60°) -->
+  <line x1="1052" y1="-36" x2="1052" y2="540" stroke="#4BBDD6" stroke-width="1.3" opacity="0.28" clip-path="url(#s1gc)"/>
+  <ellipse cx="1052" cy="252" rx="144" ry="288" fill="none" stroke="#4BBDD6" stroke-width="1" opacity="0.22" clip-path="url(#s1gc)"/>
+  <ellipse cx="1052" cy="252" rx="249" ry="288" fill="none" stroke="#4BBDD6" stroke-width="1" opacity="0.18" clip-path="url(#s1gc)"/>
+
+  <!-- Continents (simplified polygons) -->
+  <!-- North America -->
+  <polygon points="878,110 922,93 960,118 956,162 931,178 908,164 884,132" fill="#1A5C28" opacity="0.72" clip-path="url(#s1gc)"/>
+  <!-- South America -->
+  <polygon points="918,196 951,190 966,222 970,268 952,298 928,290 908,260 912,226" fill="#1A5C28" opacity="0.68" clip-path="url(#s1gc)"/>
+  <!-- Europe -->
+  <polygon points="1012,96 1042,89 1062,106 1059,128 1040,140 1016,130 1006,110" fill="#1A5C28" opacity="0.68" clip-path="url(#s1gc)"/>
+  <!-- Africa -->
+  <polygon points="1020,142 1058,135 1080,162 1087,206 1080,250 1062,272 1033,264 1012,236 1008,192 1014,164" fill="#1A5C28" opacity="0.72" clip-path="url(#s1gc)"/>
+  <!-- Asia -->
+  <polygon points="1070,90 1118,74 1174,92 1200,132 1186,162 1148,174 1100,160 1073,132 1063,106" fill="#1A5C28" opacity="0.68" clip-path="url(#s1gc)"/>
+  <!-- Australia -->
+  <polygon points="1180,280 1215,266 1240,288 1242,320 1220,334 1188,324 1172,300" fill="#1A5C28" opacity="0.60" clip-path="url(#s1gc)"/>
+
+  <!-- Globe rings (replicating logo's gold + teal rings) -->
+  <circle cx="1052" cy="252" r="288" fill="none" stroke="#C8880A" stroke-width="5.5" opacity="0.92"/>
+  <circle cx="1052" cy="252" r="274" fill="none" stroke="#4BBDD6" stroke-width="2.5" opacity="0.55"/>
+
+  <!-- Network connection lines -->
+  <line x1="764" y1="252" x2="548" y2="138" stroke="#C8880A" stroke-width="2" stroke-dasharray="9 5" opacity="0.68"/>
+  <line x1="764" y1="252" x2="458" y2="342" stroke="#C8880A" stroke-width="2" stroke-dasharray="9 5" opacity="0.58"/>
+  <line x1="806" y1="134" x2="618" y2="64" stroke="#4BBDD6" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.48"/>
+  <line x1="806" y1="370" x2="592" y2="434" stroke="#4BBDD6" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.42"/>
+  <line x1="548" y1="138" x2="378" y2="176" stroke="#C8880A" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.42"/>
+  <line x1="458" y1="342" x2="288" y2="312" stroke="#C8880A" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.36"/>
+  <line x1="378" y1="176" x2="288" y2="312" stroke="#4BBDD6" stroke-width="1" stroke-dasharray="5 5" opacity="0.3"/>
+  <line x1="618" y1="64" x2="378" y2="176" stroke="#4BBDD6" stroke-width="1" stroke-dasharray="5 5" opacity="0.26"/>
+  <line x1="592" y1="434" x2="458" y2="342" stroke="#C8880A" stroke-width="1" stroke-dasharray="4 5" opacity="0.26"/>
+  <line x1="288" y1="312" x2="178" y2="262" stroke="#4BBDD6" stroke-width="1" stroke-dasharray="4 5" opacity="0.22"/>
+
+  <!-- Primary nodes (gold) -->
+  <circle cx="548" cy="138" r="9" fill="#C8880A" opacity="0.95"/>
+  <circle cx="548" cy="138" r="18" fill="none" stroke="#C8880A" stroke-width="2" opacity="0.40"/>
+  <circle cx="548" cy="138" r="28" fill="none" stroke="#C8880A" stroke-width="1" opacity="0.18"/>
+
+  <circle cx="458" cy="342" r="8" fill="#C8880A" opacity="0.90"/>
+  <circle cx="458" cy="342" r="16" fill="none" stroke="#C8880A" stroke-width="2" opacity="0.35"/>
+
+  <!-- Secondary nodes (teal) -->
+  <circle cx="378" cy="176" r="7" fill="#4BBDD6" opacity="0.85"/>
+  <circle cx="378" cy="176" r="14" fill="none" stroke="#4BBDD6" stroke-width="1.5" opacity="0.35"/>
+
+  <circle cx="288" cy="312" r="6" fill="#4BBDD6" opacity="0.75"/>
+  <circle cx="618" cy="64" r="6" fill="#4BBDD6" opacity="0.70"/>
+  <circle cx="592" cy="434" r="6" fill="#C8880A" opacity="0.65"/>
+  <circle cx="178" cy="262" r="5" fill="#C8880A" opacity="0.55"/>
+
+  <!-- Flame motif (logo-inspired, top-left, decorative) -->
+  <g transform="translate(108, 32) scale(0.9)" opacity="0.38">
+    <path d="M40,122 Q24,86 34,56 Q44,24 54,4 Q62,30 58,58 Q70,32 80,10 Q83,42 72,66 Q86,46 94,30 Q93,62 80,82 Q92,64 100,60 Q95,88 80,102 Q93,92 101,90 Q93,112 76,120 Q62,128 48,124 Q33,116 40,122Z" fill="url(#s1flame)"/>
+    <path d="M50,116 Q40,90 48,66 Q56,42 62,24 Q67,44 63,64 Q73,46 80,30 Q81,54 72,74 Q83,58 90,50 Q87,70 77,86 Q86,74 92,72 Q85,90 73,102 Q63,110 53,108 Q43,100 50,116Z" fill="#E8A010" opacity="0.7"/>
+  </g>
+
+  <!-- Subtle "iR" watermark -->
+  <text x="220" y="410" font-family="Georgia, serif" font-size="130" font-weight="bold" fill="white" opacity="0.03" letter-spacing="-4">iR</text>
+
+  <!-- Bottom accent bar -->
+  <rect x="0" y="493" width="1400" height="7" fill="#C8880A" opacity="0.65"/>
+  <rect x="0" y="493" width="460" height="7" fill="#4BBDD6" opacity="0.45"/>
+</svg>

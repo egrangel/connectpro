@@ -3,11 +3,16 @@
 /* Theme tokens: defaults here, overridden at runtime by the values configured
    in the admin portal (injected as inline CSS vars in the root layout). */
 :root {
-  --color-primary: #0f766e;
-  --color-accent: #f59e0b;
-  --color-surface: #f8fafc;
-  --color-text: #0f172a;
+  --color-primary: #1A3D8A;
+  --color-accent: #C8880A;
+  --color-surface: #F4F7FF;
+  --color-text: #0F1E40;
   --radius: 10px;
+  --color-panel: color-mix(in srgb, var(--color-surface) 54%, white);
+  --color-muted: color-mix(in srgb, var(--color-text) 62%, white);
+  --color-line: color-mix(in srgb, var(--color-text) 10%, transparent);
+  --shadow-soft: 0 18px 55px color-mix(in srgb, var(--color-primary) 13%, transparent);
+  --shadow-card: 0 10px 30px color-mix(in srgb, var(--color-text) 9%, transparent);
 }
 
 @theme inline {
@@ -15,8 +20,39 @@
   --font-mono: var(--font-geist-mono);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--color-surface);
+  min-width: 320px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 82%, white) 0%, var(--color-surface) 44%, color-mix(in srgb, var(--color-surface) 70%, white) 100%);
   color: var(--color-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 32%, white);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-accent) 64%, white);
+  outline-offset: 3px;
+}
+
+.card-surface {
+  border: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-panel) 92%, white);
+  box-shadow: var(--shadow-card);
+}
+
+.text-muted-token {
+  color: var(--color-muted);
 }

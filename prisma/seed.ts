@@ -96,13 +96,16 @@ async function seedAdmin(): Promise<void> {
   if (!password) {
     throw new Error("SEED_ADMIN_PASSWORD não definido no .env");
   }
+  // Re-hash on every run so o .env continua sendo a fonte da senha do admin
+  // mesmo quando o usuário já existe (ex.: .env editado após o primeiro seed).
+  const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
   await prisma.user.upsert({
     where: { email },
-    update: { role: "ADMIN" },
+    update: { role: "ADMIN", passwordHash },
     create: {
       email,
       displayName: "Administrador",
-      passwordHash: await bcrypt.hash(password, BCRYPT_COST),
+      passwordHash,
       role: "ADMIN",
     },
   });

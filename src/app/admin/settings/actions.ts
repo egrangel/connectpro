@@ -35,11 +35,26 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
   await requireAdmin();
   const current = await getSiteConfig();
 
-  const bannerImageKey = await resolveImageKey(
-    formData.get("bannerImage"),
-    formData.get("removeBannerImage") === "on",
-    current.banner.imageKey,
-  );
+  const rawCount = parseInt(String(formData.get("slideCount") ?? "1"), 10);
+  const slideCount = Math.min(5, Math.max(1, Number.isNaN(rawCount) ? 1 : rawCount));
+
+  const resolvedSlides: Array<Record<string, unknown>> = [];
+  for (let i = 0; i < slideCount; i++) {
+    const currentImageKey = (formData.get(`slide_${i}_imageKey`) as string) || null;
+    const imageKey = await resolveImageKey(
+      formData.get(`bannerImage_${i}`),
+      formData.get(`removeBannerImage_${i}`) === "on",
+      currentImageKey,
+    );
+    resolvedSlides.push({
+      imageKey,
+      headline: formData.get(`slide_${i}_headline`),
+      subheadline: formData.get(`slide_${i}_subheadline`),
+      ctaText: formData.get(`slide_${i}_ctaText`),
+      ctaUrl: formData.get(`slide_${i}_ctaUrl`),
+    });
+  }
+
   const logoKey = await resolveImageKey(
     formData.get("logo"),
     formData.get("removeLogo") === "on",
@@ -48,11 +63,7 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
 
   const banner = bannerSchema.safeParse({
     enabled: formData.get("bannerEnabled") === "on",
-    imageKey: bannerImageKey,
-    headline: formData.get("headline"),
-    subheadline: formData.get("subheadline"),
-    ctaText: formData.get("ctaText"),
-    ctaUrl: formData.get("ctaUrl"),
+    slides: resolvedSlides,
   });
   const theme = themeSchema.safeParse({
     primary: formData.get("primary"),

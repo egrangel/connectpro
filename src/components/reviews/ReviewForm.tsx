@@ -26,15 +26,15 @@ export function ReviewForm({
   return (
     <form
       action={submitReviewAction}
-      className="flex flex-col gap-4 rounded-[var(--radius)] border border-black/10 bg-white p-5"
+      className="card-surface flex flex-col gap-4 rounded-[calc(var(--radius)+8px)] p-5"
     >
       <input type="hidden" name="listingId" value={listingId} />
       <input type="hidden" name="listingSlug" value={listingSlug} />
       <input type="hidden" name="rating" value={rating} />
 
       <div>
-        <p className="mb-2 text-sm font-medium">
-          {isEditing ? "Atualize sua avaliação" : "Sua avaliação"}
+        <p className="mb-2 text-sm font-bold">
+          {isEditing ? "Atualize sua avaliacao" : "Sua avaliacao"}
         </p>
         <div className="flex gap-1" role="radiogroup" aria-label="Nota de 1 a 5 estrelas">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -47,11 +47,11 @@ export function ReviewForm({
               onClick={() => setRating(star)}
               onMouseEnter={() => setHovered(star)}
               onMouseLeave={() => setHovered(0)}
-              className="p-0.5 transition-transform hover:scale-110"
+              className="rounded-full p-1 transition hover:scale-110 hover:bg-[color-mix(in_srgb,var(--color-accent)_12%,white)]"
             >
               <svg
                 viewBox="0 0 20 20"
-                className="h-8 w-8"
+                className="h-8 w-8 drop-shadow-sm"
                 fill={star <= (hovered || rating) ? "var(--color-accent)" : "#d7dbe0"}
                 aria-hidden
               >
@@ -67,18 +67,18 @@ export function ReviewForm({
         defaultValue={initialComment}
         maxLength={REVIEW_COMMENT_MAX_LENGTH}
         rows={3}
-        placeholder="Conte como foi sua experiência (opcional)"
-        className="w-full resize-y rounded-[var(--radius)] border border-black/10 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20"
+        placeholder="Conte como foi sua experiencia (opcional)"
+        className="w-full resize-y rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-3 py-2 text-sm outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_16%,transparent)]"
       />
 
-      {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+      {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 
       <button
         type="submit"
         disabled={rating === 0}
-        className="self-start rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="self-start rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_12px_26px_color-mix(in_srgb,var(--color-primary)_22%,transparent)] transition hover:-translate-y-0.5 hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {isEditing ? "Atualizar avaliação" : "Enviar avaliação"}
+        {isEditing ? "Atualizar avaliacao" : "Enviar avaliacao"}
       </button>
     </form>
   );

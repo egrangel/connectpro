@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   bannerSchema,
+  slideSchema,
   brandingSchema,
   themeSchema,
   DEFAULT_BANNER,
@@ -13,6 +14,23 @@ describe("settings schemas", () => {
     expect(bannerSchema.safeParse(DEFAULT_BANNER).success).toBe(true);
     expect(themeSchema.safeParse(DEFAULT_THEME).success).toBe(true);
     expect(brandingSchema.safeParse(DEFAULT_BRANDING).success).toBe(true);
+  });
+
+  test("banner requires at least one slide", () => {
+    expect(bannerSchema.safeParse({ enabled: true, slides: [] }).success).toBe(false);
+  });
+
+  test("slide CTA accepts anchors, internal paths, and HTTP(S) URLs", () => {
+    const slide = DEFAULT_BANNER.slides[0];
+    expect(slideSchema.safeParse({ ...slide, ctaUrl: "#listagens" }).success).toBe(true);
+    expect(slideSchema.safeParse({ ...slide, ctaUrl: "/register" }).success).toBe(true);
+    expect(slideSchema.safeParse({ ...slide, ctaUrl: "https://example.com" }).success).toBe(true);
+  });
+
+  test("slide CTA rejects unsafe URLs", () => {
+    const slide = DEFAULT_BANNER.slides[0];
+    expect(slideSchema.safeParse({ ...slide, ctaUrl: "javascript:alert(1)" }).success).toBe(false);
+    expect(slideSchema.safeParse({ ...slide, ctaUrl: "//evil.example" }).success).toBe(false);
   });
 
   test("theme rejects malformed colors (CSS injection guard)", () => {

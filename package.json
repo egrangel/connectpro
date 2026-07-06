@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --turbopack",
+    "dev:clean": "npm run clean && next dev --turbopack",
+    "dev:webpack": "next dev",
+    "clean": "node -e \"require('fs').rmSync('.next', { recursive: true, force: true })\"",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -33,6 +36,7 @@
     "eslint-config-next": "16.2.10",
     "prisma": "^6.19.3",
     "tailwindcss": "^4",
+    "cross-env": "^7.0.3",
     "tsx": "^4.23.0",
     "typescript": "^5",
     "vitest": "^3.2.6"

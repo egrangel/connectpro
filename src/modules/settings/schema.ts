@@ -1,16 +1,26 @@
 import { z } from "zod";
+import { isSafePublicHref } from "@/lib/url";
 
 const hexColor = z
   .string()
   .regex(/^#[0-9a-fA-F]{6}$/, "Cor inválida (use #RRGGBB)");
 
-export const bannerSchema = z.object({
-  enabled: z.boolean(),
+export const slideSchema = z.object({
   imageKey: z.string().nullable(),
   headline: z.string().trim().max(120),
   subheadline: z.string().trim().max(200),
   ctaText: z.string().trim().max(40),
-  ctaUrl: z.string().trim().max(500),
+  ctaUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .refine((v) => v === "" || isSafePublicHref(v), "URL inválida"),
+});
+export type SlideConfig = z.infer<typeof slideSchema>;
+
+export const bannerSchema = z.object({
+  enabled: z.boolean(),
+  slides: z.array(slideSchema).min(1).max(5),
 });
 export type BannerConfig = z.infer<typeof bannerSchema>;
 
@@ -32,26 +42,41 @@ export type BrandingConfig = z.infer<typeof brandingSchema>;
 
 export const DEFAULT_BANNER: BannerConfig = {
   enabled: true,
-  imageKey: null,
-  headline: "Encontre o profissional certo para o seu projeto",
-  subheadline:
-    "Eletricistas, professores, desenvolvedores e muito mais — avaliados por quem já contratou.",
-  ctaText: "Explorar profissionais",
-  ctaUrl: "#listagens",
+  slides: [
+    {
+      imageKey: "/branding/slide-1.svg",
+      headline: "Encontre o profissional certo para o seu projeto",
+      subheadline:
+        "Eletricistas, professores, desenvolvedores e muito mais - avaliados por quem já contratou.",
+      ctaText: "Explorar profissionais",
+      ctaUrl: "#listagens",
+    },
+    {
+      imageKey: "/branding/slide-2.svg",
+      headline: "Unidos Por um Propósito",
+      subheadline:
+        "Profissionais verificados e avaliados pela comunidade — contrate com confiança.",
+      ctaText: "Ver profissionais",
+      ctaUrl: "#listagens",
+    },
+  ],
 };
 
+// Paleta extraída do emblema Connect UPP: anel dourado, globo azul-marinho,
+// anel interno ciano e chama laranja-vermelha.
 export const DEFAULT_THEME: ThemeConfig = {
-  primary: "#0f766e",
-  accent: "#f59e0b",
-  surface: "#f8fafc",
-  text: "#0f172a",
+  primary: "#1A3D8A",
+  accent: "#C8880A",
+  surface: "#F4F7FF",
+  text: "#0F1E40",
   radius: "md",
 };
 
 export const DEFAULT_BRANDING: BrandingConfig = {
-  siteName: "Connect Profissionais",
-  logoKey: null,
-  footerText: "Conectando você aos melhores profissionais da sua região.",
+  siteName: "Rede Connect UPP",
+  logoKey: "/branding/connect-upp-logo.png",
+  footerText:
+    "Uma iniciativa da Rede Connect UPP para conectar você aos melhores profissionais da sua região.",
 };
 
 export interface SiteConfig {
