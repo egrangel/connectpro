@@ -82,6 +82,7 @@ export default async function EditListingPage({ params, searchParams }: EditList
               type="file"
               name="photo"
               accept="image/jpeg,image/png,image/webp"
+              multiple
               required
               className="text-sm"
             />
@@ -89,9 +90,11 @@ export default async function EditListingPage({ params, searchParams }: EditList
               type="submit"
               className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
             >
-              Enviar foto
+              Enviar fotos
             </button>
-            <span className="text-xs text-slate-400">JPEG, PNG ou WebP · máx. 10 MB</span>
+            <span className="text-xs text-slate-400">
+              JPEG, PNG ou WebP · máx. 10 MB cada · até {MAX_PHOTOS_PER_LISTING} fotos
+            </span>
           </form>
         )}
       </section>

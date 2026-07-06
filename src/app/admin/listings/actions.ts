@@ -59,35 +59,51 @@ export async function archiveListingAction(formData: FormData): Promise<void> {
 export async function uploadPhotoAction(formData: FormData): Promise<void> {
   await requireAdmin();
   const listingId = String(formData.get("listingId") ?? "");
-  const file = formData.get("photo");
   const backUrl = `/admin/listings/${listingId}`;
 
-  if (!listingId || !(file instanceof File)) {
-    redirect(`${backUrl}?error=${encodeURIComponent("Selecione uma imagem.")}`);
+  if (!listingId) {
+    redirect(`${backUrl}?error=${encodeURIComponent("Anúncio inválido.")}`);
   }
 
   const photoCount = await prisma.listingPhoto.count({ where: { listingId } });
-  if (photoCount >= MAX_PHOTOS_PER_LISTING) {
+  const remaining = MAX_PHOTOS_PER_LISTING - photoCount;
+
+  if (remaining <= 0) {
     redirect(
       `${backUrl}?error=${encodeURIComponent(
-        `Limite de ${MAX_PHOTOS_PER_LISTING} fotos por anúncio.`,
+        `Limite de ${MAX_PHOTOS_PER_LISTING} fotos por anúncio atingido.`,
       )}`,
     );
   }
 
-  const saved = await saveImageUpload(file);
-  if (!saved.ok || !saved.storageKey) {
-    redirect(`${backUrl}?error=${encodeURIComponent(saved.error ?? "Falha no upload.")}`);
+  const files = formData
+    .getAll("photo")
+    .filter((f): f is File => f instanceof File && f.size > 0)
+    .slice(0, remaining);
+
+  if (files.length === 0) {
+    redirect(`${backUrl}?error=${encodeURIComponent("Selecione ao menos uma imagem.")}`);
   }
 
-  await prisma.listingPhoto.create({
-    data: {
-      listingId,
-      storageKey: saved.storageKey,
-      sortOrder: photoCount,
-    },
-  });
+  let firstError: string | undefined;
+  let sortOrder = photoCount;
+
+  for (const file of files) {
+    const saved = await saveImageUpload(file);
+    if (!saved.ok || !saved.storageKey) {
+      firstError ??= saved.error ?? "Falha no upload.";
+      continue;
+    }
+    await prisma.listingPhoto.create({
+      data: { listingId, storageKey: saved.storageKey, sortOrder },
+    });
+    sortOrder++;
+  }
+
   revalidatePublic();
+  if (firstError) {
+    redirect(`${backUrl}?error=${encodeURIComponent(firstError)}`);
+  }
   redirect(backUrl);
 }
 
