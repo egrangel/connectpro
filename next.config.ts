@@ -34,6 +34,14 @@ const productionSecurityHeaders = [
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["179.109.207.101"],
+  experimental: {
+    serverActions: {
+      // Photo uploads (up to 10 MB each, multiple per form) go through server
+      // actions; the default limit is 1 MB. Note: Vercel itself caps request
+      // bodies at ~4.5 MB, so keep individual uploads under that in production.
+      bodySizeLimit: "11mb",
+    },
+  },
   async headers() {
     return [
       {

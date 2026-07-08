@@ -10,16 +10,20 @@ O plano técnico completo está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Stack
 
 - **Next.js 16** (App Router, TypeScript, Server Actions) + **Tailwind CSS 4**
-- **Prisma 6** — SQLite em desenvolvimento, PostgreSQL como alvo de produção
+- **Prisma 6** — PostgreSQL (dev e produção)
 - **Zod 4** para validação, **bcryptjs** para senhas, sessões em banco com cookie HttpOnly
+- **Vercel Blob** para fotos em produção (disco local em dev)
 - **Vitest** para testes unitários
 
 ## Como rodar
 
+Requer um PostgreSQL acessível (local, ou gratuito via Prisma Postgres / Neon /
+Supabase) apontado por `DATABASE_URL`.
+
 ```bash
 npm install
-cp .env.example .env        # ajuste SEED_ADMIN_PASSWORD
-npm run db:migrate          # cria o banco SQLite e aplica migrações
+cp .env.example .env        # ajuste DATABASE_URL e SEED_ADMIN_PASSWORD
+npm run db:migrate          # aplica as migrações no PostgreSQL
 npm run db:seed             # admin + categorias + anúncios de exemplo
 npm run dev                 # http://localhost:3000
 ```
@@ -60,18 +64,33 @@ Regras centrais:
   no banco), média/contagem denormalizadas e recalculadas em transação.
 - **Tema**: tokens (cores hex validadas + raio) gravados em `SiteSettings` e
   injetados como CSS variables no layout raiz — sem CSS livre (evita XSS).
-- **Uploads**: validados por magic bytes (JPEG/PNG/WebP, máx. 10 MB), nome de
-  arquivo gerado no servidor, gravados em `public/uploads/` (driver local).
+- **Uploads**: validados por magic bytes (JPEG/PNG/WebP/SVG, máx. 10 MB), nome
+  de arquivo gerado no servidor. Com `BLOB_READ_WRITE_TOKEN` definido vão para
+  o Vercel Blob; sem ele, para `public/uploads/` (driver local de dev).
 
-## Migrando para PostgreSQL (produção)
+## Deploy na Vercel
 
-1. Troque o provider em `prisma/schema.prisma` para `postgresql` e aponte
-   `DATABASE_URL` para o banco.
-2. Regenere as migrações (`prisma migrate dev`) em um banco novo.
-3. Opcional, em escala: substitua a busca por `searchText contains` por
-   full-text search nativa (`tsvector` + `pg_trgm`) dentro de
-   `src/modules/listings/service.ts` — a interface pública do serviço não muda.
-4. Substitua o driver de mídia local (`src/modules/media/storage.ts`) por
-   S3/R2 com URLs pré-assinadas, mantendo a mesma interface.
-5. Troque o rate-limit em memória (`src/lib/rate-limit.ts`) por Redis se
-   houver múltiplas instâncias.
+1. Crie um banco PostgreSQL (aba **Storage** do projeto na Vercel — Neon /
+   Prisma Postgres — ou qualquer provedor) e defina `DATABASE_URL` nas
+   variáveis de ambiente do projeto.
+2. Crie um **Blob store** (Storage → Blob); a Vercel injeta
+   `BLOB_READ_WRITE_TOKEN` automaticamente.
+3. Importe o repositório na Vercel. O script `vercel-build` roda
+   `prisma migrate deploy` antes do build, então as migrações são aplicadas a
+   cada deploy (o `postinstall` já cuida do `prisma generate`).
+4. Para popular o banco inicial (admin + categorias), rode localmente com o
+   `DATABASE_URL` de produção: `npm run db:seed` (usa `SEED_ADMIN_EMAIL` /
+   `SEED_ADMIN_PASSWORD` do `.env`).
+
+Limitações conhecidas na Vercel:
+
+- Corpo de requisição limitado a ~4,5 MB — envie fotos maiores que isso uma
+  de cada vez ou reduza o tamanho antes do upload.
+- O rate-limit em memória (`src/lib/rate-limit.ts`) é por instância
+  serverless; para garantia real em escala, troque por Redis/Upstash.
+
+## Evoluções opcionais em escala
+
+- Substitua a busca por `searchText contains` por full-text search nativa
+  (`tsvector` + `pg_trgm`) dentro de `src/modules/listings/service.ts` — a
+  interface pública do serviço não muda.

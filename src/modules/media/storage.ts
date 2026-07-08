@@ -1,14 +1,29 @@
-// Local-disk storage driver for development: files land in public/uploads and
-// are served statically. Production swaps this module for an S3/R2 presigned
-// upload pipeline behind the same interface (docs/ARCHITECTURE.md §10).
+// Two storage drivers behind one interface (docs/ARCHITECTURE.md §10):
+// - Vercel Blob when BLOB_READ_WRITE_TOKEN is set (production/Vercel) —
+//   storageKey is the public blob URL.
+// - Local disk otherwise (development): files land in public/uploads and are
+//   served statically — storageKey is the /uploads/... path.
 
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
+import { del as blobDel, put as blobPut } from "@vercel/blob";
 import { MAX_PHOTO_SIZE_BYTES } from "@/lib/constants";
 
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 const UPLOADS_PREFIX = "/uploads/";
+const BLOB_PREFIX = "uploads/";
+
+const CONTENT_TYPES: Record<string, string> = {
+  jpg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  svg: "image/svg+xml",
+};
+
+function isBlobStorageConfigured(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
 
 interface MagicSignature {
   ext: string;
@@ -72,8 +87,22 @@ export async function saveImageUpload(file: File): Promise<SaveResult> {
     }
   }
 
-  // Server-generated name only: user filenames never touch the filesystem.
+  // Server-generated name only: user filenames never touch storage.
   const fileName = `${randomUUID()}.${signature.ext}`;
+
+  if (isBlobStorageConfigured()) {
+    try {
+      const blob = await blobPut(`${BLOB_PREFIX}${fileName}`, Buffer.from(bytes), {
+        access: "public",
+        contentType: CONTENT_TYPES[signature.ext],
+        addRandomSuffix: false,
+      });
+      return { ok: true, storageKey: blob.url };
+    } catch {
+      return { ok: false, error: "Falha ao enviar a imagem. Tente novamente." };
+    }
+  }
+
   await mkdir(UPLOADS_DIR, { recursive: true });
   await writeFile(path.join(UPLOADS_DIR, fileName), bytes);
 
@@ -81,6 +110,17 @@ export async function saveImageUpload(file: File): Promise<SaveResult> {
 }
 
 export async function deleteImageUpload(storageKey: string): Promise<void> {
+  // Blob-stored keys are absolute URLs; local keys are /uploads/... paths.
+  if (storageKey.startsWith("https://")) {
+    if (!isBlobStorageConfigured()) return;
+    try {
+      await blobDel(storageKey);
+    } catch {
+      // Missing blob is not an error worth surfacing — the DB row is the source of truth.
+    }
+    return;
+  }
+
   if (!storageKey.startsWith(UPLOADS_PREFIX)) return;
   const fileName = path.basename(storageKey);
   try {

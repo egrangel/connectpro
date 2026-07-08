@@ -1,18 +1,18 @@
-// Local development uses SQLite (no Docker available on dev machines).
-// Production target is PostgreSQL — see docs/ARCHITECTURE.md §4 and README
-// "Upgrading to PostgreSQL". The schema intentionally avoids SQLite-only or
-// Postgres-only features so the provider swap is a migration regen, not a rewrite.
+// PostgreSQL everywhere (dev and production/Vercel) — see docs/ARCHITECTURE.md §4
+// and README "Banco de dados". The schema deliberately sticks to portable
+// features (string roles/statuses, JSON-as-string) inherited from the original
+// SQLite setup, so no data-shape migration was needed for the provider swap.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// role: "USER" | "ADMIN" — string because SQLite has no enums (see src/lib/constants.ts)
+// role: "USER" | "ADMIN" — string by design for portability (see src/lib/constants.ts)
 model User {
   id           String    @id @default(uuid())
   email        String    @unique
