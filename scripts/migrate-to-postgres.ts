@@ -49,7 +49,9 @@ async function uploadPhotoToBlob(storageKey: string): Promise<string> {
 
 async function main(): Promise<void> {
   const env = await loadEnvFile(".env.production.local");
-  const databaseUrl = env.DATABASE_URL_UNPOOLED || env.DATABASE_URL;
+  const databaseUrl = [process.env.DATABASE_URL, env.DATABASE_URL_UNPOOLED, env.DATABASE_URL].find(
+    (url) => url?.startsWith("postgres"),
+  );
   if (!databaseUrl) {
     throw new Error("DATABASE_URL not found in .env.production.local — run `vercel env pull .env.production.local --environment=production` first.");
   }
@@ -96,26 +98,30 @@ async function main(): Promise<void> {
     }
     console.info(`Categories migrated: ${categories.length}`);
 
+    // A user with the same email may already exist in the target (e.g. the
+    // production-seeded admin) under a different id — reuse it and remap
+    // every reference instead of violating the email unique constraint.
+    const userIdMap = new Map<string, string>();
     for (const user of users) {
-      await target.user.upsert({ where: { id: user.id }, create: user, update: user });
+      const existing = await target.user.findUnique({ where: { email: user.email } });
+      if (existing) {
+        userIdMap.set(user.id, existing.id);
+        continue;
+      }
+      await target.user.create({ data: user });
+      userIdMap.set(user.id, user.id);
     }
     console.info(`Users migrated: ${users.length}`);
 
     for (const listing of listings) {
-      await target.listing.upsert({
-        where: { id: listing.id },
-        create: listing,
-        update: listing,
-      });
+      const data = { ...listing, createdById: userIdMap.get(listing.createdById)! };
+      await target.listing.upsert({ where: { id: listing.id }, create: data, update: data });
     }
     console.info(`Listings migrated: ${listings.length}`);
 
     for (const review of reviews) {
-      await target.review.upsert({
-        where: { id: review.id },
-        create: review,
-        update: review,
-      });
+      const data = { ...review, userId: userIdMap.get(review.userId)! };
+      await target.review.upsert({ where: { id: review.id }, create: data, update: data });
     }
     console.info(`Reviews migrated: ${reviews.length}`);
 
