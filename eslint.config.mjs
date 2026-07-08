@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated Prisma client used only by scripts/migrate-to-postgres.ts.
+    "scripts/generated/**",
   ]),
 ]);
 
