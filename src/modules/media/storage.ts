@@ -22,7 +22,13 @@ const CONTENT_TYPES: Record<string, string> = {
 };
 
 function isBlobStorageConfigured(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  // Classic stores inject BLOB_READ_WRITE_TOKEN. OIDC-managed stores only
+  // inject BLOB_STORE_ID — on Vercel the SDK resolves credentials from the
+  // runtime OIDC context, so the store id plus the VERCEL marker is enough.
+  return Boolean(
+    process.env.BLOB_READ_WRITE_TOKEN ||
+      (process.env.BLOB_STORE_ID && process.env.VERCEL),
+  );
 }
 
 interface MagicSignature {

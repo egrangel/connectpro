@@ -1,0 +1,81 @@
+// Read-only mirror of the legacy SQLite dev database, used exclusively by
+// scripts/migrate-to-postgres.ts to copy local data into Postgres.
+// The live schema is prisma/schema.prisma (PostgreSQL).
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/sqlite-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../prisma/dev.db"
+}
+
+model User {
+  id           String    @id
+  email        String    @unique
+  passwordHash String
+  displayName  String
+  role         String
+  isActive     Boolean
+  createdAt    DateTime
+  updatedAt    DateTime
+  reviews      Review[]
+  listings     Listing[]
+}
+
+model Category {
+  id        String    @id
+  name      String    @unique
+  slug      String    @unique
+  sortOrder Int
+  isActive  Boolean
+  listings  Listing[]
+}
+
+model Listing {
+  id              String         @id
+  slug            String         @unique
+  title           String
+  description     String
+  searchText      String
+  categoryId      String
+  category        Category       @relation(fields: [categoryId], references: [id])
+  contactPhone    String?
+  contactEmail    String?
+  contactWhatsapp String?
+  websiteUrl      String?
+  city            String?
+  status          String
+  ratingAvg       Float
+  ratingCount     Int
+  createdById     String
+  createdBy       User           @relation(fields: [createdById], references: [id])
+  photos          ListingPhoto[]
+  reviews         Review[]
+  createdAt       DateTime
+  updatedAt       DateTime
+}
+
+model ListingPhoto {
+  id         String  @id
+  listingId  String
+  listing    Listing @relation(fields: [listingId], references: [id])
+  storageKey String
+  altText    String?
+  sortOrder  Int
+}
+
+model Review {
+  id        String   @id
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int
+  comment   String?
+  status    String
+  createdAt DateTime
+  updatedAt DateTime
+}
