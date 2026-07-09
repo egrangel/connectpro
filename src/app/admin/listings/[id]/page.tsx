@@ -4,7 +4,8 @@ import { listActiveCategories } from "@/modules/categories/service";
 import { getListingById } from "@/modules/listings/service";
 import { LISTING_STATUS, MAX_PHOTOS_PER_LISTING } from "@/lib/constants";
 import { ListingForm } from "../ListingForm";
-import { archiveListingAction, deletePhotoAction, uploadPhotoAction } from "../actions";
+import { PhotoUploadForm } from "../PhotoUploadForm";
+import { archiveListingAction, deletePhotoAction } from "../actions";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
@@ -73,29 +74,13 @@ export default async function EditListingPage({ params, searchParams }: EditList
         </div>
 
         {listing.photos.length < MAX_PHOTOS_PER_LISTING && (
-          <form
-            action={uploadPhotoAction}
-            className="mt-4 flex flex-wrap items-center gap-3 rounded-md border border-dashed border-slate-300 bg-white p-4"
-          >
-            <input type="hidden" name="listingId" value={listing.id} />
-            <input
-              type="file"
-              name="photo"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              required
-              className="text-sm"
-            />
-            <button
-              type="submit"
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
-            >
-              Enviar fotos
-            </button>
-            <span className="text-xs text-slate-400">
-              JPEG, PNG ou WebP · máx. 10 MB cada · até {MAX_PHOTOS_PER_LISTING} fotos
-            </span>
-          </form>
+          <PhotoUploadForm
+            // Remount after a successful upload/delete so the selected-files
+            // feedback clears; a failed upload keeps the selection visible.
+            key={listing.photos.length}
+            listingId={listing.id}
+            remaining={MAX_PHOTOS_PER_LISTING - listing.photos.length}
+          />
         )}
       </section>
 
