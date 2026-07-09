@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/admin/listings", label: "Anúncios" },
   { href: "/admin/categories", label: "Categorias" },
   { href: "/admin/reviews", label: "Avaliações" },
+  { href: "/admin/users", label: "Usuários" },
   { href: "/admin/settings", label: "Aparência" },
 ] as const;
 

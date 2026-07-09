@@ -16,7 +16,7 @@ export default async function AdminDashboardPage() {
     { label: "Anúncios publicados", value: published, href: "/admin/listings" },
     { label: "Rascunhos", value: drafts, href: "/admin/listings?status=DRAFT" },
     { label: "Categorias ativas", value: categories, href: "/admin/categories" },
-    { label: "Usuários", value: users, href: "/admin" },
+    { label: "Usuários", value: users, href: "/admin/users" },
     { label: "Avaliações", value: reviews, href: "/admin/reviews" },
     { label: "Avaliações ocultas", value: hidden, href: "/admin/reviews" },
   ];
