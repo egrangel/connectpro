@@ -17,25 +17,48 @@ function revalidatePublic(): void {
   revalidatePath("/", "layout");
 }
 
-export async function saveListingAction(formData: FormData): Promise<void> {
+export interface ListingFormValues {
+  title: string;
+  description: string;
+  categoryId: string;
+  contactPhone: string;
+  contactEmail: string;
+  contactWhatsapp: string;
+  websiteUrl: string;
+  city: string;
+  status: string;
+}
+
+export interface SaveListingState {
+  error: string | null;
+  // Echoes the submitted values back so the form can repopulate on error
+  // instead of wiping everything the user typed.
+  values: ListingFormValues | null;
+}
+
+export async function saveListingAction(
+  _prevState: SaveListingState,
+  formData: FormData,
+): Promise<SaveListingState> {
   const admin = await requireAdmin();
   const id = String(formData.get("id") ?? "");
 
-  const parsed = listingInputSchema.safeParse({
-    title: formData.get("title"),
-    description: formData.get("description"),
-    categoryId: formData.get("categoryId"),
-    contactPhone: formData.get("contactPhone"),
-    contactEmail: formData.get("contactEmail"),
-    contactWhatsapp: formData.get("contactWhatsapp"),
-    websiteUrl: formData.get("websiteUrl"),
-    city: formData.get("city"),
-    status: formData.get("status"),
-  });
+  const values: ListingFormValues = {
+    title: String(formData.get("title") ?? ""),
+    description: String(formData.get("description") ?? ""),
+    categoryId: String(formData.get("categoryId") ?? ""),
+    contactPhone: String(formData.get("contactPhone") ?? ""),
+    contactEmail: String(formData.get("contactEmail") ?? ""),
+    contactWhatsapp: String(formData.get("contactWhatsapp") ?? ""),
+    websiteUrl: String(formData.get("websiteUrl") ?? ""),
+    city: String(formData.get("city") ?? ""),
+    status: String(formData.get("status") ?? ""),
+  };
+
+  const parsed = listingInputSchema.safeParse(values);
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? "Dados inválidos";
-    const base = id ? `/admin/listings/${id}` : "/admin/listings/new";
-    redirect(`${base}?error=${encodeURIComponent(message)}`);
+    return { error: message, values };
   }
 
   const listing = id
