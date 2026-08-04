@@ -23,3 +23,16 @@ export function toSearchText(...parts: Array<string | null | undefined>): string
     .replace(/\s+/g, " ")
     .trim();
 }
+
+/**
+ * Splits a user query into normalized terms matched independently, so word
+ * order does not matter. Punctuation is dropped: terms must be comparable
+ * against both `searchText` (space separated) and category slugs (dash
+ * separated).
+ */
+export function searchTerms(query: string | null | undefined): string[] {
+  return removeAccents(query ?? "")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}

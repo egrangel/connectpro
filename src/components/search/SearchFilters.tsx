@@ -33,7 +33,7 @@ export function SearchFilters({ categories, query }: SearchFiltersProps) {
           type="search"
           name="q"
           defaultValue={query.q ?? ""}
-          placeholder="Buscar por servico, nome ou descricao"
+          placeholder="Buscar por servico, categoria, nome ou cidade"
           className="min-h-12 w-full rounded-[var(--radius)] border border-[var(--color-line)] bg-white/86 px-4 text-sm shadow-inner outline-none transition placeholder:text-[var(--color-muted)]/70 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]"
         />
         <button

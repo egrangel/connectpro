@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { removeAccents, slugify, toSearchText } from "./text";
+import { removeAccents, searchTerms, slugify, toSearchText } from "./text";
 
 describe("removeAccents", () => {
   test("strips Portuguese diacritics", () => {
@@ -42,5 +42,28 @@ describe("toSearchText", () => {
 
   test("collapses internal whitespace", () => {
     expect(toSearchText("a   b\n\nc")).toBe("a b c");
+  });
+});
+
+describe("searchTerms", () => {
+  test("splits a query into normalized terms", () => {
+    expect(searchTerms("Elétrica  São Paulo")).toEqual([
+      "eletrica",
+      "sao",
+      "paulo",
+    ]);
+  });
+
+  test("drops punctuation so terms match slugs and searchText", () => {
+    expect(searchTerms("Fotógrafo, casamento!")).toEqual([
+      "fotografo",
+      "casamento",
+    ]);
+  });
+
+  test("returns an empty list for blank or symbol-only queries", () => {
+    expect(searchTerms("   ")).toEqual([]);
+    expect(searchTerms("!!!")).toEqual([]);
+    expect(searchTerms(undefined)).toEqual([]);
   });
 });

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { LISTING_STATUS, LISTINGS_PAGE_SIZE } from "@/lib/constants";
 import { slugify, toSearchText } from "@/lib/text";
 import { compareRatingRank } from "./ranking";
+import { listingWhere } from "./where";
 import type { ListingInput, ListingQuery } from "./schema";
 import type { Prisma } from "@prisma/client";
 
@@ -19,20 +20,6 @@ export interface PublicListingPage {
   total: number;
   page: number;
   pageCount: number;
-}
-
-function listingWhere(query: ListingQuery): Prisma.ListingWhereInput {
-  const where: Prisma.ListingWhereInput = { status: LISTING_STATUS.PUBLISHED };
-
-  if (query.category) {
-    where.category = { slug: query.category };
-  }
-  if (query.q) {
-    // searchText is pre-normalized (lowercase, unaccented) at write time.
-    where.searchText = { contains: toSearchText(query.q) };
-  }
-
-  return where;
 }
 
 async function searchPublishedListingsByRating(
