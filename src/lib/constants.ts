@@ -35,3 +35,7 @@ export const RATING_SORT_MIN_REVIEWS = 3;
 
 export const SESSION_COOKIE_NAME = "connect_session";
 export const SESSION_DURATION_DAYS = 30;
+
+// Short-lived on purpose: a reset link sitting in an inbox is a standing key
+// to the account.
+export const PASSWORD_RESET_TOKEN_TTL_MINUTES = 60;

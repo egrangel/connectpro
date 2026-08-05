@@ -18,6 +18,9 @@ export const RATE_LIMITS = {
   login: { limit: 10, windowMs: 15 * 60 * 1000 },
   register: { limit: 5, windowMs: 60 * 60 * 1000 },
   review: { limit: 5, windowMs: 60 * 60 * 1000 },
+  // Applied per IP *and* per target address, so neither a scanner nor a
+  // mail-bomb aimed at one inbox gets far.
+  passwordReset: { limit: 5, windowMs: 60 * 60 * 1000 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /** Returns true when the action is allowed, false when rate-limited. */

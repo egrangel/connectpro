@@ -14,17 +14,34 @@ datasource db {
 
 // role: "USER" | "ADMIN" — string by design for portability (see src/lib/constants.ts)
 model User {
-  id           String    @id @default(uuid())
-  email        String    @unique
-  passwordHash String
-  displayName  String
-  role         String    @default("USER")
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  sessions     Session[]
-  reviews      Review[]
-  listings     Listing[]
+  id             String               @id @default(uuid())
+  email          String               @unique
+  passwordHash   String
+  displayName    String
+  role           String               @default("USER")
+  isActive       Boolean              @default(true)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  sessions       Session[]
+  reviews        Review[]
+  listings       Listing[]
+  passwordResets PasswordResetToken[]
+}
+
+// Single-use password reset grant. Only the SHA-256 hash of the token is
+// stored — the raw value exists solely inside the emailed link, so a database
+// leak cannot be replayed to take over accounts. Rows are deleted on
+// redemption (never marked "used"), and every outstanding row for a user is
+// dropped whenever a new one is issued or the password changes.
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Session {

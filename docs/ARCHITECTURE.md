@@ -35,10 +35,11 @@ Next.js app ──► Public site (/)  Admin portal (/admin)  Server actions
 | `modules/listings` | CRUD, draft/publish/archive lifecycle, search, aggregate rating cache |
 | `modules/categories` | Category CRUD, ordered active list for filters |
 | `modules/reviews` | 1–5 star reviews, one-per-user rule, transactional aggregate recompute, moderation |
-| `modules/auth` | Registration (always USER), login, sessions, rate-limited actions |
+| `modules/auth` | Registration (always USER), login, sessions, password recovery, rate-limited actions |
 | `modules/media` | Image validation by magic bytes, storage driver |
 | `modules/settings` | Banner/theme/branding singleton, Zod-validated, cached read path |
-| `lib/auth` | Password hashing (bcrypt cost 12), DB sessions, `requireAdmin` gate |
+| `lib/auth` | Password hashing (bcrypt cost 12), DB sessions, reset tokens, `requireAdmin` gate |
+| `lib/mail` | Transactional e-mail: Resend HTTP driver (prod) / console driver (dev) |
 
 ## 3. Roles and Permissions
 
@@ -57,7 +58,8 @@ user-facing input schema. The first admin comes from the seed script
 
 ## 4. Database Model
 
-See `prisma/schema.prisma`. Tables: `User`, `Session`, `Category`, `Listing`
+See `prisma/schema.prisma`. Tables: `User`, `Session`, `PasswordResetToken`
+(hashed, single-use — see §8), `Category`, `Listing`
 (with denormalized `ratingAvg`/`ratingCount` and normalized `searchText`),
 `ListingPhoto`, `Review` (unique `(listingId, userId)`), `SiteSettings`
 (singleton row, JSON-as-validated-string per section).
@@ -97,6 +99,24 @@ categories, review moderation (hide/restore), appearance (banner/theme/brand).
 - bcrypt cost 12; generic login errors; rate-limited login/register.
 - Authorization enforced server-side at the action/service level; UI checks
   are convenience only.
+
+### Password recovery
+
+`/forgot-password` → e-mailed link → `/reset-password?token=…`.
+
+- **Token**: 256 random bits, hex, single use, 60-minute TTL. Only its SHA-256
+  is stored (`PasswordResetToken`), so a database leak yields no usable links.
+  Issuing a new grant deletes any outstanding one for that user.
+- **No enumeration**: the request form always lands on the same confirmation,
+  registered address or not — including when delivery fails (logged
+  server-side only, since a visible failure would only occur for real accounts).
+- **Rate limited per IP *and* per target address**, so the form is neither an
+  account scanner nor a mail bomb.
+- **Redemption revokes every session** for the user (a stolen cookie must not
+  survive the reset), then signs in the fresh browser.
+- **Link origin comes from `APP_BASE_URL` / `VERCEL_PROJECT_PRODUCTION_URL`**,
+  never the request `Host` header — a poisoned host would redirect reset links
+  to an attacker's domain.
 
 ## 9. Search & Filtering
 

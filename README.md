@@ -13,6 +13,7 @@ O plano técnico completo está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Prisma 6** — PostgreSQL (dev e produção)
 - **Zod 4** para validação, **bcryptjs** para senhas, sessões em banco com cookie HttpOnly
 - **Vercel Blob** para fotos em produção (disco local em dev)
+- **Resend** (API HTTP, sem SDK) para e-mail transacional — driver de console em dev
 - **Vitest** para testes unitários
 
 ## Como rodar
@@ -64,6 +65,12 @@ Regras centrais:
   no banco), média/contagem denormalizadas e recalculadas em transação.
 - **Tema**: tokens (cores hex validadas + raio) gravados em `SiteSettings` e
   injetados como CSS variables no layout raiz — sem CSS livre (evita XSS).
+- **Recuperação de senha**: `/forgot-password` gera um token de 256 bits válido
+  por 60 minutos e envia o link por e-mail; o banco guarda apenas o SHA-256 do
+  token. A tela responde igual para e-mail cadastrado ou não (não revela quem
+  tem conta). Ao redefinir em `/reset-password`, o token é apagado e **todas as
+  sessões do usuário são revogadas**. Sem `RESEND_API_KEY`, o link é impresso no
+  log do servidor — é assim que se testa o fluxo em desenvolvimento.
 - **Uploads**: validados por magic bytes (JPEG/PNG/WebP/SVG, máx. 10 MB), nome
   de arquivo gerado no servidor. Com `BLOB_READ_WRITE_TOKEN` definido vão para
   o Vercel Blob; sem ele, para `public/uploads/` (driver local de dev).
@@ -75,10 +82,14 @@ Regras centrais:
    variáveis de ambiente do projeto.
 2. Crie um **Blob store** (Storage → Blob); a Vercel injeta
    `BLOB_READ_WRITE_TOKEN` automaticamente.
-3. Importe o repositório na Vercel. O script `vercel-build` roda
+3. Para os e-mails de recuperação de senha, defina `RESEND_API_KEY` e
+   `MAIL_FROM` (remetente de um domínio verificado no Resend). Sem a chave o
+   fluxo continua funcionando, mas o link só aparece no log — nunca chega ao
+   usuário.
+4. Importe o repositório na Vercel. O script `vercel-build` roda
    `prisma migrate deploy` antes do build, então as migrações são aplicadas a
    cada deploy (o `postinstall` já cuida do `prisma generate`).
-4. Para popular o banco inicial (admin + categorias), rode localmente com o
+5. Para popular o banco inicial (admin + categorias), rode localmente com o
    `DATABASE_URL` de produção: `npm run db:seed` (usa `SEED_ADMIN_EMAIL` /
    `SEED_ADMIN_PASSWORD` do `.env`).
 

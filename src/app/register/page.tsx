@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { registerAction } from "@/modules/auth/actions";
 
 export const metadata: Metadata = { title: "Criar conta" };
@@ -7,9 +8,6 @@ export const metadata: Metadata = { title: "Criar conta" };
 interface RegisterPageProps {
   searchParams: Promise<{ error?: string }>;
 }
-
-const inputClass =
-  "rounded-[var(--radius)] border border-[var(--color-line)] bg-white/86 px-3 py-2.5 font-normal outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_16%,transparent)]";
 
 export default async function RegisterPage({ searchParams }: RegisterPageProps) {
   const { error } = await searchParams;
@@ -54,10 +52,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
 
           {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 
-          <button
-            type="submit"
-            className="mt-2 rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-3 font-bold text-white shadow-[0_14px_30px_color-mix(in_srgb,var(--color-primary)_22%,transparent)] transition hover:-translate-y-0.5 hover:opacity-95"
-          >
+          <button type="submit" className={primaryButtonClass}>
             Criar conta
           </button>
         </form>
