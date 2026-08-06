@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import type { Category, Listing } from "@prisma/client";
 import { LISTING_STATUS } from "@/lib/constants";
+import { INSTAGRAM_INPUT_MAX_LENGTH } from "@/modules/listings/instagram";
 import { saveListingAction, type SaveListingState } from "./actions";
 
 interface ListingFormProps {
@@ -131,6 +132,24 @@ export function ListingForm({ categories, listing, error, saved }: ListingFormPr
             defaultValue={values?.contactEmail ?? listing?.contactEmail ?? ""}
             className={inputClass}
           />
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+          Instagram
+          <input
+            type="text"
+            name="instagram"
+            maxLength={INSTAGRAM_INPUT_MAX_LENGTH}
+            placeholder="@perfil ou link do perfil"
+            defaultValue={
+              values?.instagram ??
+              (listing?.instagram ? `@${listing.instagram}` : "")
+            }
+            className={inputClass}
+          />
+          <span className="text-xs font-normal text-slate-500">
+            Cole o @ ou o link — o link do perfil é montado automaticamente.
+          </span>
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">

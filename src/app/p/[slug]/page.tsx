@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PhotoCarousel } from "@/components/listings/PhotoCarousel";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
+import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { StarRating } from "@/components/ui/StarRating";
+import { instagramProfileUrl } from "@/modules/listings/instagram";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getPublishedListingBySlug } from "@/modules/listings/service";
 import { getSiteFeatures } from "@/modules/settings/service";
@@ -137,12 +139,34 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
                 href={`mailto:${listing.contactEmail}`}
               />
             )}
+            {listing.instagram && (
+              <a
+                href={instagramProfileUrl(listing.instagram)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 rounded-[var(--radius)] border border-[var(--color-line)] bg-white/72 p-3 transition hover:border-[var(--color-primary)] hover:bg-white"
+              >
+                <InstagramIcon className="h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+                <span className="min-w-0">
+                  <span className="block text-xs font-bold uppercase text-[var(--color-muted)]">
+                    Instagram
+                  </span>
+                  <span className="block truncate font-bold text-[var(--color-primary)] group-hover:underline">
+                    {`@${listing.instagram}`}
+                  </span>
+                </span>
+              </a>
+            )}
             {listing.websiteUrl && (
               <ContactRow label="Site" value={listing.websiteUrl} href={listing.websiteUrl} />
             )}
-            {!whatsappDigits && !listing.contactPhone && !listing.contactEmail && !listing.websiteUrl && (
-              <p className="text-[var(--color-muted)]">Nenhum contato informado.</p>
-            )}
+            {!whatsappDigits &&
+              !listing.contactPhone &&
+              !listing.contactEmail &&
+              !listing.instagram &&
+              !listing.websiteUrl && (
+                <p className="text-[var(--color-muted)]">Nenhum contato informado.</p>
+              )}
           </div>
         </aside>
       </div>

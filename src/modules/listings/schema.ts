@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { LISTING_STATUS, SEARCH_QUERY_MAX_LENGTH } from "@/lib/constants";
 import { isHttpUrl } from "@/lib/url";
+import { extractInstagramHandle, INSTAGRAM_INPUT_MAX_LENGTH } from "./instagram";
 
 const optionalTrimmed = (max: number) =>
   z
@@ -20,6 +21,20 @@ const optionalHttpUrl = z
   .nullable()
   .optional();
 
+// Stored as a bare handle; see modules/listings/instagram.ts for why the URL is
+// never persisted.
+const instagramHandle = z
+  .string()
+  .trim()
+  .max(INSTAGRAM_INPUT_MAX_LENGTH)
+  .refine(
+    (v) => v === "" || extractInstagramHandle(v) !== null,
+    "Instagram inválido — informe o @ do perfil ou o link completo",
+  )
+  .transform((v) => (v === "" ? null : extractInstagramHandle(v)))
+  .nullable()
+  .optional();
+
 export const listingInputSchema = z.object({
   title: z.string().trim().min(3, "Título muito curto").max(120),
   description: z.string().trim().min(10, "Descreva o profissional").max(5000),
@@ -31,6 +46,7 @@ export const listingInputSchema = z.object({
     .nullable()
     .optional(),
   contactWhatsapp: optionalTrimmed(30),
+  instagram: instagramHandle,
   websiteUrl: optionalHttpUrl,
   city: optionalTrimmed(80),
   status: z.enum([

@@ -57,6 +57,36 @@ describe("listingInputSchema", () => {
   test("rejects too-short title", () => {
     expect(listingInputSchema.safeParse({ ...validListing, title: "ab" }).success).toBe(false);
   });
+
+  test("stores Instagram as a bare handle, whatever form was pasted", () => {
+    const fromUrl = listingInputSchema.parse({
+      ...validListing,
+      instagram: "https://www.instagram.com/Joao.Silva/?igsh=MXY2cHJ5",
+    });
+    expect(fromUrl.instagram).toBe("joao.silva");
+
+    const fromAt = listingInputSchema.parse({ ...validListing, instagram: "@joao.silva" });
+    expect(fromAt.instagram).toBe("joao.silva");
+  });
+
+  test("treats a blank Instagram as no Instagram", () => {
+    expect(listingInputSchema.parse({ ...validListing, instagram: "" }).instagram).toBeNull();
+    expect(listingInputSchema.parse({ ...validListing, instagram: "   " }).instagram).toBeNull();
+  });
+
+  test("rejects an Instagram value that is not a profile", () => {
+    // Nothing user-supplied may become an href, so these must never be stored.
+    for (const value of [
+      "javascript:alert(1)",
+      "https://evil.example/joao",
+      "https://instagram.com.evil.example/joao",
+      "joao silva",
+    ]) {
+      expect(
+        listingInputSchema.safeParse({ ...validListing, instagram: value }).success,
+      ).toBe(false);
+    }
+  });
 });
 
 describe("listingQuerySchema", () => {

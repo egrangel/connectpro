@@ -25,6 +25,7 @@ interface SeedListing {
   city: string;
   description: string;
   contactWhatsapp?: string;
+  instagram?: string;
   reviews: Array<{ userIndex: number; rating: number; comment?: string }>;
 }
 
@@ -86,6 +87,7 @@ const LISTINGS: SeedListing[] = [
     city: "Florianópolis, SC",
     description:
       "Ensaios de família, casamentos e fotografia de produto. Entrega em galeria digital com tratamento profissional de imagem.",
+    instagram: "estudio.luz.norte",
     reviews: [{ userIndex: 0, rating: 3, comment: "Fotos bonitas, mas a entrega demorou mais que o combinado." }],
   },
 ];
@@ -164,6 +166,7 @@ async function main(): Promise<void> {
         categoryId: categoryIds.get(item.category)!,
         city: item.city,
         contactWhatsapp: item.contactWhatsapp ?? null,
+        instagram: item.instagram ?? null,
         status: "PUBLISHED",
         createdById: admin.id,
         ratingAvg: aggregate.avg,

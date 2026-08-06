@@ -24,6 +24,7 @@ export interface ListingFormValues {
   contactPhone: string;
   contactEmail: string;
   contactWhatsapp: string;
+  instagram: string;
   websiteUrl: string;
   city: string;
   status: string;
@@ -50,6 +51,7 @@ export async function saveListingAction(
     contactPhone: String(formData.get("contactPhone") ?? ""),
     contactEmail: String(formData.get("contactEmail") ?? ""),
     contactWhatsapp: String(formData.get("contactWhatsapp") ?? ""),
+    instagram: String(formData.get("instagram") ?? ""),
     websiteUrl: String(formData.get("websiteUrl") ?? ""),
     city: String(formData.get("city") ?? ""),
     status: String(formData.get("status") ?? ""),

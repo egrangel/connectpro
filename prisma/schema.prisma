@@ -83,6 +83,8 @@ model Listing {
   contactPhone    String?
   contactEmail    String?
   contactWhatsapp String?
+  // Bare handle, no "@" and no URL — see src/modules/listings/instagram.ts.
+  instagram       String?
   websiteUrl      String?
   city            String?
   status          String         @default("DRAFT")
