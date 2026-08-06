@@ -4,7 +4,7 @@ import type { PublicListing } from "@/modules/listings/service";
 
 interface ListingCardProps {
   listing: PublicListing;
-  /** Hidden when the admin turns the review system off (Aparência). */
+  /** Hidden when the admin turns the review system off (Configurações). */
   showRating?: boolean;
 }
 

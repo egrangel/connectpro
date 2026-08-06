@@ -21,7 +21,7 @@ interface ReviewsSectionProps {
 
 /**
  * Public reviews block of a listing page. Rendered only when the review system
- * is enabled in Aparência (see settings featuresSchema.reviewsEnabled).
+ * is enabled in Configurações (see settings featuresSchema.reviewsEnabled).
  */
 export function ReviewsSection({
   listingId,

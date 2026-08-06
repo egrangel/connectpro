@@ -37,7 +37,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight">Aparencia</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Aparência</h1>
       <p className="mt-1 text-sm text-slate-500">
         Banner, cores e identidade visual do site publico.
       </p>

@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { href: "/admin/categories", label: "Categorias" },
   { href: "/admin/reviews", label: "Avaliações" },
   { href: "/admin/users", label: "Usuários" },
-  { href: "/admin/settings", label: "Aparência" },
+  { href: "/admin/settings", label: "Configurações" },
 ] as const;
 
 // Admin UI is deliberately not themed by site settings: a broken theme must
