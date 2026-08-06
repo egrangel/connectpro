@@ -33,6 +33,15 @@ export const REVIEWS_PAGE_SIZE = 10;
 // Minimum reviews before a listing can outrank unrated ones in rating sort.
 export const RATING_SORT_MIN_REVIEWS = 3;
 
+// Longest search query accepted from the URL; anything beyond is truncated.
+export const SEARCH_QUERY_MAX_LENGTH = 120;
+
+// Search report: terms shorter than this are noise ("de", "e", stray letters),
+// longer ones are pasted junk that would sit in the table forever.
+export const SEARCH_TERM_MIN_LENGTH = 3;
+export const SEARCH_TERM_MAX_LENGTH = 40;
+export const SEARCH_REPORT_PAGE_SIZE = 50;
+
 export const SESSION_COOKIE_NAME = "connect_session";
 export const SESSION_DURATION_DAYS = 30;
 

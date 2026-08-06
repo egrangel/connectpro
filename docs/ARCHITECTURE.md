@@ -38,6 +38,7 @@ Next.js app ──► Public site (/)  Admin portal (/admin)  Server actions
 | `modules/auth` | Registration (always USER), login, sessions, password recovery, rate-limited actions |
 | `modules/media` | Image validation by magic bytes, storage driver |
 | `modules/settings` | Banner/theme/branding/features singleton, Zod-validated, cached read path |
+| `modules/reports` | Search analytics: per-term counters written via `after()`, read by the admin report |
 | `lib/auth` | Password hashing (bcrypt cost 12), DB sessions, reset tokens, `requireAdmin` gate |
 | `lib/mail` | Transactional e-mail: Resend HTTP driver (prod) / console driver (dev) |
 
@@ -90,10 +91,20 @@ can be added later over the same services if external consumers appear.
 Guarded by `requireAdmin()` in the layout **and** in every server action.
 Deliberately not themed by site settings (a broken theme must not break the
 tool that fixes it). Sections: dashboard, listings (CRUD + photos + archive),
-categories, review moderation (hide/restore), appearance (banner/theme/brand +
-feature toggles). Appearance carries `features.reviewsEnabled`: turning it off
-hides ratings, the review form and the rating sort across the public site and
-rejects new review posts, while stored reviews stay intact and moderatable.
+categories, review moderation (hide/restore), reports, settings (banner/theme/
+brand + feature toggles). Settings carries `features.reviewsEnabled`: turning
+it off hides ratings, the review form and the rating sort across the public
+site and rejects new review posts, while stored reviews stay intact and
+moderatable.
+
+**Reports** (`/admin/reports`) surfaces demand signals. The first one is *most
+searched terms*: each public search increments a counter per normalized term
+(`SearchTermStat`), written from `after()` so analytics never delays or breaks
+the response, and only on page 1 so paging does not inflate a term. It is a
+counter table, not a query log — no user, session or IP is recorded, and size
+is bounded by vocabulary rather than traffic. The trade-off is that counts
+cannot be sliced by period; a dated `SearchEvent` log would be the change if
+"top terms last 30 days" is ever needed.
 
 ## 8. AuthN/AuthZ
 

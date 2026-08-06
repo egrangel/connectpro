@@ -122,6 +122,20 @@ model Review {
   @@index([listingId, status, createdAt])
 }
 
+// Search analytics, aggregated: one row per normalized term (see `searchTerms`
+// in src/lib/text.ts), incremented on every public search. Deliberately a
+// counter and not a log — no user, session, IP or timestamp of the individual
+// search is stored, so the report carries no personal data and the table stays
+// bounded by vocabulary size instead of by traffic.
+model SearchTermStat {
+  term      String   @id
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([count])
+}
+
 // Singleton row (id always 1). JSON stored as validated strings because the
 // SQLite connector lacks a native Json type; Zod schemas in
 // src/modules/settings/schema.ts are the source of truth for their shape.

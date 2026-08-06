@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { after } from "next/server";
 import { HeroBanner } from "@/components/site/HeroBanner";
 import { SearchFilters } from "@/components/search/SearchFilters";
 import { ListingCard } from "@/components/listings/ListingCard";
+import { searchTerms } from "@/lib/text";
 import { listActiveCategories } from "@/modules/categories/service";
 import { listingQuerySchema } from "@/modules/listings/schema";
 import { searchPublishedListings } from "@/modules/listings/service";
+import { recordSearchTerms } from "@/modules/reports/service";
 import { getSiteConfig } from "@/modules/settings/service";
 
 interface HomePageProps {
@@ -33,6 +36,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     sort: params.sort,
     page: params.page,
   });
+
+  // Search report (admin). Counted on page 1 only, so paging through results
+  // does not inflate a term, and after the response so it never delays it.
+  if (query.q && query.page === 1) {
+    const terms = searchTerms(query.q);
+    after(() => recordSearchTerms(terms));
+  }
 
   const [config, categories, results] = await Promise.all([
     getSiteConfig(),

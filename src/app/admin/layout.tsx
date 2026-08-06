@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/admin/categories", label: "Categorias" },
   { href: "/admin/reviews", label: "Avaliações" },
   { href: "/admin/users", label: "Usuários" },
+  { href: "/admin/reports", label: "Relatórios" },
   { href: "/admin/settings", label: "Configurações" },
 ] as const;
 
