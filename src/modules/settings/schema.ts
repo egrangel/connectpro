@@ -33,6 +33,11 @@ export const themeSchema = z.object({
 });
 export type ThemeConfig = z.infer<typeof themeSchema>;
 
+export const featuresSchema = z.object({
+  reviewsEnabled: z.boolean(),
+});
+export type FeaturesConfig = z.infer<typeof featuresSchema>;
+
 export const brandingSchema = z.object({
   siteName: z.string().trim().min(1, "Informe o nome do site").max(60),
   logoKey: z.string().nullable(),
@@ -72,6 +77,10 @@ export const DEFAULT_THEME: ThemeConfig = {
   radius: "md",
 };
 
+export const DEFAULT_FEATURES: FeaturesConfig = {
+  reviewsEnabled: true,
+};
+
 export const DEFAULT_BRANDING: BrandingConfig = {
   siteName: "Rede Connect UPP",
   logoKey: "/branding/connect-upp-logo.png",
@@ -83,6 +92,7 @@ export interface SiteConfig {
   banner: BannerConfig;
   theme: ThemeConfig;
   branding: BrandingConfig;
+  features: FeaturesConfig;
 }
 
 export const RADIUS_CSS: Record<ThemeConfig["radius"], string> = {

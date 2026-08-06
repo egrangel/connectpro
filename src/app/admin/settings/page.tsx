@@ -24,7 +24,7 @@ function ColorField({ name, label, value }: { name: string; label: string; value
 
 export default async function AdminSettingsPage({ searchParams }: AdminSettingsPageProps) {
   const [{ error, saved }, config] = await Promise.all([searchParams, getSiteConfig()]);
-  const { banner, theme, branding } = config;
+  const { banner, theme, branding, features } = config;
   const firstSlide = banner.slides[0];
 
   const previewStyle = {
@@ -37,7 +37,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight">Aparencia</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Aparência</h1>
       <p className="mt-1 text-sm text-slate-500">
         Banner, cores e identidade visual do site publico.
       </p>
@@ -66,6 +66,25 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
               </label>
               <BannerSlidesEditor initialSlides={banner.slides} />
             </div>
+          </fieldset>
+
+          <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
+            <legend className="px-1 text-sm font-semibold text-slate-800">
+              Sistema de avaliacoes
+            </legend>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                name="reviewsEnabled"
+                defaultChecked={features.reviewsEnabled}
+              />
+              Exibir avaliacoes e notas dos anuncios no site publico
+            </label>
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Ao desativar, as estrelas, a nota media e o formulario de avaliacao ficam ocultos
+              no site e novas avaliacoes deixam de ser aceitas. As avaliacoes ja enviadas sao
+              preservadas e voltam a aparecer se voce reativar a opcao.
+            </p>
           </fieldset>
 
           <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
@@ -152,7 +171,11 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
                   Categoria
                 </span>
                 <p className="mt-3 font-bold">Card de profissional</p>
-                <p className="mt-1 text-xs opacity-70">Exemplo de texto, avaliacao e botao.</p>
+                <p className="mt-1 text-xs opacity-70">
+                  {features.reviewsEnabled
+                    ? "Exemplo de texto, avaliacao e botao."
+                    : "Exemplo de texto e botao (avaliacoes ocultas)."}
+                </p>
                 <p className="mt-3 text-xs font-bold text-[var(--preview-primary)]">Ver profissional</p>
               </div>
             </div>

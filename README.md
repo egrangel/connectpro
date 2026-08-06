@@ -32,6 +32,30 @@ npm run dev                 # http://localhost:3000
 Login do admin: o e-mail/senha definidos em `SEED_ADMIN_EMAIL` /
 `SEED_ADMIN_PASSWORD` no `.env`. O portal fica em `/admin`.
 
+### Banco local para desenvolvimento
+
+Para desenvolver sem depender do banco remoto, o projeto sobe um PostgreSQL
+**real** dentro da própria pasta (`.localdb/`, ignorada pelo git) — mesmo motor
+e mesmo dialeto da produção, sem instalar nada no sistema e sem privilégio de
+administrador. Assim as migrações são ensaiadas localmente exatamente como
+rodarão no deploy.
+
+```bash
+npm run db:local          # terminal 1: sobe o Postgres em localhost:5433 (deixe aberto)
+npm run db:migrate:local  # terminal 2: aplica as migrações
+npm run db:seed:local     # popula admin, categorias e anúncios
+npm run dev:local         # http://localhost:3000 usando o banco local
+```
+
+Os comandos `*:local` passam `DATABASE_URL` explicitamente, então **não
+alteram** `.env`, `.env.local` nem `.env.development.local` (este último é
+gerado pelo `vercel env pull` e seria sobrescrito). Os comandos sem sufixo
+(`npm run dev`, `db:migrate`, `db:seed`) continuam usando o `DATABASE_URL` dos
+arquivos `.env`.
+
+Para zerar a base local: `npm run db:local:reset` (apaga `.localdb/` e recria o
+cluster; depois rode `db:migrate:local` e `db:seed:local` de novo).
+
 Usuários de demonstração (para testar avaliações): `joana@example.com` e
 `pedro@example.com`, senha `senha-demo-123`.
 
@@ -45,6 +69,11 @@ Usuários de demonstração (para testar avaliações): `joana@example.com` e
 | `npm run lint` | ESLint |
 | `npm run db:migrate` | `prisma migrate dev` |
 | `npm run db:seed` | Popula admin, categorias e anúncios de exemplo |
+| `npm run db:local` | Sobe o PostgreSQL local do projeto (`.localdb/`, porta 5433) |
+| `npm run db:local:reset` | Apaga `.localdb/` e recria o cluster do zero |
+| `npm run dev:local` | `next dev` apontado para o banco local |
+| `npm run db:migrate:local` | Migrações no banco local |
+| `npm run db:seed:local` | Seed no banco local |
 
 ## Estrutura
 

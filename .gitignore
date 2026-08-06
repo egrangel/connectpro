@@ -38,6 +38,9 @@ yarn-error.log*
 /prisma/dev.db
 /prisma/dev.db-journal
 
+# project-local postgres cluster (npm run db:local)
+/.localdb/
+
 # user-uploaded media (local storage driver)
 /public/uploads/
 

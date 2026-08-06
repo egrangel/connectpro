@@ -2,16 +2,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PhotoCarousel } from "@/components/listings/PhotoCarousel";
-import { ReviewForm } from "@/components/reviews/ReviewForm";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { StarRating } from "@/components/ui/StarRating";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getPublishedListingBySlug } from "@/modules/listings/service";
-import { computeRatingDistribution } from "@/modules/reviews/aggregate";
-import { deleteReviewAction } from "@/modules/reviews/actions";
+import { getSiteFeatures } from "@/modules/settings/service";
 import {
   getUserReviewForListing,
   getVisibleReviews,
 } from "@/modules/reviews/service";
+
+type VisibleReview = Awaited<ReturnType<typeof getVisibleReviews>>[number];
 
 interface ListingPageProps {
   params: Promise<{ slug: string }>;
@@ -54,12 +55,17 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
   const listing = await getPublishedListingBySlug(slug);
   if (!listing) notFound();
 
-  const user = await getCurrentUser();
-  const [reviews, ownReview] = await Promise.all([
-    getVisibleReviews(listing.id),
-    user ? getUserReviewForListing(listing.id, user.id) : Promise.resolve(null),
+  const [user, { reviewsEnabled }] = await Promise.all([
+    getCurrentUser(),
+    getSiteFeatures(),
   ]);
-  const distribution = computeRatingDistribution(reviews.map((r) => r.rating));
+  // With the review system off, skip the queries entirely — nothing renders.
+  const [reviews, ownReview] = await Promise.all([
+    reviewsEnabled ? getVisibleReviews(listing.id) : Promise.resolve<VisibleReview[]>([]),
+    reviewsEnabled && user
+      ? getUserReviewForListing(listing.id, user.id)
+      : Promise.resolve(null),
+  ]);
 
   const whatsappDigits = listing.contactWhatsapp?.replace(/\D/g, "");
 
@@ -84,14 +90,16 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
             <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{listing.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--color-muted)]">
               {listing.city && <span className="font-semibold">{listing.city}</span>}
-              <span className="flex items-center gap-1.5 font-semibold">
-                <StarRating value={listing.ratingAvg} />
-                {listing.ratingCount > 0
-                  ? `${listing.ratingAvg.toFixed(1)} - ${listing.ratingCount} ${
-                      listing.ratingCount === 1 ? "avaliacao" : "avaliacoes"
-                    }`
-                  : "Sem avaliacoes ainda"}
-              </span>
+              {reviewsEnabled && (
+                <span className="flex items-center gap-1.5 font-semibold">
+                  <StarRating value={listing.ratingAvg} />
+                  {listing.ratingCount > 0
+                    ? `${listing.ratingAvg.toFixed(1)} - ${listing.ratingCount} ${
+                        listing.ratingCount === 1 ? "avaliacao" : "avaliacoes"
+                      }`
+                    : "Sem avaliacoes ainda"}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -139,104 +147,19 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
         </aside>
       </div>
 
-      <section id="avaliacoes" className="mt-12" aria-label="Avaliacoes">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Experiencias</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight">Avaliacoes</h2>
-          </div>
-        </div>
-
-        {listing.ratingCount > 0 && (
-          <div className="card-surface mt-5 flex flex-col gap-5 rounded-[calc(var(--radius)+8px)] p-5 sm:flex-row sm:items-center sm:gap-8">
-            <div className="text-center sm:w-36">
-              <p className="text-5xl font-bold">{listing.ratingAvg.toFixed(1)}</p>
-              <StarRating value={listing.ratingAvg} size="md" />
-              <p className="mt-1 text-xs text-[var(--color-muted)]">{listing.ratingCount} avaliacoes</p>
-            </div>
-            <div className="flex-1 space-y-2">
-              {([5, 4, 3, 2, 1] as const).map((stars) => {
-                const count = distribution[stars];
-                const percent = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
-                return (
-                  <div key={stars} className="flex items-center gap-2 text-xs">
-                    <span className="w-3 text-right text-[var(--color-muted)]">{stars}</span>
-                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--color-text)_10%,white)]">
-                      <div
-                        className="h-full rounded-full bg-[var(--color-accent)]"
-                        style={{ width: `${percent}%` }}
-                      />
-                    </div>
-                    <span className="w-6 text-[var(--color-muted)]">{count}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        <div className="mt-6">
-          {user ? (
-            <ReviewForm
-              listingId={listing.id}
-              listingSlug={listing.slug}
-              initialRating={ownReview?.rating ?? 0}
-              initialComment={ownReview?.comment ?? ""}
-              error={reviewError}
-            />
-          ) : (
-            <p className="card-surface rounded-[calc(var(--radius)+8px)] p-5 text-sm text-[var(--color-muted)]">
-              <Link
-                href={`/login?next=${encodeURIComponent(`/p/${listing.slug}`)}`}
-                className="font-bold text-[var(--color-primary)] hover:underline"
-              >
-                Entre na sua conta
-              </Link>{" "}
-              para avaliar este profissional.
-            </p>
-          )}
-        </div>
-
-        <ul className="mt-6 space-y-4">
-          {reviews.map((review) => (
-            <li
-              key={review.id}
-              className="card-surface rounded-[calc(var(--radius)+8px)] p-5"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="font-bold">{review.user.displayName}</span>
-                  <StarRating value={review.rating} />
-                </div>
-                <div className="flex items-center gap-3 text-xs text-[var(--color-muted)]">
-                  <time dateTime={review.createdAt.toISOString()}>
-                    {review.createdAt.toLocaleDateString("pt-BR")}
-                  </time>
-                  {user?.id === review.userId && (
-                    <form action={deleteReviewAction}>
-                      <input type="hidden" name="reviewId" value={review.id} />
-                      <input type="hidden" name="listingSlug" value={listing.slug} />
-                      <button type="submit" className="font-bold text-red-600 hover:underline">
-                        Excluir
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </div>
-              {review.comment && (
-                <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--color-muted)]">
-                  {review.comment}
-                </p>
-              )}
-            </li>
-          ))}
-          {reviews.length === 0 && (
-            <li className="text-sm text-[var(--color-muted)]">
-              Este profissional ainda nao recebeu avaliacoes. Seja o primeiro!
-            </li>
-          )}
-        </ul>
-      </section>
+      {reviewsEnabled && (
+        <ReviewsSection
+          listingId={listing.id}
+          listingSlug={listing.slug}
+          ratingAvg={listing.ratingAvg}
+          ratingCount={listing.ratingCount}
+          reviews={reviews}
+          ownRating={ownReview?.rating ?? 0}
+          ownComment={ownReview?.comment ?? ""}
+          currentUserId={user?.id ?? null}
+          error={reviewError}
+        />
+      )}
     </article>
   );
 }

@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import {
   bannerSchema,
   brandingSchema,
+  featuresSchema,
   themeSchema,
 } from "@/modules/settings/schema";
 import { getSiteConfig, updateSiteConfig } from "@/modules/settings/service";
@@ -77,12 +78,16 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
     logoKey,
     footerText: formData.get("footerText"),
   });
+  const features = featuresSchema.safeParse({
+    reviewsEnabled: formData.get("reviewsEnabled") === "on",
+  });
 
   const firstError =
     (!banner.success && banner.error.issues[0]?.message) ||
     (!theme.success && theme.error.issues[0]?.message) ||
-    (!branding.success && branding.error.issues[0]?.message);
-  if (!banner.success || !theme.success || !branding.success) {
+    (!branding.success && branding.error.issues[0]?.message) ||
+    (!features.success && features.error.issues[0]?.message);
+  if (!banner.success || !theme.success || !branding.success || !features.success) {
     backWithError(firstError || "Dados inválidos.");
   }
 
@@ -90,6 +95,7 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
     banner: banner.data,
     theme: theme.data,
     branding: branding.data,
+    features: features.data,
   });
 
   revalidatePath("/", "layout");

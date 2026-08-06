@@ -3,9 +3,11 @@ import {
   bannerSchema,
   slideSchema,
   brandingSchema,
+  featuresSchema,
   themeSchema,
   DEFAULT_BANNER,
   DEFAULT_BRANDING,
+  DEFAULT_FEATURES,
   DEFAULT_THEME,
 } from "./schema";
 
@@ -14,6 +16,7 @@ describe("settings schemas", () => {
     expect(bannerSchema.safeParse(DEFAULT_BANNER).success).toBe(true);
     expect(themeSchema.safeParse(DEFAULT_THEME).success).toBe(true);
     expect(brandingSchema.safeParse(DEFAULT_BRANDING).success).toBe(true);
+    expect(featuresSchema.safeParse(DEFAULT_FEATURES).success).toBe(true);
   });
 
   test("banner requires at least one slide", () => {
@@ -52,5 +55,23 @@ describe("settings schemas", () => {
 
   test("branding requires a site name", () => {
     expect(brandingSchema.safeParse({ ...DEFAULT_BRANDING, siteName: " " }).success).toBe(false);
+  });
+
+  test("review system is visible by default", () => {
+    expect(DEFAULT_FEATURES.reviewsEnabled).toBe(true);
+  });
+
+  test("features accept both states of the review toggle", () => {
+    expect(featuresSchema.safeParse({ reviewsEnabled: false }).data).toEqual({
+      reviewsEnabled: false,
+    });
+    expect(featuresSchema.safeParse({ reviewsEnabled: true }).data).toEqual({
+      reviewsEnabled: true,
+    });
+  });
+
+  test("features reject non-boolean and missing toggles, so legacy rows fall back to defaults", () => {
+    expect(featuresSchema.safeParse({}).success).toBe(false);
+    expect(featuresSchema.safeParse({ reviewsEnabled: "on" }).success).toBe(false);
   });
 });
