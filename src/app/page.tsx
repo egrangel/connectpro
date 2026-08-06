@@ -40,12 +40,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     searchPublishedListings(query),
   ]);
 
+  const { reviewsEnabled } = config.features;
+
   return (
     <>
       <HeroBanner banner={config.banner} />
 
       <section id="listagens" className="mx-auto max-w-6xl px-4 py-12 sm:py-14">
-        <SearchFilters categories={categories} query={query} />
+        <SearchFilters
+          categories={categories}
+          query={query}
+          showRatingSort={reviewsEnabled}
+        />
 
         <div className="mt-10 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -69,7 +75,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         ) : (
           <div className="mt-7 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {results.items.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                showRating={reviewsEnabled}
+              />
             ))}
           </div>
         )}

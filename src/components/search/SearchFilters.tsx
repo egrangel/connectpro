@@ -5,6 +5,8 @@ import type { ListingQuery } from "@/modules/listings/schema";
 interface SearchFiltersProps {
   categories: Category[];
   query: ListingQuery;
+  /** Hides the "Melhor avaliados" sort when the review system is off. */
+  showRatingSort?: boolean;
 }
 
 function buildHref(query: ListingQuery, overrides: Partial<ListingQuery>): string {
@@ -18,7 +20,11 @@ function buildHref(query: ListingQuery, overrides: Partial<ListingQuery>): strin
 }
 
 /** Search + filters as GET form and links: state lives in the URL. */
-export function SearchFilters({ categories, query }: SearchFiltersProps) {
+export function SearchFilters({
+  categories,
+  query,
+  showRatingSort = true,
+}: SearchFiltersProps) {
   const chipBase =
     "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition";
 
@@ -72,27 +78,32 @@ export function SearchFilters({ categories, query }: SearchFiltersProps) {
           );
         })}
 
-        <span className="mx-2 h-6 w-px shrink-0 bg-[var(--color-line)]" aria-hidden />
-        <Link
-          href={buildHref(query, { sort: "recent" })}
-          className={`${chipBase} ${
-            query.sort === "recent"
-              ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
-              : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
-          }`}
-        >
-          Recentes
-        </Link>
-        <Link
-          href={buildHref(query, { sort: "rating" })}
-          className={`${chipBase} ${
-            query.sort === "rating"
-              ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
-              : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
-          }`}
-        >
-          Melhor avaliados
-        </Link>
+        {/* With reviews off, "Recentes" is the only order left — drop the group. */}
+        {showRatingSort && (
+          <>
+            <span className="mx-2 h-6 w-px shrink-0 bg-[var(--color-line)]" aria-hidden />
+            <Link
+              href={buildHref(query, { sort: "recent" })}
+              className={`${chipBase} ${
+                query.sort === "recent"
+                  ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
+                  : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
+              }`}
+            >
+              Recentes
+            </Link>
+            <Link
+              href={buildHref(query, { sort: "rating" })}
+              className={`${chipBase} ${
+                query.sort === "rating"
+                  ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
+                  : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
+              }`}
+            >
+              Melhor avaliados
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

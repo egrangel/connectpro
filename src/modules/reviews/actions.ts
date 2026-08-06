@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { getSiteFeatures } from "@/modules/settings/service";
 import { reviewInputSchema } from "./schema";
 import { deleteOwnReview, submitReview } from "./service";
 
@@ -17,6 +18,12 @@ export async function submitReviewAction(formData: FormData): Promise<void> {
   const user = await getCurrentUser();
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(`/p/${slug}`)}`);
+  }
+
+  // The form is hidden when reviews are off; refuse direct posts too.
+  const { reviewsEnabled } = await getSiteFeatures();
+  if (!reviewsEnabled) {
+    redirect(`/p/${slug}`);
   }
 
   const parsed = reviewInputSchema.safeParse({

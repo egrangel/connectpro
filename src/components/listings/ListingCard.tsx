@@ -4,9 +4,11 @@ import type { PublicListing } from "@/modules/listings/service";
 
 interface ListingCardProps {
   listing: PublicListing;
+  /** Hidden when the admin turns the review system off (Aparência). */
+  showRating?: boolean;
 }
 
-export function ListingCard({ listing }: ListingCardProps) {
+export function ListingCard({ listing, showRating = true }: ListingCardProps) {
   const cover = listing.photos[0];
   return (
     <Link
@@ -45,16 +47,18 @@ export function ListingCard({ listing }: ListingCardProps) {
         <h3 className="text-lg font-bold leading-snug tracking-tight group-hover:text-[var(--color-primary)]">
           {listing.title}
         </h3>
-        <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
-          <StarRating value={listing.ratingAvg} />
-          {listing.ratingCount > 0 ? (
-            <span className="font-semibold">
-              {listing.ratingAvg.toFixed(1)} ({listing.ratingCount})
-            </span>
-          ) : (
-            <span>Sem avaliacoes</span>
-          )}
-        </div>
+        {showRating && (
+          <div className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
+            <StarRating value={listing.ratingAvg} />
+            {listing.ratingCount > 0 ? (
+              <span className="font-semibold">
+                {listing.ratingAvg.toFixed(1)} ({listing.ratingCount})
+              </span>
+            ) : (
+              <span>Sem avaliacoes</span>
+            )}
+          </div>
+        )}
         <p className="line-clamp-3 text-sm leading-6 text-[var(--color-muted)]">{listing.description}</p>
         <span className="mt-auto inline-flex items-center text-sm font-bold text-[var(--color-primary)]">
           Ver profissional

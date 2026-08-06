@@ -37,7 +37,7 @@ Next.js app ──► Public site (/)  Admin portal (/admin)  Server actions
 | `modules/reviews` | 1–5 star reviews, one-per-user rule, transactional aggregate recompute, moderation |
 | `modules/auth` | Registration (always USER), login, sessions, password recovery, rate-limited actions |
 | `modules/media` | Image validation by magic bytes, storage driver |
-| `modules/settings` | Banner/theme/branding singleton, Zod-validated, cached read path |
+| `modules/settings` | Banner/theme/branding/features singleton, Zod-validated, cached read path |
 | `lib/auth` | Password hashing (bcrypt cost 12), DB sessions, reset tokens, `requireAdmin` gate |
 | `lib/mail` | Transactional e-mail: Resend HTTP driver (prod) / console driver (dev) |
 
@@ -90,7 +90,10 @@ can be added later over the same services if external consumers appear.
 Guarded by `requireAdmin()` in the layout **and** in every server action.
 Deliberately not themed by site settings (a broken theme must not break the
 tool that fixes it). Sections: dashboard, listings (CRUD + photos + archive),
-categories, review moderation (hide/restore), appearance (banner/theme/brand).
+categories, review moderation (hide/restore), appearance (banner/theme/brand +
+feature toggles). Appearance carries `features.reviewsEnabled`: turning it off
+hides ratings, the review form and the rating sort across the public site and
+rejects new review posts, while stored reviews stay intact and moderatable.
 
 ## 8. AuthN/AuthZ
 
