@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { PhotoCarousel } from "@/components/listings/PhotoCarousel";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
-import { InstagramIcon } from "@/components/ui/InstagramIcon";
+import {
+  InstagramIcon,
+  MailIcon,
+  PhoneIcon,
+  WebsiteIcon,
+  WhatsappIcon,
+} from "@/components/ui/contact-icons";
 import { StarRating } from "@/components/ui/StarRating";
 import { instagramProfileUrl } from "@/modules/listings/instagram";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -31,24 +38,39 @@ export async function generateMetadata({ params }: ListingPageProps): Promise<Me
   };
 }
 
-function ContactRow({ label, value, href }: { label: string; value: string; href?: string }) {
+interface ContactRowProps {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  href: string;
+}
+
+const contactRowClass =
+  "group flex items-center gap-3 rounded-[var(--radius)] border border-[var(--color-line)] bg-white/72 p-3 transition hover:border-[var(--color-primary)] hover:bg-white";
+
+function ContactRow({ icon, label, value, href }: ContactRowProps) {
+  // Web links leave the site, so they open in a new tab — losing the listing to
+  // web.whatsapp.com is how people lose the professional they just found.
+  // tel: and mailto: hand off to an app instead of navigating, and a new tab
+  // there would just sit blank behind the dialer or mail client.
+  const opensInNewTab = /^https?:/i.test(href);
+
   return (
-    <div className="rounded-[var(--radius)] border border-[var(--color-line)] bg-white/72 p-3">
-      <span className="text-xs font-bold uppercase text-[var(--color-muted)]">
-        {label}
-      </span>
-      {href ? (
-        <a
-          href={href}
-          className="mt-1 block break-words font-bold text-[var(--color-primary)] hover:underline"
-          rel="noopener noreferrer"
-        >
+    <a
+      href={href}
+      className={contactRowClass}
+      {...(opensInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      <span className="shrink-0 text-[var(--color-primary)]">{icon}</span>
+      <span className="min-w-0">
+        <span className="block text-xs font-bold uppercase text-[var(--color-muted)]">
+          {label}
+        </span>
+        <span className="block truncate font-bold text-[var(--color-primary)] group-hover:underline">
           {value}
-        </a>
-      ) : (
-        <span className="mt-1 block font-bold">{value}</span>
-      )}
-    </div>
+        </span>
+      </span>
+    </a>
   );
 }
 
@@ -70,6 +92,53 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
   ]);
 
   const whatsappDigits = listing.contactWhatsapp?.replace(/\D/g, "");
+
+  const iconClass = "h-6 w-6";
+  const contactEntries: Array<ContactRowProps | null> = [
+    whatsappDigits && listing.contactWhatsapp
+      ? {
+          icon: <WhatsappIcon className={iconClass} />,
+          label: "WhatsApp",
+          value: listing.contactWhatsapp,
+          href: `https://wa.me/${whatsappDigits}`,
+        }
+      : null,
+    listing.contactPhone
+      ? {
+          icon: <PhoneIcon className={iconClass} />,
+          label: "Telefone",
+          value: listing.contactPhone,
+          href: `tel:${listing.contactPhone}`,
+        }
+      : null,
+    listing.contactEmail
+      ? {
+          icon: <MailIcon className={iconClass} />,
+          label: "E-mail",
+          value: listing.contactEmail,
+          href: `mailto:${listing.contactEmail}`,
+        }
+      : null,
+    listing.instagram
+      ? {
+          icon: <InstagramIcon className={iconClass} />,
+          label: "Instagram",
+          value: `@${listing.instagram}`,
+          href: instagramProfileUrl(listing.instagram),
+        }
+      : null,
+    listing.websiteUrl
+      ? {
+          icon: <WebsiteIcon className={iconClass} />,
+          label: "Site",
+          value: listing.websiteUrl,
+          href: listing.websiteUrl,
+        }
+      : null,
+  ];
+  const contacts = contactEntries.filter(
+    (contact): contact is ContactRowProps => contact !== null,
+  );
 
   return (
     <article className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
@@ -118,55 +187,12 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
         <aside className="card-surface h-fit rounded-[calc(var(--radius)+8px)] p-5">
           <h2 className="mb-4 text-lg font-bold tracking-tight">Contato</h2>
           <div className="flex flex-col gap-3 text-sm">
-            {whatsappDigits && (
-              <ContactRow
-                label="WhatsApp"
-                value={listing.contactWhatsapp!}
-                href={`https://wa.me/${whatsappDigits}`}
-              />
+            {contacts.map((contact) => (
+              <ContactRow key={contact.label} {...contact} />
+            ))}
+            {contacts.length === 0 && (
+              <p className="text-[var(--color-muted)]">Nenhum contato informado.</p>
             )}
-            {listing.contactPhone && (
-              <ContactRow
-                label="Telefone"
-                value={listing.contactPhone}
-                href={`tel:${listing.contactPhone}`}
-              />
-            )}
-            {listing.contactEmail && (
-              <ContactRow
-                label="E-mail"
-                value={listing.contactEmail}
-                href={`mailto:${listing.contactEmail}`}
-              />
-            )}
-            {listing.instagram && (
-              <a
-                href={instagramProfileUrl(listing.instagram)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 rounded-[var(--radius)] border border-[var(--color-line)] bg-white/72 p-3 transition hover:border-[var(--color-primary)] hover:bg-white"
-              >
-                <InstagramIcon className="h-6 w-6 shrink-0 text-[var(--color-primary)]" />
-                <span className="min-w-0">
-                  <span className="block text-xs font-bold uppercase text-[var(--color-muted)]">
-                    Instagram
-                  </span>
-                  <span className="block truncate font-bold text-[var(--color-primary)] group-hover:underline">
-                    {`@${listing.instagram}`}
-                  </span>
-                </span>
-              </a>
-            )}
-            {listing.websiteUrl && (
-              <ContactRow label="Site" value={listing.websiteUrl} href={listing.websiteUrl} />
-            )}
-            {!whatsappDigits &&
-              !listing.contactPhone &&
-              !listing.contactEmail &&
-              !listing.instagram &&
-              !listing.websiteUrl && (
-                <p className="text-[var(--color-muted)]">Nenhum contato informado.</p>
-              )}
           </div>
         </aside>
       </div>
