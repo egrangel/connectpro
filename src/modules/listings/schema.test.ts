@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { SEARCH_QUERY_MAX_LENGTH } from "@/lib/constants";
 import { listingInputSchema, listingQuerySchema } from "./schema";
 
 const validListing = {
@@ -73,5 +74,21 @@ describe("listingQuerySchema", () => {
 
   test("coerces valid numeric page strings", () => {
     expect(listingQuerySchema.parse({ page: "4" }).page).toBe(4);
+  });
+
+  test("truncates an over-long query instead of throwing", () => {
+    // Regression: a pasted wall of text used to reject and 500 the home page.
+    const query = listingQuerySchema.parse({ q: "a".repeat(500) });
+    expect(query.q).toBe("a".repeat(SEARCH_QUERY_MAX_LENGTH));
+  });
+
+  test("keeps queries at the limit intact and trims surrounding space", () => {
+    const atLimit = "b".repeat(SEARCH_QUERY_MAX_LENGTH);
+    expect(listingQuerySchema.parse({ q: atLimit }).q).toBe(atLimit);
+    expect(listingQuerySchema.parse({ q: "  pintor  " }).q).toBe("pintor");
+  });
+
+  test("drops an over-long category filter instead of throwing", () => {
+    expect(listingQuerySchema.parse({ category: "c".repeat(500) }).category).toBeUndefined();
   });
 });

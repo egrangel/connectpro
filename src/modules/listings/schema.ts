@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LISTING_STATUS } from "@/lib/constants";
+import { LISTING_STATUS, SEARCH_QUERY_MAX_LENGTH } from "@/lib/constants";
 import { isHttpUrl } from "@/lib/url";
 
 const optionalTrimmed = (max: number) =>
@@ -41,9 +41,20 @@ export const listingInputSchema = z.object({
 });
 export type ListingInput = z.infer<typeof listingInputSchema>;
 
+// Every field degrades instead of throwing: these come straight from the URL,
+// where anyone can type anything, and a bad query string must never turn the
+// home page into an error page.
 export const listingQuerySchema = z.object({
-  q: z.string().trim().max(120).optional(),
-  category: z.string().trim().max(120).optional(),
+  // Truncated, not rejected — a pasted wall of text should search its first
+  // words. This also bounds how many terms one search can add to the report.
+  q: z
+    .string()
+    .trim()
+    .transform((value) => value.slice(0, SEARCH_QUERY_MAX_LENGTH))
+    .optional()
+    .catch(undefined),
+  // An over-long slug cannot match a real category, so drop the filter.
+  category: z.string().trim().max(120).optional().catch(undefined),
   sort: z.enum(["recent", "rating"]).catch("recent"),
   page: z.coerce.number().int().min(1).catch(1),
 });
