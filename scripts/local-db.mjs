@@ -12,12 +12,8 @@
  *   postgresql://postgres:postgres@localhost:5433/connect_dev
  */
 import { existsSync, rmSync } from "node:fs";
-import { resolve } from "node:path";
 import EmbeddedPostgres from "embedded-postgres";
-
-const DATA_DIR = resolve(process.cwd(), ".localdb");
-const DATABASE = "connect_dev";
-const PORT = 5433;
+import { DATA_DIR, DATABASE, PASSWORD, PORT, USER } from "./local-db-config.mjs";
 
 const shouldReset = process.argv.includes("--reset");
 
@@ -28,8 +24,8 @@ if (shouldReset && existsSync(DATA_DIR)) {
 
 const postgres = new EmbeddedPostgres({
   databaseDir: DATA_DIR,
-  user: "postgres",
-  password: "postgres",
+  user: USER,
+  password: PASSWORD,
   port: PORT,
   persistent: true,
   // Quiet by default: Postgres logs every checkpoint otherwise.

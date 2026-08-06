@@ -15,9 +15,9 @@
     "test:watch": "vitest",
     "db:local": "node scripts/local-db.mjs",
     "db:local:reset": "node scripts/local-db.mjs --reset",
-    "dev:local": "cross-env DATABASE_URL=postgresql://postgres:postgres@localhost:5433/connect_dev next dev --turbopack",
-    "db:migrate:local": "cross-env DATABASE_URL=postgresql://postgres:postgres@localhost:5433/connect_dev prisma migrate dev",
-    "db:seed:local": "cross-env DATABASE_URL=postgresql://postgres:postgres@localhost:5433/connect_dev tsx prisma/seed.ts",
+    "dev:local": "node scripts/with-local-db.mjs next dev --turbopack",
+    "db:migrate:local": "node scripts/with-local-db.mjs prisma migrate dev",
+    "db:seed:local": "node scripts/with-local-db.mjs tsx prisma/seed.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "postinstall": "prisma generate"
