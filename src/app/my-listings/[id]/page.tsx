@@ -6,7 +6,7 @@ import { PhotoUploadForm } from "@/components/listings/PhotoUploadForm";
 import { requireUser } from "@/lib/auth/session";
 import { LISTING_STATUS } from "@/lib/constants";
 import { listActiveCategories } from "@/modules/categories/service";
-import { canManageListing } from "@/modules/listings/authorization";
+import { canManageListing, canPublishListing } from "@/modules/listings/authorization";
 import { deletePhotoAction } from "@/modules/listings/photo-actions";
 import { getListingById } from "@/modules/listings/service";
 import { getSiteFeatures } from "@/modules/settings/service";
@@ -36,15 +36,18 @@ export default async function EditOwnListingPage({
   ]);
 
   // Missing and not-yours are the same answer: no listing ids leak this way.
-  if (!listing || !canManageListing(user, listing)) redirect("/meus-anuncios");
+  if (!listing || !canManageListing(user, listing)) redirect("/my-listings");
 
   const isJustCreated = created === "1";
   const isPublished = listing.status === LISTING_STATUS.PUBLISHED;
+  // Admins edit any listing from here too — theirs or someone else's — and the
+  // status stays theirs to set, exactly as it is under /admin.
+  const canChangeStatus = canPublishListing(user);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <Link
-        href="/meus-anuncios"
+        href="/my-listings"
         className="text-sm font-semibold text-[var(--color-muted)] hover:text-[var(--color-primary)]"
       >
         ← Meus anúncios
@@ -53,11 +56,14 @@ export default async function EditOwnListingPage({
 
       {isJustCreated && (
         <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          <p className="font-semibold">Anúncio enviado para análise.</p>
+          <p className="font-semibold">
+            {isPublished ? "Anúncio criado e publicado." : "Anúncio enviado para análise."}
+          </p>
           <p className="mt-1 text-emerald-700">
-            Ele ainda não aparece no site. Agora adicione as fotos — elas só podem
-            ser enviadas depois que o anúncio existe.{" "}
-            <a href="#fotos" className="font-semibold underline underline-offset-2">
+            {isPublished
+              ? "Ele já aparece no site. Agora adicione as fotos — elas só podem ser enviadas depois que o anúncio existe. "
+              : "Ele ainda não aparece no site. Agora adicione as fotos — elas só podem ser enviadas depois que o anúncio existe. "}
+            <a href="#photos" className="font-semibold underline underline-offset-2">
               Ir para as fotos
             </a>
             .
@@ -65,7 +71,7 @@ export default async function EditOwnListingPage({
         </div>
       )}
 
-      {isPublished && (
+      {isPublished && !canChangeStatus && (
         <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Este anúncio está publicado. Se você editar os dados, ele volta para
           análise e sai do site até ser aprovado de novo.
@@ -79,12 +85,12 @@ export default async function EditOwnListingPage({
           error={error}
           saved={saved === "1"}
           action={saveOwnListingAction}
-          canChangeStatus={false}
+          canChangeStatus={canChangeStatus}
         />
       </div>
 
       <section
-        id="fotos"
+        id="photos"
         className={`mt-10 max-w-2xl scroll-mt-6 ${
           isJustCreated
             ? "rounded-lg ring-2 ring-emerald-300 ring-offset-4 ring-offset-[var(--color-surface)]"

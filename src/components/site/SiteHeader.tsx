@@ -43,7 +43,7 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
           )}
           {user && (
             <Link
-              href="/meus-anuncios"
+              href="/my-listings"
               className="rounded-[var(--radius)] px-3 py-2 font-semibold transition hover:bg-white/70"
             >
               Meus anúncios

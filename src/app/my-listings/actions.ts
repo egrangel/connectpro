@@ -3,8 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/session";
-import { LISTING_STATUS } from "@/lib/constants";
-import { canManageListing, canPublishListing } from "@/modules/listings/authorization";
+import { canManageListing, resolveListingStatus } from "@/modules/listings/authorization";
 import {
   readListingFormValues,
   type ListingFormValues,
@@ -20,9 +19,10 @@ import {
 /**
  * Listing create/edit for the author's own pages.
  *
- * The status field is not rendered for authors, and this action never reads one
- * from the form: it decides the status itself. Trusting a submitted value would
- * make the missing field a UI suggestion rather than a rule.
+ * An admin gets the same pages as everyone else from the site header, so the
+ * submitted status is read here — but only resolveListingStatus decides whether
+ * it counts. For an author it is discarded, which is what keeps the hidden
+ * status field a courtesy rather than the rule.
  */
 export async function saveOwnListingAction(
   _prevState: SaveListingState,
@@ -34,16 +34,13 @@ export async function saveOwnListingAction(
   const existing = id ? await getListingById(id) : null;
   if (id && (!existing || !canManageListing(user, existing))) {
     // Missing and not-yours look identical on purpose.
-    redirect("/meus-anuncios");
+    redirect("/my-listings");
   }
 
-  // An author's edit sends a published listing back to draft, so an approved
-  // listing cannot be rewritten into something else while it is live. Admins
-  // editing their own listing here keep whatever status it already had.
-  const status =
-    existing && canPublishListing(user) ? existing.status : LISTING_STATUS.DRAFT;
-
-  const values: ListingFormValues = { ...readListingFormValues(formData), status };
+  const values: ListingFormValues = {
+    ...readListingFormValues(formData),
+    status: resolveListingStatus(user, String(formData.get("status") ?? "")),
+  };
 
   const parsed = listingInputSchema.safeParse(values);
   if (!parsed.success) {
@@ -57,7 +54,7 @@ export async function saveOwnListingAction(
   revalidatePath("/", "layout");
   redirect(
     existing
-      ? `/meus-anuncios/${listing.id}?saved=1`
-      : `/meus-anuncios/${listing.id}?created=1#fotos`,
+      ? `/my-listings/${listing.id}?saved=1`
+      : `/my-listings/${listing.id}?created=1#photos`,
   );
 }

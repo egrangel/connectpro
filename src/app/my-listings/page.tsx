@@ -35,7 +35,7 @@ export default async function MyListingsPage() {
           </p>
         </div>
         <Link
-          href="/meus-anuncios/novo"
+          href="/my-listings/new"
           className="rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:opacity-95"
         >
           + Novo anúncio
@@ -58,7 +58,7 @@ export default async function MyListingsPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
                     <Link
-                      href={`/meus-anuncios/${listing.id}`}
+                      href={`/my-listings/${listing.id}`}
                       className="font-bold hover:text-[var(--color-primary)] hover:underline"
                     >
                       {listing.title}

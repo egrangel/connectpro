@@ -17,7 +17,7 @@ import { canManageListing } from "./authorization";
 
 /** Where to send the caller back to, since the two surfaces have their own pages. */
 function listingUrl(listingId: string, isAdmin: boolean): string {
-  return isAdmin ? `/admin/listings/${listingId}` : `/meus-anuncios/${listingId}`;
+  return isAdmin ? `/admin/listings/${listingId}` : `/my-listings/${listingId}`;
 }
 
 interface ListingAccess {
@@ -43,7 +43,7 @@ async function requireListingAccess(listingId: string): Promise<ListingAccess> {
   // Same destination whether the listing is missing or simply not theirs: a
   // logged-in stranger should not learn which listing ids exist.
   if (!listing || !canManageListing(user, listing)) {
-    redirect(isAdmin ? "/admin/listings" : "/meus-anuncios");
+    redirect(isAdmin ? "/admin/listings" : "/my-listings");
   }
 
   return { isAdmin, backUrl: listingUrl(listingId, isAdmin) };

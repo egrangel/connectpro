@@ -86,16 +86,20 @@ can be added later over the same services if external consumers appear.
   list, review form (or login prompt).
 - `/login`, `/register` — optional accounts; browsing never requires login.
 
-## 6b. Author Portal (`/meus-anuncios`)
+## 6b. Author Portal (`/my-listings`)
 
 Any logged-in user may create listings. Authors submit **drafts only**: the
 status field is not rendered for them (`ListingForm canChangeStatus={false}`)
-*and* `saveOwnListingAction` never reads a status from the form, so the missing
+*and* `resolveListingStatus` discards any status the form posted, so the missing
 field is a rule rather than a UI suggestion. Publishing stays an admin decision.
 
 An author's edit of a published listing sends it back to `DRAFT`, so approved
-content cannot be rewritten while it is live. Admins editing their own listing
-here keep its current status.
+content cannot be rewritten while it is live.
+
+Admins reach these pages from the site header like everyone else, so they are
+treated as admins here: `canPublishListing` decides `canChangeStatus`, and they
+get the same status select as under `/admin` — on their own listings and on any
+listing they open by id.
 
 Listing ids travel in form fields, so every action resolves the row and calls
 `canManageListing` (author or admin) before touching it — see

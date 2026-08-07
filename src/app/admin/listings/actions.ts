@@ -48,7 +48,7 @@ export async function saveListingAction(
   // the admin on a page whose next step is below the fold.
   redirect(
     isNew
-      ? `/admin/listings/${listing.id}?created=1#fotos`
+      ? `/admin/listings/${listing.id}?created=1#photos`
       : `/admin/listings/${listing.id}?saved=1`,
   );
 }

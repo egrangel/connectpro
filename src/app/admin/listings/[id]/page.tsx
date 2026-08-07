@@ -24,11 +24,13 @@ export default async function EditListingPage({ params, searchParams }: EditList
   ]);
   if (!listing) notFound();
 
+  const isPublished = listing.status === LISTING_STATUS.PUBLISHED;
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight">Editar anúncio</h1>
-        {listing.status === LISTING_STATUS.PUBLISHED && (
+        {isPublished && (
           <Link
             href={`/p/${listing.slug}`}
             className="text-sm font-medium text-slate-600 hover:underline"
@@ -40,11 +42,14 @@ export default async function EditListingPage({ params, searchParams }: EditList
 
       {isJustCreated && (
         <div className="mt-4 max-w-2xl rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          <p className="font-semibold">Anúncio criado como rascunho.</p>
+          <p className="font-semibold">
+            {isPublished ? "Anúncio criado e publicado." : "Anúncio criado como rascunho."}
+          </p>
           <p className="mt-1 text-emerald-700">
-            Ele ainda não aparece no site. Agora adicione as fotos — elas só podem
-            ser enviadas depois que o anúncio existe.{" "}
-            <a href="#fotos" className="font-semibold underline underline-offset-2">
+            {isPublished
+              ? "Ele já aparece no site. Agora adicione as fotos — elas só podem ser enviadas depois que o anúncio existe. "
+              : "Ele ainda não aparece no site. Agora adicione as fotos — elas só podem ser enviadas depois que o anúncio existe. "}
+            <a href="#photos" className="font-semibold underline underline-offset-2">
               Ir para as fotos
             </a>
             .
@@ -63,7 +68,7 @@ export default async function EditListingPage({ params, searchParams }: EditList
       </div>
 
       <section
-        id="fotos"
+        id="photos"
         className={`mt-10 max-w-2xl scroll-mt-6 ${
           isJustCreated
             ? "rounded-lg ring-2 ring-emerald-300 ring-offset-4 ring-offset-slate-50"
