@@ -86,6 +86,24 @@ can be added later over the same services if external consumers appear.
   list, review form (or login prompt).
 - `/login`, `/register` — optional accounts; browsing never requires login.
 
+## 6b. Author Portal (`/meus-anuncios`)
+
+Any logged-in user may create listings. Authors submit **drafts only**: the
+status field is not rendered for them (`ListingForm canChangeStatus={false}`)
+*and* `saveOwnListingAction` never reads a status from the form, so the missing
+field is a rule rather than a UI suggestion. Publishing stays an admin decision.
+
+An author's edit of a published listing sends it back to `DRAFT`, so approved
+content cannot be rewritten while it is live. Admins editing their own listing
+here keep its current status.
+
+Listing ids travel in form fields, so every action resolves the row and calls
+`canManageListing` (author or admin) before touching it — see
+`modules/listings/authorization.ts`. `deletePhotoAction` authorizes against the
+photo's *own* listing, never a listing id from the form, or a caller could pair
+their listing with someone else's photo id. A listing that is missing and one
+that belongs to someone else give the same answer, so ids cannot be probed.
+
 ## 7. Admin Portal (`/admin`)
 
 Guarded by `requireAdmin()` in the layout **and** in every server action.

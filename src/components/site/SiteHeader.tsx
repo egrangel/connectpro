@@ -41,6 +41,14 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
               Painel admin
             </Link>
           )}
+          {user && (
+            <Link
+              href="/meus-anuncios"
+              className="rounded-[var(--radius)] px-3 py-2 font-semibold transition hover:bg-white/70"
+            >
+              Meus anúncios
+            </Link>
+          )}
           {user ? (
             <form action={logoutAction} className="flex items-center gap-3">
               <span className="hidden text-[var(--color-muted)] sm:inline">

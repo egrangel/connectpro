@@ -10,13 +10,20 @@ import {
   LISTING_TITLE_MIN_LENGTH,
 } from "@/lib/constants";
 import { INSTAGRAM_INPUT_MAX_LENGTH } from "@/modules/listings/instagram";
-import { saveListingAction, type SaveListingState } from "./actions";
+import type { SaveListingState } from "@/modules/listings/form-state";
 
 interface ListingFormProps {
   categories: Category[];
   listing?: Listing;
   error?: string;
   saved?: boolean;
+  /** Server action to submit to — admin and author surfaces pass their own. */
+  action: (state: SaveListingState, formData: FormData) => Promise<SaveListingState>;
+  /**
+   * Authors submit drafts and never choose the status; only admins decide what
+   * is published, so the field is not rendered for them at all.
+   */
+  canChangeStatus?: boolean;
 }
 
 const inputClass =
@@ -60,8 +67,15 @@ function CharacterCounter({
   );
 }
 
-export function ListingForm({ categories, listing, error, saved }: ListingFormProps) {
-  const [state, formAction, pending] = useActionState(saveListingAction, initialState);
+export function ListingForm({
+  categories,
+  listing,
+  error,
+  saved,
+  action,
+  canChangeStatus = true,
+}: ListingFormProps) {
+  const [state, formAction, pending] = useActionState(action, initialState);
 
   // On a failed save, repopulate from what the user submitted; otherwise
   // fall back to the stored listing (edit) or empty fields (create).
@@ -225,19 +239,21 @@ export function ListingForm({ categories, listing, error, saved }: ListingFormPr
         </label>
       </div>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-        Status *
-        <select
-          name="status"
-          required
-          defaultValue={values?.status ?? listing?.status ?? LISTING_STATUS.DRAFT}
-          className={inputClass}
-        >
-          <option value={LISTING_STATUS.DRAFT}>Rascunho (não aparece no site)</option>
-          <option value={LISTING_STATUS.PUBLISHED}>Publicado</option>
-          <option value={LISTING_STATUS.ARCHIVED}>Arquivado</option>
-        </select>
-      </label>
+      {canChangeStatus && (
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+          Status *
+          <select
+            name="status"
+            required
+            defaultValue={values?.status ?? listing?.status ?? LISTING_STATUS.DRAFT}
+            className={inputClass}
+          >
+            <option value={LISTING_STATUS.DRAFT}>Rascunho (não aparece no site)</option>
+            <option value={LISTING_STATUS.PUBLISHED}>Publicado</option>
+            <option value={LISTING_STATUS.ARCHIVED}>Arquivado</option>
+          </select>
+        </label>
+      )}
 
       <div className="mt-2 flex gap-3">
         <button

@@ -4,9 +4,10 @@ import { listActiveCategories } from "@/modules/categories/service";
 import { getListingById } from "@/modules/listings/service";
 import { LISTING_STATUS } from "@/lib/constants";
 import { getSiteFeatures } from "@/modules/settings/service";
-import { ListingForm } from "../ListingForm";
-import { PhotoUploadForm } from "../PhotoUploadForm";
-import { archiveListingAction, deletePhotoAction } from "../actions";
+import { ListingForm } from "@/components/listings/ListingForm";
+import { PhotoUploadForm } from "@/components/listings/PhotoUploadForm";
+import { deletePhotoAction } from "@/modules/listings/photo-actions";
+import { archiveListingAction, saveListingAction } from "../actions";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
@@ -57,6 +58,7 @@ export default async function EditListingPage({ params, searchParams }: EditList
           listing={listing}
           error={error}
           saved={saved === "1"}
+          action={saveListingAction}
         />
       </div>
 

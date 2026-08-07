@@ -9,7 +9,7 @@ import {
   PHOTO_RECOMMENDED_HEIGHT,
   PHOTO_RECOMMENDED_WIDTH,
 } from "@/lib/constants";
-import { uploadPhotoAction } from "./actions";
+import { uploadPhotoAction } from "@/modules/listings/photo-actions";
 
 interface PhotoUploadFormProps {
   listingId: string;

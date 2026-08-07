@@ -112,6 +112,15 @@ export async function listAllListings(statusFilter?: string) {
   });
 }
 
+/** An author's own listings, drafts included — their queue, newest first. */
+export async function listListingsByOwner(userId: string) {
+  return prisma.listing.findMany({
+    where: { createdById: userId },
+    include: { category: true, photos: { orderBy: { sortOrder: "asc" } } },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
 export async function getListingById(id: string) {
   return prisma.listing.findUnique({
     where: { id },

@@ -1,5 +1,6 @@
 import { listActiveCategories } from "@/modules/categories/service";
-import { ListingForm } from "../ListingForm";
+import { ListingForm } from "@/components/listings/ListingForm";
+import { saveListingAction } from "../actions";
 
 interface NewListingPageProps {
   searchParams: Promise<{ error?: string }>;
@@ -18,7 +19,7 @@ export default async function NewListingPage({ searchParams }: NewListingPagePro
         Preencha os dados e salve: o anúncio nasce como rascunho, sem aparecer no
         site, e as fotos são enviadas na tela seguinte.
       </p>
-      <ListingForm categories={categories} error={error} />
+      <ListingForm categories={categories} error={error} action={saveListingAction} />
     </div>
   );
 }
