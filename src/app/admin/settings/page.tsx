@@ -1,5 +1,6 @@
 import { getSiteConfig } from "@/modules/settings/service";
 import { RADIUS_CSS } from "@/modules/settings/schema";
+import { PHOTOS_PER_LISTING_MAX, PHOTOS_PER_LISTING_MIN } from "@/lib/constants";
 import { saveSettingsAction } from "./actions";
 import { BannerSlidesEditor } from "./BannerSlidesEditor";
 
@@ -84,6 +85,31 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
               Ao desativar, as estrelas, a nota media e o formulario de avaliacao ficam ocultos
               no site e novas avaliacoes deixam de ser aceitas. As avaliacoes ja enviadas sao
               preservadas e voltam a aparecer se voce reativar a opcao.
+            </p>
+          </fieldset>
+
+          <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
+            <legend className="px-1 text-sm font-semibold text-slate-800">
+              Fotos dos anuncios
+            </legend>
+            <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              Maximo de fotos por anuncio
+              <input
+                type="number"
+                name="maxPhotosPerListing"
+                required
+                min={PHOTOS_PER_LISTING_MIN}
+                max={PHOTOS_PER_LISTING_MAX}
+                step={1}
+                defaultValue={features.maxPhotosPerListing}
+                className={`${inputClass} max-w-28`}
+              />
+            </label>
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Entre {PHOTOS_PER_LISTING_MIN} e {PHOTOS_PER_LISTING_MAX}. Reduzir o
+              limite nao apaga fotos ja enviadas: anuncios que passarem do novo
+              limite apenas deixam de aceitar fotos novas ate que alguma seja
+              removida.
             </p>
           </fieldset>
 

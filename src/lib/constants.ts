@@ -31,7 +31,12 @@ export const LISTING_TITLE_MAX_LENGTH = 120;
 export const LISTING_DESCRIPTION_MIN_LENGTH = 10;
 export const LISTING_DESCRIPTION_MAX_LENGTH = 5000;
 
-export const MAX_PHOTOS_PER_LISTING = 10;
+// Photos per listing is configurable in admin → Configurações. This is the
+// value used until an admin changes it, plus the range the form accepts.
+export const DEFAULT_MAX_PHOTOS_PER_LISTING = 10;
+export const PHOTOS_PER_LISTING_MIN = 1;
+export const PHOTOS_PER_LISTING_MAX = 20;
+
 export const MAX_PHOTO_SIZE_BYTES = 10 * 1024 * 1024;
 
 // Photo guidance shown on the upload form. The same image is cropped to 4:3 on

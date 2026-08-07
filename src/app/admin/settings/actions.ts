@@ -80,6 +80,7 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
   });
   const features = featuresSchema.safeParse({
     reviewsEnabled: formData.get("reviewsEnabled") === "on",
+    maxPhotosPerListing: formData.get("maxPhotosPerListing"),
   });
 
   const firstError =

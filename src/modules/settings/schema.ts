@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  DEFAULT_MAX_PHOTOS_PER_LISTING,
+  PHOTOS_PER_LISTING_MAX,
+  PHOTOS_PER_LISTING_MIN,
+} from "@/lib/constants";
 import { isSafePublicHref } from "@/lib/url";
 
 const hexColor = z
@@ -35,6 +40,15 @@ export type ThemeConfig = z.infer<typeof themeSchema>;
 
 export const featuresSchema = z.object({
   reviewsEnabled: z.boolean(),
+  // `.default()` is load-bearing: rows written before this field existed must
+  // still parse. Without it the whole features section would fall back to
+  // defaults on read, silently re-enabling reviews an admin had turned off.
+  maxPhotosPerListing: z.coerce
+    .number()
+    .int()
+    .min(PHOTOS_PER_LISTING_MIN, `Mínimo de ${PHOTOS_PER_LISTING_MIN} foto por anúncio`)
+    .max(PHOTOS_PER_LISTING_MAX, `Máximo de ${PHOTOS_PER_LISTING_MAX} fotos por anúncio`)
+    .default(DEFAULT_MAX_PHOTOS_PER_LISTING),
 });
 export type FeaturesConfig = z.infer<typeof featuresSchema>;
 
@@ -79,6 +93,7 @@ export const DEFAULT_THEME: ThemeConfig = {
 
 export const DEFAULT_FEATURES: FeaturesConfig = {
   reviewsEnabled: true,
+  maxPhotosPerListing: DEFAULT_MAX_PHOTOS_PER_LISTING,
 };
 
 export const DEFAULT_BRANDING: BrandingConfig = {

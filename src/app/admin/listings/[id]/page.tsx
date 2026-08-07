@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listActiveCategories } from "@/modules/categories/service";
 import { getListingById } from "@/modules/listings/service";
-import { LISTING_STATUS, MAX_PHOTOS_PER_LISTING } from "@/lib/constants";
+import { LISTING_STATUS } from "@/lib/constants";
+import { getSiteFeatures } from "@/modules/settings/service";
 import { ListingForm } from "../ListingForm";
 import { PhotoUploadForm } from "../PhotoUploadForm";
 import { archiveListingAction, deletePhotoAction } from "../actions";
@@ -15,9 +16,10 @@ interface EditListingPageProps {
 export default async function EditListingPage({ params, searchParams }: EditListingPageProps) {
   const [{ id }, { error, saved, created }] = await Promise.all([params, searchParams]);
   const isJustCreated = created === "1";
-  const [listing, categories] = await Promise.all([
+  const [listing, categories, { maxPhotosPerListing }] = await Promise.all([
     getListingById(id),
     listActiveCategories(),
+    getSiteFeatures(),
   ]);
   if (!listing) notFound();
 
@@ -68,8 +70,17 @@ export default async function EditListingPage({ params, searchParams }: EditList
         aria-label="Fotos"
       >
         <h2 className="text-lg font-semibold">
-          Fotos ({listing.photos.length}/{MAX_PHOTOS_PER_LISTING})
+          Fotos ({listing.photos.length}/{maxPhotosPerListing})
         </h2>
+        {listing.photos.length > maxPhotosPerListing && (
+          // Lowering the limit never deletes photos, so an older listing can sit
+          // above it. Say so, instead of leaving the count looking broken.
+          <p className="mt-1 text-sm text-amber-700">
+            Este anúncio foi criado quando o limite era maior. As fotos existentes
+            continuam no ar; para enviar novas, remova algumas até ficar dentro do
+            limite de {maxPhotosPerListing}.
+          </p>
+        )}
         {isJustCreated && listing.photos.length === 0 && (
           <p className="mt-1 text-sm text-slate-500">
             Escolha as fotos abaixo. A primeira será a capa do anúncio.
@@ -101,13 +112,13 @@ export default async function EditListingPage({ params, searchParams }: EditList
           ))}
         </div>
 
-        {listing.photos.length < MAX_PHOTOS_PER_LISTING && (
+        {listing.photos.length < maxPhotosPerListing && (
           <PhotoUploadForm
             // Remount after a successful upload/delete so the selected-files
             // feedback clears; a failed upload keeps the selection visible.
             key={listing.photos.length}
             listingId={listing.id}
-            remaining={MAX_PHOTOS_PER_LISTING - listing.photos.length}
+            remaining={maxPhotosPerListing - listing.photos.length}
           />
         )}
       </section>

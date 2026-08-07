@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/session";
-import { MAX_PHOTOS_PER_LISTING } from "@/lib/constants";
 import { listingInputSchema } from "@/modules/listings/schema";
+import { getSiteFeatures } from "@/modules/settings/service";
 import {
   archiveListing,
   createListing,
@@ -98,13 +98,16 @@ export async function uploadPhotoAction(formData: FormData): Promise<void> {
     redirect(`${backUrl}?error=${encodeURIComponent("Anúncio inválido.")}`);
   }
 
-  const photoCount = await prisma.listingPhoto.count({ where: { listingId } });
-  const remaining = MAX_PHOTOS_PER_LISTING - photoCount;
+  const [photoCount, { maxPhotosPerListing }] = await Promise.all([
+    prisma.listingPhoto.count({ where: { listingId } }),
+    getSiteFeatures(),
+  ]);
+  const remaining = maxPhotosPerListing - photoCount;
 
   if (remaining <= 0) {
     redirect(
       `${backUrl}?error=${encodeURIComponent(
-        `Limite de ${MAX_PHOTOS_PER_LISTING} fotos por anúncio atingido.`,
+        `Limite de ${maxPhotosPerListing} fotos por anúncio atingido.`,
       )}`,
     );
   }

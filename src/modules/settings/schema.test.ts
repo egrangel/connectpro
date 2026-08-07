@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { DEFAULT_MAX_PHOTOS_PER_LISTING } from "@/lib/constants";
 import {
   bannerSchema,
   slideSchema,
@@ -62,16 +63,42 @@ describe("settings schemas", () => {
   });
 
   test("features accept both states of the review toggle", () => {
-    expect(featuresSchema.safeParse({ reviewsEnabled: false }).data).toEqual({
-      reviewsEnabled: false,
-    });
-    expect(featuresSchema.safeParse({ reviewsEnabled: true }).data).toEqual({
-      reviewsEnabled: true,
-    });
+    expect(
+      featuresSchema.safeParse({ reviewsEnabled: false }).data?.reviewsEnabled,
+    ).toBe(false);
+    expect(
+      featuresSchema.safeParse({ reviewsEnabled: true }).data?.reviewsEnabled,
+    ).toBe(true);
   });
 
   test("features reject non-boolean and missing toggles, so legacy rows fall back to defaults", () => {
     expect(featuresSchema.safeParse({}).success).toBe(false);
     expect(featuresSchema.safeParse({ reviewsEnabled: "on" }).success).toBe(false);
+  });
+
+  test("a row saved before the photo limit existed keeps its review setting", () => {
+    // Regression: if maxPhotosPerListing were required, this parse would fail
+    // and getSiteConfig would fall back to DEFAULT_FEATURES, silently turning
+    // reviews back on for anyone who had disabled them.
+    const legacy = featuresSchema.safeParse({ reviewsEnabled: false });
+    expect(legacy.success).toBe(true);
+    expect(legacy.data).toEqual({
+      reviewsEnabled: false,
+      maxPhotosPerListing: DEFAULT_MAX_PHOTOS_PER_LISTING,
+    });
+  });
+
+  test("photo limit accepts numeric strings from the form and rejects out-of-range values", () => {
+    expect(
+      featuresSchema.safeParse({ reviewsEnabled: true, maxPhotosPerListing: "6" }).data
+        ?.maxPhotosPerListing,
+    ).toBe(6);
+
+    for (const invalid of [0, -1, 21, 2.5]) {
+      expect(
+        featuresSchema.safeParse({ reviewsEnabled: true, maxPhotosPerListing: invalid })
+          .success,
+      ).toBe(false);
+    }
   });
 });
