@@ -9,11 +9,12 @@ import { archiveListingAction, deletePhotoAction } from "../actions";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; saved?: string }>;
+  searchParams: Promise<{ error?: string; saved?: string; created?: string }>;
 }
 
 export default async function EditListingPage({ params, searchParams }: EditListingPageProps) {
-  const [{ id }, { error, saved }] = await Promise.all([params, searchParams]);
+  const [{ id }, { error, saved, created }] = await Promise.all([params, searchParams]);
+  const isJustCreated = created === "1";
   const [listing, categories] = await Promise.all([
     getListingById(id),
     listActiveCategories(),
@@ -34,6 +35,20 @@ export default async function EditListingPage({ params, searchParams }: EditList
         )}
       </div>
 
+      {isJustCreated && (
+        <div className="mt-4 max-w-2xl rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          <p className="font-semibold">Anúncio criado como rascunho.</p>
+          <p className="mt-1 text-emerald-700">
+            Ele ainda não aparece no site. Agora adicione as fotos — elas só podem
+            ser enviadas depois que o anúncio existe.{" "}
+            <a href="#fotos" className="font-semibold underline underline-offset-2">
+              Ir para as fotos
+            </a>
+            .
+          </p>
+        </div>
+      )}
+
       <div className="mt-6">
         <ListingForm
           categories={categories}
@@ -43,10 +58,23 @@ export default async function EditListingPage({ params, searchParams }: EditList
         />
       </div>
 
-      <section className="mt-10 max-w-2xl" aria-label="Fotos">
+      <section
+        id="fotos"
+        className={`mt-10 max-w-2xl scroll-mt-6 ${
+          isJustCreated
+            ? "rounded-lg ring-2 ring-emerald-300 ring-offset-4 ring-offset-slate-50"
+            : ""
+        }`}
+        aria-label="Fotos"
+      >
         <h2 className="text-lg font-semibold">
           Fotos ({listing.photos.length}/{MAX_PHOTOS_PER_LISTING})
         </h2>
+        {isJustCreated && listing.photos.length === 0 && (
+          <p className="mt-1 text-sm text-slate-500">
+            Escolha as fotos abaixo. A primeira será a capa do anúncio.
+          </p>
+        )}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {listing.photos.map((photo) => (
             <div

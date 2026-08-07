@@ -15,7 +15,8 @@ export default async function NewListingPage({ searchParams }: NewListingPagePro
     <div>
       <h1 className="text-2xl font-bold tracking-tight">Novo anúncio</h1>
       <p className="mt-1 mb-6 text-sm text-slate-500">
-        Salve como rascunho primeiro para poder adicionar fotos.
+        Preencha os dados e salve: o anúncio nasce como rascunho, sem aparecer no
+        site, e as fotos são enviadas na tela seguinte.
       </p>
       <ListingForm categories={categories} error={error} />
     </div>

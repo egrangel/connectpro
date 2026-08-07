@@ -63,12 +63,20 @@ export async function saveListingAction(
     return { error: message, values };
   }
 
-  const listing = id
-    ? await updateListing(id, parsed.data)
-    : await createListing(parsed.data, admin.id);
+  const isNew = !id;
+  const listing = isNew
+    ? await createListing(parsed.data, admin.id)
+    : await updateListing(id, parsed.data);
 
   revalidatePublic();
-  redirect(`/admin/listings/${listing.id}?saved=1`);
+  // Photos need a listing id to attach to, so they only become available now.
+  // Send a freshly created listing straight to that section instead of leaving
+  // the admin on a page whose next step is below the fold.
+  redirect(
+    isNew
+      ? `/admin/listings/${listing.id}?created=1#fotos`
+      : `/admin/listings/${listing.id}?saved=1`,
+  );
 }
 
 export async function archiveListingAction(formData: FormData): Promise<void> {
