@@ -1,8 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import type { Category, Listing } from "@prisma/client";
-import { LISTING_STATUS } from "@/lib/constants";
+import {
+  LISTING_DESCRIPTION_MAX_LENGTH,
+  LISTING_DESCRIPTION_MIN_LENGTH,
+  LISTING_STATUS,
+  LISTING_TITLE_MAX_LENGTH,
+  LISTING_TITLE_MIN_LENGTH,
+} from "@/lib/constants";
 import { INSTAGRAM_INPUT_MAX_LENGTH } from "@/modules/listings/instagram";
 import { saveListingAction, type SaveListingState } from "./actions";
 
@@ -18,6 +24,42 @@ const inputClass =
 
 const initialState: SaveListingState = { error: null, values: null };
 
+/**
+ * Live character budget for a field. Shows the minimum while the text is still
+ * too short — a bare "4 / 120" does not tell an admin why saving failed — and
+ * warns before the browser silently stops accepting input at the limit.
+ */
+function CharacterCounter({
+  length,
+  min,
+  max,
+}: {
+  length: number;
+  min: number;
+  max: number;
+}) {
+  const isTooShort = length < min;
+  const isAtLimit = length >= max;
+  const isNearLimit = !isAtLimit && length >= max * 0.9;
+
+  const countClass = isAtLimit
+    ? "text-amber-700"
+    : isNearLimit
+      ? "text-amber-600"
+      : "text-slate-400";
+
+  return (
+    <span className="flex justify-between gap-3 text-xs font-normal">
+      <span className={isTooShort ? "text-slate-500" : "text-transparent"}>
+        {isTooShort ? `Mínimo de ${min} caracteres` : "."}
+      </span>
+      <span className={countClass}>
+        {isAtLimit ? `Limite de ${max} caracteres atingido` : `${length} / ${max}`}
+      </span>
+    </span>
+  );
+}
+
 export function ListingForm({ categories, listing, error, saved }: ListingFormProps) {
   const [state, formAction, pending] = useActionState(saveListingAction, initialState);
 
@@ -25,6 +67,13 @@ export function ListingForm({ categories, listing, error, saved }: ListingFormPr
   // fall back to the stored listing (edit) or empty fields (create).
   const values = state.values;
   const errorMessage = state.error ?? error;
+
+  const initialTitle = values?.title ?? listing?.title ?? "";
+  const initialDescription = values?.description ?? listing?.description ?? "";
+  // Counts track the inputs, which stay uncontrolled so typing never round-trips
+  // through React state.
+  const [titleLength, setTitleLength] = useState(initialTitle.length);
+  const [descriptionLength, setDescriptionLength] = useState(initialDescription.length);
 
   return (
     <form action={formAction} className="flex max-w-2xl flex-col gap-4">
@@ -50,10 +99,16 @@ export function ListingForm({ categories, listing, error, saved }: ListingFormPr
           type="text"
           name="title"
           required
-          minLength={3}
-          maxLength={120}
-          defaultValue={values?.title ?? listing?.title ?? ""}
+          minLength={LISTING_TITLE_MIN_LENGTH}
+          maxLength={LISTING_TITLE_MAX_LENGTH}
+          defaultValue={initialTitle}
+          onChange={(event) => setTitleLength(event.target.value.length)}
           className={inputClass}
+        />
+        <CharacterCounter
+          length={titleLength}
+          min={LISTING_TITLE_MIN_LENGTH}
+          max={LISTING_TITLE_MAX_LENGTH}
         />
       </label>
 
@@ -62,11 +117,17 @@ export function ListingForm({ categories, listing, error, saved }: ListingFormPr
         <textarea
           name="description"
           required
-          minLength={10}
-          maxLength={5000}
+          minLength={LISTING_DESCRIPTION_MIN_LENGTH}
+          maxLength={LISTING_DESCRIPTION_MAX_LENGTH}
           rows={6}
-          defaultValue={values?.description ?? listing?.description ?? ""}
+          defaultValue={initialDescription}
+          onChange={(event) => setDescriptionLength(event.target.value.length)}
           className={`${inputClass} resize-y`}
+        />
+        <CharacterCounter
+          length={descriptionLength}
+          min={LISTING_DESCRIPTION_MIN_LENGTH}
+          max={LISTING_DESCRIPTION_MAX_LENGTH}
         />
       </label>
 

@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import {
+  MAX_PHOTO_SIZE_BYTES,
+  PHOTO_MIN_HEIGHT,
+  PHOTO_MIN_WIDTH,
+  PHOTO_RECOMMENDED_HEIGHT,
+  PHOTO_RECOMMENDED_WIDTH,
+} from "@/lib/constants";
 import { uploadPhotoAction } from "./actions";
 
 interface PhotoUploadFormProps {
@@ -22,12 +29,33 @@ function SubmitButton({ hasFiles }: { hasFiles: boolean }) {
   );
 }
 
+const MAX_PHOTO_SIZE_MB = Math.round(MAX_PHOTO_SIZE_BYTES / (1024 * 1024));
+
 export function PhotoUploadForm({ listingId, remaining }: PhotoUploadFormProps) {
   const [fileNames, setFileNames] = useState<string[]>([]);
 
   return (
     <form action={uploadPhotoAction} className="mt-4 flex flex-col gap-3">
       <input type="hidden" name="listingId" value={listingId} />
+
+      <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-600">
+        <p className="font-semibold text-slate-700">Resolução recomendada</p>
+        <ul className="mt-1 list-disc space-y-0.5 pl-4">
+          <li>
+            Ideal: <strong>{PHOTO_RECOMMENDED_WIDTH} × {PHOTO_RECOMMENDED_HEIGHT} px</strong>{" "}
+            (proporção 4:3) — mínimo de {PHOTO_MIN_WIDTH} × {PHOTO_MIN_HEIGHT} px.
+          </li>
+          <li>
+            A mesma foto é cortada em <strong>4:3</strong> nos cards da busca e em{" "}
+            <strong>16:9</strong> na página do anúncio: deixe o assunto centralizado
+            e evite texto perto das bordas.
+          </li>
+          <li>
+            Fotos deitadas (horizontais) funcionam melhor que fotos em pé; a primeira
+            foto é a capa do anúncio.
+          </li>
+        </ul>
+      </div>
 
       <label className="group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-slate-300 bg-white px-4 py-8 text-center transition hover:border-slate-400 hover:bg-slate-50 focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200">
         <svg
@@ -48,7 +76,7 @@ export function PhotoUploadForm({ listingId, remaining }: PhotoUploadFormProps) 
           Clique para escolher as fotos
         </span>
         <span className="text-xs text-slate-400">
-          JPEG, PNG ou WebP · máx. 10 MB cada · até {remaining}{" "}
+          JPEG, PNG ou WebP · máx. {MAX_PHOTO_SIZE_MB} MB cada · até {remaining}{" "}
           {remaining === 1 ? "foto restante" : "fotos restantes"}
         </span>
         <input

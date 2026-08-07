@@ -12,6 +12,7 @@
  *   postgresql://postgres:postgres@localhost:5433/connect_dev
  */
 import { existsSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import EmbeddedPostgres from "embedded-postgres";
 import { DATA_DIR, DATABASE, PASSWORD, PORT, USER } from "./local-db-config.mjs";
 
@@ -37,6 +38,22 @@ const isFirstRun = !existsSync(DATA_DIR);
 if (isFirstRun) {
   console.log("Inicializando cluster PostgreSQL em .localdb/ (so na primeira vez)...");
   await postgres.initialise();
+}
+
+// A postmaster.pid left behind means a previous cluster is still up — usually
+// because this script was killed without its shutdown hook running. That
+// cluster keeps port 5433 open but often stops accepting connections, which
+// surfaces as confusing timeouts. Stop it first so `db:local` is always
+// safe to re-run. (`stop` shells out to pg_ctl against the data dir, so it
+// works even though another process started the server.)
+if (!isFirstRun && existsSync(join(DATA_DIR, "postmaster.pid"))) {
+  console.log("Cluster anterior detectado — parando antes de iniciar...");
+  try {
+    await postgres.stop();
+  } catch (error) {
+    // Expected when the pid file is stale and no server is actually running.
+    console.log(`  (nada para parar: ${String(error).split("\n")[0]})`);
+  }
 }
 
 await postgres.start();

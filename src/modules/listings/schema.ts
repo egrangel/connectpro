@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { LISTING_STATUS, SEARCH_QUERY_MAX_LENGTH } from "@/lib/constants";
+import {
+  LISTING_DESCRIPTION_MAX_LENGTH,
+  LISTING_DESCRIPTION_MIN_LENGTH,
+  LISTING_STATUS,
+  LISTING_TITLE_MAX_LENGTH,
+  LISTING_TITLE_MIN_LENGTH,
+  SEARCH_QUERY_MAX_LENGTH,
+} from "@/lib/constants";
 import { isHttpUrl } from "@/lib/url";
 import { extractInstagramHandle, INSTAGRAM_INPUT_MAX_LENGTH } from "./instagram";
 
@@ -36,8 +43,16 @@ const instagramHandle = z
   .optional();
 
 export const listingInputSchema = z.object({
-  title: z.string().trim().min(3, "Título muito curto").max(120),
-  description: z.string().trim().min(10, "Descreva o profissional").max(5000),
+  title: z
+    .string()
+    .trim()
+    .min(LISTING_TITLE_MIN_LENGTH, "Título muito curto")
+    .max(LISTING_TITLE_MAX_LENGTH),
+  description: z
+    .string()
+    .trim()
+    .min(LISTING_DESCRIPTION_MIN_LENGTH, "Descreva o profissional")
+    .max(LISTING_DESCRIPTION_MAX_LENGTH),
   categoryId: z.string().min(1, "Selecione uma categoria"),
   contactPhone: optionalTrimmed(30),
   contactEmail: z
