@@ -7,6 +7,7 @@ import {
   bannerSchema,
   brandingSchema,
   featuresSchema,
+  termsSchema,
   themeSchema,
 } from "@/modules/settings/schema";
 import { getSiteConfig, updateSiteConfig } from "@/modules/settings/service";
@@ -82,13 +83,21 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
     reviewsEnabled: formData.get("reviewsEnabled") === "on",
     maxPhotosPerListing: formData.get("maxPhotosPerListing"),
   });
+  const terms = termsSchema.safeParse({ text: formData.get("termsText") });
 
   const firstError =
     (!banner.success && banner.error.issues[0]?.message) ||
     (!theme.success && theme.error.issues[0]?.message) ||
     (!branding.success && branding.error.issues[0]?.message) ||
-    (!features.success && features.error.issues[0]?.message);
-  if (!banner.success || !theme.success || !branding.success || !features.success) {
+    (!features.success && features.error.issues[0]?.message) ||
+    (!terms.success && terms.error.issues[0]?.message);
+  if (
+    !banner.success ||
+    !theme.success ||
+    !branding.success ||
+    !features.success ||
+    !terms.success
+  ) {
     backWithError(firstError || "Dados inválidos.");
   }
 
@@ -97,6 +106,7 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
     theme: theme.data,
     branding: branding.data,
     features: features.data,
+    terms: terms.data,
   });
 
   revalidatePath("/", "layout");

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { forgotPasswordSchema, resetPasswordSchema } from "./schema";
+import { forgotPasswordSchema, registerSchema, resetPasswordSchema } from "./schema";
 
 const VALID_TOKEN = "a".repeat(64);
 
@@ -21,6 +21,31 @@ describe("forgotPasswordSchema", () => {
   test("rejects an address beyond the storage limit", () => {
     const email = `${"a".repeat(250)}@example.com`;
     expect(forgotPasswordSchema.safeParse({ email }).success).toBe(false);
+  });
+});
+
+describe("registerSchema", () => {
+  const valid = {
+    email: "joana@example.com",
+    password: "senha-forte-123",
+    displayName: "Joana",
+    acceptedTerms: true as const,
+  };
+
+  test("accepts a registration that agreed to the consent terms", () => {
+    expect(registerSchema.safeParse(valid).success).toBe(true);
+  });
+
+  test("rejects a registration without consent, however the box was left", () => {
+    // An unchecked box posts nothing, so `false` is what the action derives —
+    // but a hand-crafted POST can send anything, and none of it may pass.
+    for (const acceptedTerms of [false, undefined, "on", 1, null]) {
+      const result = registerSchema.safeParse({ ...valid, acceptedTerms });
+      expect(result.success).toBe(false);
+      expect(firstIssue(result)).toBe(
+        "É preciso aceitar o termo de consentimento para criar a conta",
+      );
+    }
   });
 });
 

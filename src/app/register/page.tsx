@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { registerAction } from "@/modules/auth/actions";
+import { getConsentTerms } from "@/modules/settings/service";
 
 export const metadata: Metadata = { title: "Criar conta" };
 
@@ -10,7 +11,7 @@ interface RegisterPageProps {
 }
 
 export default async function RegisterPage({ searchParams }: RegisterPageProps) {
-  const { error } = await searchParams;
+  const [{ error }, terms] = await Promise.all([searchParams, getConsentTerms()]);
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16">
@@ -49,6 +50,29 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
               className={inputClass}
             />
           </label>
+
+          <fieldset className="mt-1 flex flex-col gap-2">
+            <legend className="mb-2 text-sm font-bold">Termo de consentimento</legend>
+            <div
+              // Scrollable rather than truncated: the whole agreement has to be
+              // readable on the page where it is accepted.
+              tabIndex={0}
+              role="region"
+              aria-label="Termo de consentimento"
+              className="max-h-56 overflow-y-auto whitespace-pre-line rounded-[var(--radius)] border border-[var(--color-line)] bg-white/70 p-4 text-xs leading-6 text-[var(--color-muted)]"
+            >
+              {terms.text}
+            </div>
+            <label className="flex items-start gap-2.5 text-sm font-semibold">
+              <input
+                type="checkbox"
+                name="acceptTerms"
+                required
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
+              />
+              <span>Li e aceito o termo de consentimento acima. *</span>
+            </label>
+          </fieldset>
 
           {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 

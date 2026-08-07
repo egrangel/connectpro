@@ -28,6 +28,10 @@ model User {
   isActive       Boolean              @default(true)
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
+  // When this account accepted the consent agreement. Nullable because accounts
+  // created before the agreement existed never saw one — recording "now" for
+  // them would be inventing a consent that was never given.
+  termsAcceptedAt DateTime?
   sessions       Session[]
   reviews        Review[]
   listings       Listing[]
@@ -153,5 +157,6 @@ model SiteSettings {
   themeJson    String   @default("{}")
   brandingJson String   @default("{}")
   featuresJson String   @default("{}")
+  termsJson    String   @default("{}")
   updatedAt    DateTime @updatedAt
 }

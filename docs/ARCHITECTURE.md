@@ -51,11 +51,19 @@ Next.js app ──► Public site (/)  Admin portal (/admin)  Server actions
 | Post/edit/delete own review | — | ✅ | ✅ |
 | Manage listings/categories | — | ❌ | ✅ |
 | Moderate reviews | — | ❌ | ✅ |
-| Banner/theme/branding | — | ❌ | ✅ |
+| Banner/theme/branding/consent text | — | ❌ | ✅ |
 
 **Invariant:** registration always creates `USER`; role is never part of any
 user-facing input schema. The first admin comes from the seed script
 (`SEED_ADMIN_*` env vars); further admins are promoted by an existing admin.
+
+**Consent:** registration requires accepting the agreement shown on `/register`
+(admin-editable, `settings.terms.text`). `registerSchema` demands
+`acceptedTerms: true`, so the `required` checkbox is a convenience and the
+server is what decides — a POST without it cannot create an account.
+`registerUser` stamps `User.termsAcceptedAt`, written only on that path. The
+column is nullable: accounts predating the agreement never accepted one, and
+backfilling would record a consent nobody gave.
 
 ## 4. Database Model
 
@@ -114,10 +122,14 @@ Guarded by `requireAdmin()` in the layout **and** in every server action.
 Deliberately not themed by site settings (a broken theme must not break the
 tool that fixes it). Sections: dashboard, listings (CRUD + photos + archive),
 categories, review moderation (hide/restore), reports, settings (banner/theme/
-brand + feature toggles). Settings carries `features.reviewsEnabled`: turning
-it off hides ratings, the review form and the rating sort across the public
-site and rejects new review posts, while stored reviews stay intact and
-moderatable.
+brand + feature toggles + consent agreement). Settings carries
+`features.reviewsEnabled`: turning it off hides ratings, the review form and
+the rating sort across the public site and rejects new review posts, while
+stored reviews stay intact and moderatable. `terms.text` is the agreement
+shown at registration; it cannot be saved empty, since a blank agreement would
+turn the acceptance we record into a signature on nothing. Editing it applies
+to later registrations only — earlier accounts accepted the text that was live
+when they signed up.
 
 **Reports** (`/admin/reports`) surfaces demand signals. The first one is *most
 searched terms*: each public search increments a counter per normalized term

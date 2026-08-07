@@ -39,6 +39,11 @@ export const PHOTOS_PER_LISTING_MAX = 20;
 
 export const MAX_PHOTO_SIZE_BYTES = 10 * 1024 * 1024;
 
+// Consent agreement shown at registration, editable in admin → Configurações.
+// Generous on purpose: a legal text that hits the ceiling would be silently
+// unsaveable, and the admin textarea shares this bound with the schema.
+export const TERMS_TEXT_MAX_LENGTH = 20000;
+
 // Photo guidance shown on the upload form. The same image is cropped to 4:3 on
 // the listing cards and 16:9 on the listing page (both object-cover), so the
 // recommendation is a 4:3 source wide enough to stay sharp in the wider crop.

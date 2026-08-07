@@ -1,14 +1,16 @@
 import { describe, expect, test } from "vitest";
-import { DEFAULT_MAX_PHOTOS_PER_LISTING } from "@/lib/constants";
+import { DEFAULT_MAX_PHOTOS_PER_LISTING, TERMS_TEXT_MAX_LENGTH } from "@/lib/constants";
 import {
   bannerSchema,
   slideSchema,
   brandingSchema,
   featuresSchema,
+  termsSchema,
   themeSchema,
   DEFAULT_BANNER,
   DEFAULT_BRANDING,
   DEFAULT_FEATURES,
+  DEFAULT_TERMS,
   DEFAULT_THEME,
 } from "./schema";
 
@@ -18,6 +20,7 @@ describe("settings schemas", () => {
     expect(themeSchema.safeParse(DEFAULT_THEME).success).toBe(true);
     expect(brandingSchema.safeParse(DEFAULT_BRANDING).success).toBe(true);
     expect(featuresSchema.safeParse(DEFAULT_FEATURES).success).toBe(true);
+    expect(termsSchema.safeParse(DEFAULT_TERMS).success).toBe(true);
   });
 
   test("banner requires at least one slide", () => {
@@ -86,6 +89,28 @@ describe("settings schemas", () => {
       reviewsEnabled: false,
       maxPhotosPerListing: DEFAULT_MAX_PHOTOS_PER_LISTING,
     });
+  });
+
+  test("consent agreement rejects an empty text", () => {
+    // An admin who blanks the field would leave the registration form asking
+    // people to agree to nothing.
+    expect(termsSchema.safeParse({ text: "" }).success).toBe(false);
+    expect(termsSchema.safeParse({ text: "   \n  " }).success).toBe(false);
+    expect(termsSchema.safeParse({}).success).toBe(false);
+  });
+
+  test("consent agreement keeps line breaks and rejects text past the limit", () => {
+    const multiline = "Primeira linha.\n\nSegunda linha.";
+    expect(termsSchema.safeParse({ text: multiline }).data?.text).toBe(multiline);
+    expect(
+      termsSchema.safeParse({ text: "a".repeat(TERMS_TEXT_MAX_LENGTH + 1) }).success,
+    ).toBe(false);
+  });
+
+  test("the default agreement states the disclaimer it exists for", () => {
+    // The text is admin-editable, but shipping a default that omitted the
+    // liability disclaimer would put every portal live without one.
+    expect(DEFAULT_TERMS.text).toMatch(/NÃO se responsabiliza/);
   });
 
   test("photo limit accepts numeric strings from the form and rejects out-of-range values", () => {

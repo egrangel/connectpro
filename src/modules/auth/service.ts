@@ -35,6 +35,10 @@ const INVALID_RESET_ERROR = "Link inválido ou expirado. Solicite um novo.";
 /**
  * Always creates a USER — role is deliberately not an input anywhere in the
  * registration path. Admins are promoted via seed script or by another admin.
+ *
+ * Acceptance of the consent agreement is stamped here rather than defaulted in
+ * the schema: the column exists to record that a person agreed, so it is only
+ * ever written on a path that checked they did.
  */
 export async function registerUser(input: RegisterInput): Promise<AuthResult> {
   const email = input.email.toLowerCase().trim();
@@ -50,6 +54,7 @@ export async function registerUser(input: RegisterInput): Promise<AuthResult> {
       displayName: input.displayName,
       passwordHash: await hashPassword(input.password),
       role: ROLES.USER,
+      termsAcceptedAt: new Date(),
     },
   });
   return { ok: true, userId: user.id };

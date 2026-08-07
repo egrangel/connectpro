@@ -11,6 +11,13 @@ export const registerSchema = z.object({
     .trim()
     .min(2, "Informe seu nome")
     .max(80, "Nome muito longo"),
+  // The checkbox is `required` in the browser too, but that is only a
+  // convenience: consent is a condition of the account existing, so the one
+  // check that decides it has to be this one, on the server.
+  acceptedTerms: z.literal(
+    true,
+    "É preciso aceitar o termo de consentimento para criar a conta",
+  ),
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 

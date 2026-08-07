@@ -1,6 +1,10 @@
 import { getSiteConfig } from "@/modules/settings/service";
 import { RADIUS_CSS } from "@/modules/settings/schema";
-import { PHOTOS_PER_LISTING_MAX, PHOTOS_PER_LISTING_MIN } from "@/lib/constants";
+import {
+  PHOTOS_PER_LISTING_MAX,
+  PHOTOS_PER_LISTING_MIN,
+  TERMS_TEXT_MAX_LENGTH,
+} from "@/lib/constants";
 import { saveSettingsAction } from "./actions";
 import { BannerSlidesEditor } from "./BannerSlidesEditor";
 
@@ -25,7 +29,7 @@ function ColorField({ name, label, value }: { name: string; label: string; value
 
 export default async function AdminSettingsPage({ searchParams }: AdminSettingsPageProps) {
   const [{ error, saved }, config] = await Promise.all([searchParams, getSiteConfig()]);
-  const { banner, theme, branding, features } = config;
+  const { banner, theme, branding, features, terms } = config;
   const firstSlide = banner.slides[0];
 
   const previewStyle = {
@@ -110,6 +114,30 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
               limite nao apaga fotos ja enviadas: anuncios que passarem do novo
               limite apenas deixam de aceitar fotos novas ate que alguma seja
               removida.
+            </p>
+          </fieldset>
+
+          <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
+            <legend className="px-1 text-sm font-semibold text-slate-800">
+              Termo de consentimento
+            </legend>
+            <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              Texto exibido no cadastro
+              <textarea
+                name="termsText"
+                required
+                rows={14}
+                maxLength={TERMS_TEXT_MAX_LENGTH}
+                defaultValue={terms.text}
+                className={`${inputClass} resize-y font-mono text-xs leading-5`}
+              />
+            </label>
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Quem cria uma conta precisa marcar que leu e aceita este texto — sem
+              isso o cadastro nao e concluido, e a data do aceite fica registrada
+              na conta. Alterar o texto vale para os proximos cadastros; quem ja
+              se cadastrou aceitou a versao vigente naquele momento. As quebras de
+              linha sao preservadas.
             </p>
           </fieldset>
 

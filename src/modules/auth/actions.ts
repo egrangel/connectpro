@@ -49,6 +49,9 @@ export async function registerAction(formData: FormData): Promise<void> {
     email: formData.get("email"),
     password: formData.get("password"),
     displayName: formData.get("displayName"),
+    // An unchecked box sends nothing at all, which is exactly the case the
+    // schema must reject.
+    acceptedTerms: formData.get("acceptTerms") === "on",
   });
   if (!parsed.success) {
     backTo("/register", parsed.error.issues[0]?.message ?? "Dados inválidos");
