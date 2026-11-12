@@ -76,7 +76,7 @@ export const DEFAULT_BANNER: BannerConfig = {
   enabled: true,
   slides: [
     {
-      imageKey: "/branding/slide-1.svg",
+      imageKey: "/branding/hero-rede-1.webp",
       headline: "Encontre o profissional certo para o seu projeto",
       subheadline:
         "Eletricistas, professores, fotógrafos e muito mais, todos da nossa comunidade.",
@@ -84,7 +84,7 @@ export const DEFAULT_BANNER: BannerConfig = {
       ctaUrl: "#listagens",
     },
     {
-      imageKey: "/branding/slide-2.svg",
+      imageKey: "/branding/hero-rede-2.webp",
       headline: "Unidos Por um Propósito",
       subheadline:
         "Cada anúncio é revisado antes de ir ao ar. Encontre um profissional e fale direto com ele.",
