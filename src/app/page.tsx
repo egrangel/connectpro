@@ -28,6 +28,48 @@ function pageHref(
   return qs ? `/?${qs}#listagens` : "/#listagens";
 }
 
+interface EmptyResultsProps {
+  query?: string;
+  isFiltered: boolean;
+}
+
+const emptyLinkClass =
+  "mt-5 inline-flex rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-4 py-2 text-sm font-bold text-[var(--color-primary)] transition hover:bg-white";
+
+// Three different situations share this slot: the directory has nothing
+// published yet, a search matched nothing, or a category is still empty.
+// Each gets its own message and the one action that moves the visitor on.
+function EmptyResults({ query, isFiltered }: EmptyResultsProps) {
+  const seeAll = { href: "/#listagens", label: "Ver todos os profissionais" };
+  const { title, hint, action } = !isFiltered
+    ? {
+        title: "Ainda não há profissionais publicados.",
+        hint: "Presta algum serviço? Crie sua conta e cadastre seu anúncio. Ele aparece aqui depois de aprovado.",
+        action: { href: "/register", label: "Criar conta e anunciar" },
+      }
+    : query
+      ? {
+          title: `Nada encontrado para "${query}".`,
+          hint: "Confira a grafia ou busque pelo nome do serviço, como “eletricista” ou “aulas”.",
+          action: seeAll,
+        }
+      : {
+          title: "Ainda não há profissionais nesta categoria.",
+          hint: "Veja os profissionais das outras categorias.",
+          action: seeAll,
+        };
+
+  return (
+    <div className="card-surface mt-8 rounded-[calc(var(--radius)+8px)] p-12 text-center text-[var(--color-muted)]">
+      <p className="font-bold text-[var(--color-text)]">{title}</p>
+      <p className="mx-auto mt-1 max-w-md text-sm leading-6">{hint}</p>
+      <Link href={action.href} className={emptyLinkClass}>
+        {action.label}
+      </Link>
+    </div>
+  );
+}
+
 export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   const query = listingQuerySchema.parse({
@@ -73,15 +115,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </h2>
           </div>
           <span className="text-sm font-semibold text-[var(--color-muted)]">
-            {results.total} {results.total === 1 ? "anuncio" : "anuncios"}
+            {results.total} {results.total === 1 ? "anúncio" : "anúncios"}
           </span>
         </div>
 
         {results.items.length === 0 ? (
-          <div className="card-surface mt-8 rounded-[calc(var(--radius)+8px)] p-12 text-center text-[var(--color-muted)]">
-            <p className="font-bold text-[var(--color-text)]">Nenhum profissional encontrado.</p>
-            <p className="mt-1 text-sm">Tente outra busca ou remova os filtros.</p>
-          </div>
+          <EmptyResults query={query.q} isFiltered={Boolean(query.q || query.category)} />
         ) : (
           <div className="mt-7 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {results.items.map((listing) => (
@@ -96,7 +135,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {results.pageCount > 1 && (
           <nav
-            aria-label="Paginacao"
+            aria-label="Paginação"
             className="mt-12 flex items-center justify-center gap-3 text-sm"
           >
             {results.page > 1 && (
@@ -108,14 +147,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </Link>
             )}
             <span className="text-[var(--color-muted)]">
-              Pagina {results.page} de {results.pageCount}
+              Página {results.page} de {results.pageCount}
             </span>
             {results.page < results.pageCount && (
               <Link
                 href={pageHref(params, results.page + 1)}
                 className="rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-4 py-2 font-bold transition hover:bg-white"
               >
-                Proxima
+                Próxima
               </Link>
             )}
           </nav>

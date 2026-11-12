@@ -37,11 +37,11 @@ export function ReviewsSection({
   const distribution = computeRatingDistribution(reviews.map((r) => r.rating));
 
   return (
-    <section id="avaliacoes" className="mt-12" aria-label="Avaliacoes">
+    <section id="avaliacoes" className="mt-12" aria-label="Avaliações">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Experiencias</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight">Avaliacoes</h2>
+          <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Experiências</p>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight">Avaliações</h2>
         </div>
       </div>
 
@@ -50,7 +50,9 @@ export function ReviewsSection({
           <div className="text-center sm:w-36">
             <p className="text-5xl font-bold">{ratingAvg.toFixed(1)}</p>
             <StarRating value={ratingAvg} size="md" />
-            <p className="mt-1 text-xs text-[var(--color-muted)]">{ratingCount} avaliacoes</p>
+            <p className="mt-1 text-xs text-[var(--color-muted)]">
+              {ratingCount} {ratingCount === 1 ? "avaliação" : "avaliações"}
+            </p>
           </div>
           <div className="flex-1 space-y-2">
             {([5, 4, 3, 2, 1] as const).map((stars) => {
@@ -127,7 +129,7 @@ export function ReviewsSection({
         ))}
         {reviews.length === 0 && (
           <li className="text-sm text-[var(--color-muted)]">
-            Este profissional ainda nao recebeu avaliacoes. Seja o primeiro!
+            Ainda não há avaliações. Já contratou este profissional? Conte como foi.
           </li>
         )}
       </ul>

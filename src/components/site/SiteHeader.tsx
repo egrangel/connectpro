@@ -52,7 +52,7 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
           {user ? (
             <form action={logoutAction} className="flex items-center gap-3">
               <span className="hidden text-[var(--color-muted)] sm:inline">
-                Ola, {user.displayName.split(" ")[0]}
+                Olá, {user.displayName.split(" ")[0]}
               </span>
               <button
                 type="submit"

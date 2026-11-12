@@ -79,7 +79,7 @@ export const DEFAULT_BANNER: BannerConfig = {
       imageKey: "/branding/slide-1.svg",
       headline: "Encontre o profissional certo para o seu projeto",
       subheadline:
-        "Eletricistas, professores, desenvolvedores e muito mais - avaliados por quem já contratou.",
+        "Eletricistas, professores, fotógrafos e muito mais, todos da nossa comunidade.",
       ctaText: "Explorar profissionais",
       ctaUrl: "#listagens",
     },
@@ -87,7 +87,7 @@ export const DEFAULT_BANNER: BannerConfig = {
       imageKey: "/branding/slide-2.svg",
       headline: "Unidos Por um Propósito",
       subheadline:
-        "Profissionais verificados e avaliados pela comunidade — contrate com confiança.",
+        "Cada anúncio é revisado antes de ir ao ar. Encontre um profissional e fale direto com ele.",
       ctaText: "Ver profissionais",
       ctaUrl: "#listagens",
     },
@@ -113,10 +113,10 @@ export const DEFAULT_FEATURES: FeaturesConfig = {
 // it is editable in admin → Configurações precisely because this is a legal
 // statement, not a product string.
 export const DEFAULT_TERMS: TermsConfig = {
-  text: `Ao criar uma conta no portal do Grupo Connect Pro, você declara que leu, entendeu e concorda com os termos abaixo.
+  text: `Ao criar uma conta no portal da Rede Connect UPP, você declara que leu, entendeu e concorda com os termos abaixo.
 
 1. Uso dos seus dados
-Você autoriza o Grupo Connect Pro a coletar, armazenar e utilizar os dados que informar — nome, e-mail, telefone, WhatsApp, redes sociais, cidade, textos e imagens enviadas — para criar e manter sua conta, publicar os anúncios que você cadastrar e permitir que outras pessoas entrem em contato com você.
+Você autoriza a Rede Connect UPP a coletar, armazenar e utilizar os dados que informar — nome, e-mail, telefone, WhatsApp, redes sociais, cidade, textos e imagens enviadas — para criar e manter sua conta, publicar os anúncios que você cadastrar e permitir que outras pessoas entrem em contato com você.
 
 2. Contato e divulgação
 Os dados de contato incluídos em um anúncio ficam visíveis publicamente no portal, para qualquer visitante, com ou sem cadastro. Você também autoriza o uso das imagens que enviar na divulgação do portal e dos seus próprios anúncios, sem qualquer remuneração.
@@ -125,7 +125,7 @@ Os dados de contato incluídos em um anúncio ficam visíveis publicamente no po
 Você é responsável pelo conteúdo que publica e declara ter os direitos necessários sobre os textos e as imagens enviadas, incluindo a autorização das pessoas retratadas.
 
 4. Limitação de responsabilidade
-O Grupo Connect Pro apenas disponibiliza o espaço de divulgação. O Grupo Connect Pro NÃO se responsabiliza por nenhum serviço, produto, negociação, pagamento, orçamento, prazo ou qualquer outra coisa oferecida, prometida ou prestada por qualquer anunciante do portal. A contratação acontece diretamente entre você e o anunciante, por sua conta e risco, e qualquer problema, prejuízo ou dano deve ser resolvido entre as partes envolvidas.
+A Rede Connect UPP apenas disponibiliza o espaço de divulgação. A Rede Connect UPP NÃO se responsabiliza por nenhum serviço, produto, negociação, pagamento, orçamento, prazo ou qualquer outra coisa oferecida, prometida ou prestada por qualquer anunciante do portal. A contratação acontece diretamente entre você e o anunciante, por sua conta e risco, e qualquer problema, prejuízo ou dano deve ser resolvido entre as partes envolvidas.
 
 5. Cancelamento
 Você pode solicitar a exclusão da sua conta e dos seus anúncios a qualquer momento pelos canais de contato do portal.`,

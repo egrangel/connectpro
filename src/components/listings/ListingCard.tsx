@@ -55,7 +55,7 @@ export function ListingCard({ listing, showRating = true }: ListingCardProps) {
                 {listing.ratingAvg.toFixed(1)} ({listing.ratingCount})
               </span>
             ) : (
-              <span>Sem avaliacoes</span>
+              <span>Sem avaliações</span>
             )}
           </div>
         )}

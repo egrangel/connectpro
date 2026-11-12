@@ -31,7 +31,8 @@ export default async function MyListingsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Meus anúncios</h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            Novos anúncios passam por análise antes de aparecerem no site.
+            Anúncios novos ou editados passam pela análise de um administrador antes de
+            aparecerem no site.
           </p>
         </div>
         <Link
@@ -43,9 +44,19 @@ export default async function MyListingsPage() {
       </div>
 
       {listings.length === 0 ? (
-        <p className="card-surface mt-8 rounded-[calc(var(--radius)+8px)] p-10 text-center text-sm text-[var(--color-muted)]">
-          Você ainda não criou nenhum anúncio.
-        </p>
+        <div className="card-surface mt-8 rounded-[calc(var(--radius)+8px)] p-10 text-center text-sm text-[var(--color-muted)]">
+          <p className="font-bold text-[var(--color-text)]">Você ainda não tem anúncios.</p>
+          <p className="mx-auto mt-1 max-w-sm leading-6">
+            Cadastre seu serviço com descrição, contatos e fotos. Ele vai para análise e aparece
+            no site depois de aprovado.
+          </p>
+          <Link
+            href="/my-listings/new"
+            className="mt-5 inline-flex font-bold text-[var(--color-primary)] hover:underline"
+          >
+            Criar meu primeiro anúncio
+          </Link>
+        </div>
       ) : (
         <ul className="mt-8 space-y-3">
           {listings.map((listing) => {

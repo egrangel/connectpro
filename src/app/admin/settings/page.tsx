@@ -44,12 +44,12 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
     <div>
       <h1 className="text-2xl font-bold tracking-tight">Aparência</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Banner, cores e identidade visual do site publico.
+        Banner, cores e identidade visual do site público.
       </p>
 
       {saved === "1" && (
         <p className="mt-4 rounded-md bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
-          Configuracoes salvas. O site ja reflete as mudancas.
+          Configurações salvas. O site já reflete as mudanças.
         </p>
       )}
       {error && (
@@ -67,7 +67,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
             <div className="flex flex-col gap-4">
               <label className="flex items-center gap-2 text-sm text-slate-700">
                 <input type="checkbox" name="bannerEnabled" defaultChecked={banner.enabled} />
-                Exibir carrossel na pagina inicial
+                Exibir carrossel na página inicial
               </label>
               <BannerSlidesEditor initialSlides={banner.slides} />
             </div>
@@ -75,7 +75,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
 
           <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
             <legend className="px-1 text-sm font-semibold text-slate-800">
-              Sistema de avaliacoes
+              Sistema de avaliações
             </legend>
             <label className="flex items-center gap-2 text-sm text-slate-700">
               <input
@@ -83,21 +83,21 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
                 name="reviewsEnabled"
                 defaultChecked={features.reviewsEnabled}
               />
-              Exibir avaliacoes e notas dos anuncios no site publico
+              Exibir avaliações e notas dos anúncios no site público
             </label>
             <p className="mt-2 text-xs leading-5 text-slate-500">
-              Ao desativar, as estrelas, a nota media e o formulario de avaliacao ficam ocultos
-              no site e novas avaliacoes deixam de ser aceitas. As avaliacoes ja enviadas sao
-              preservadas e voltam a aparecer se voce reativar a opcao.
+              Ao desativar, as estrelas, a nota média e o formulário de avaliação ficam ocultos
+              no site e novas avaliações deixam de ser aceitas. As avaliações já enviadas são
+              preservadas e voltam a aparecer se você reativar a opção.
             </p>
           </fieldset>
 
           <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
             <legend className="px-1 text-sm font-semibold text-slate-800">
-              Fotos dos anuncios
+              Fotos dos anúncios
             </legend>
             <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-              Maximo de fotos por anuncio
+              Máximo de fotos por anúncio
               <input
                 type="number"
                 name="maxPhotosPerListing"
@@ -111,8 +111,8 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
             </label>
             <p className="mt-2 text-xs leading-5 text-slate-500">
               Entre {PHOTOS_PER_LISTING_MIN} e {PHOTOS_PER_LISTING_MAX}. Reduzir o
-              limite nao apaga fotos ja enviadas: anuncios que passarem do novo
-              limite apenas deixam de aceitar fotos novas ate que alguma seja
+              limite não apaga fotos já enviadas: anúncios que passarem do novo
+              limite apenas deixam de aceitar fotos novas até que alguma seja
               removida.
             </p>
           </fieldset>
@@ -134,17 +134,17 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
             </label>
             <p className="mt-2 text-xs leading-5 text-slate-500">
               Quem cria uma conta precisa marcar que leu e aceita este texto — sem
-              isso o cadastro nao e concluido, e a data do aceite fica registrada
-              na conta. Alterar o texto vale para os proximos cadastros; quem ja
-              se cadastrou aceitou a versao vigente naquele momento. As quebras de
-              linha sao preservadas.
+              isso o cadastro não é concluído, e a data do aceite fica registrada
+              na conta. Alterar o texto vale para os próximos cadastros; quem já
+              se cadastrou aceitou a versão vigente naquele momento. As quebras de
+              linha são preservadas.
             </p>
           </fieldset>
 
           <fieldset className="rounded-lg border border-slate-200 bg-white p-5">
             <legend className="px-1 text-sm font-semibold text-slate-800">Tema de cores</legend>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <ColorField name="primary" label="Primaria" value={theme.primary} />
+              <ColorField name="primary" label="Primária" value={theme.primary} />
               <ColorField name="accent" label="Destaque" value={theme.accent} />
               <ColorField name="surface" label="Fundo" value={theme.surface} />
               <ColorField name="text" label="Texto" value={theme.text} />
@@ -154,7 +154,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
               <select name="radius" defaultValue={theme.radius} className={`${inputClass} max-w-48`}>
                 <option value="none">Reto</option>
                 <option value="sm">Sutil</option>
-                <option value="md">Medio</option>
+                <option value="md">Médio</option>
                 <option value="lg">Grande</option>
                 <option value="full">Arredondado</option>
               </select>
@@ -169,7 +169,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
                 <input type="text" name="siteName" required maxLength={60} defaultValue={branding.siteName} className={inputClass} />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Texto do rodape
+                Texto do rodapé
                 <input type="text" name="footerText" maxLength={300} defaultValue={branding.footerText} className={inputClass} />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
@@ -188,14 +188,14 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
             type="submit"
             className="self-start rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-700"
           >
-            Salvar configuracoes
+            Salvar configurações
           </button>
         </form>
 
         <aside className="h-fit rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24">
-          <h2 className="text-sm font-semibold text-slate-800">Previa visual</h2>
+          <h2 className="text-sm font-semibold text-slate-800">Prévia visual</h2>
           <p className="mt-1 text-xs leading-5 text-slate-500">
-            Amostra com as cores e o raio configurados. As alteracoes aparecem aqui apos salvar.
+            Amostra com as cores e o raio configurados. As alterações aparecem aqui após salvar.
           </p>
           <div
             style={previewStyle}
@@ -227,8 +227,8 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
                 <p className="mt-3 font-bold">Card de profissional</p>
                 <p className="mt-1 text-xs opacity-70">
                   {features.reviewsEnabled
-                    ? "Exemplo de texto, avaliacao e botao."
-                    : "Exemplo de texto e botao (avaliacoes ocultas)."}
+                    ? "Exemplo de texto, avaliação e botão."
+                    : "Exemplo de texto e botão (avaliações ocultas)."}
                 </p>
                 <p className="mt-3 text-xs font-bold text-[var(--preview-primary)]">Ver profissional</p>
               </div>

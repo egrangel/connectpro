@@ -143,7 +143,7 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
   return (
     <article className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
       <nav className="mb-5 text-sm font-semibold text-[var(--color-muted)]">
-        <Link href="/" className="hover:text-[var(--color-primary)]">Inicio</Link>
+        <Link href="/" className="hover:text-[var(--color-primary)]">Início</Link>
         {" / "}
         <Link href={`/?category=${listing.category.slug}#listagens`} className="hover:text-[var(--color-primary)]">
           {listing.category.name}
@@ -166,9 +166,9 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
                   <StarRating value={listing.ratingAvg} />
                   {listing.ratingCount > 0
                     ? `${listing.ratingAvg.toFixed(1)} - ${listing.ratingCount} ${
-                        listing.ratingCount === 1 ? "avaliacao" : "avaliacoes"
+                        listing.ratingCount === 1 ? "avaliação" : "avaliações"
                       }`
-                    : "Sem avaliacoes ainda"}
+                    : "Sem avaliações ainda"}
                 </span>
               )}
             </div>
@@ -177,7 +177,7 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
       </header>
 
       <div className="mt-6 grid gap-6 md:grid-cols-[1fr_320px]">
-        <section aria-label="Descricao" className="card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6">
+        <section aria-label="Descrição" className="card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6">
           <h2 className="mb-3 text-lg font-bold tracking-tight">Sobre o profissional</h2>
           <p className="whitespace-pre-line leading-8 text-[var(--color-muted)]">
             {listing.description}

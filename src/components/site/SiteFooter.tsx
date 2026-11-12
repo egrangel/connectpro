@@ -12,14 +12,14 @@ export function SiteFooter({ branding }: SiteFooterProps) {
           <p className="text-base font-bold text-[var(--color-text)]">{branding.siteName}</p>
           {branding.footerText && <p className="mt-2 max-w-2xl leading-6">{branding.footerText}</p>}
           <p className="mt-4 max-w-2xl text-xs leading-5">
-            Este aplicativo pertence a Rede Connect UPP - {" "}
+            Este portal pertence à Rede Connect UPP, da{" "}
             <a
               href="https://www.iprmaringa.com.br/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-[var(--color-primary)] underline-offset-4 hover:underline"
             >
-              1a Igreja Presbiteriana Renovada (IPR) de Maringa-PR
+              1ª Igreja Presbiteriana Renovada (IPR) de Maringá-PR
             </a>
             .
           </p>

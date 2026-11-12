@@ -34,7 +34,7 @@ export function ReviewForm({
 
       <div>
         <p className="mb-2 text-sm font-bold">
-          {isEditing ? "Atualize sua avaliacao" : "Sua avaliacao"}
+          {isEditing ? "Atualize sua avaliação" : "Sua avaliação"}
         </p>
         <div className="flex gap-1" role="radiogroup" aria-label="Nota de 1 a 5 estrelas">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -67,7 +67,8 @@ export function ReviewForm({
         defaultValue={initialComment}
         maxLength={REVIEW_COMMENT_MAX_LENGTH}
         rows={3}
-        placeholder="Conte como foi sua experiencia (opcional)"
+        aria-label="Comentário (opcional)"
+        placeholder="Conte como foi sua experiência (opcional)"
         className="w-full resize-y rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-3 py-2 text-sm outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_16%,transparent)]"
       />
 
@@ -78,8 +79,13 @@ export function ReviewForm({
         disabled={rating === 0}
         className="self-start rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_12px_26px_color-mix(in_srgb,var(--color-primary)_22%,transparent)] transition hover:-translate-y-0.5 hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {isEditing ? "Atualizar avaliacao" : "Enviar avaliacao"}
+        {isEditing ? "Atualizar avaliação" : "Enviar avaliação"}
       </button>
+      {rating === 0 && (
+        <p className="-mt-2 text-xs text-[var(--color-muted)]">
+          Escolha de 1 a 5 estrelas para enviar.
+        </p>
+      )}
     </form>
   );
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { registerAction } from "@/modules/auth/actions";
-import { getConsentTerms } from "@/modules/settings/service";
+import { getConsentTerms, getSiteConfig } from "@/modules/settings/service";
 
 export const metadata: Metadata = { title: "Criar conta" };
 
@@ -11,7 +11,12 @@ interface RegisterPageProps {
 }
 
 export default async function RegisterPage({ searchParams }: RegisterPageProps) {
-  const [{ error }, terms] = await Promise.all([searchParams, getConsentTerms()]);
+  const [{ error }, terms, config] = await Promise.all([
+    searchParams,
+    getConsentTerms(),
+    getSiteConfig(),
+  ]);
+  const { reviewsEnabled } = config.features;
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16">
@@ -19,7 +24,9 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
         <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Conta gratuita</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight">Criar conta</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-          Use sua conta para avaliar profissionais. Navegar nao exige cadastro.
+          {reviewsEnabled
+            ? "Com uma conta você avalia profissionais e anuncia seus serviços. Para buscar e ver contatos, não precisa de cadastro."
+            : "Com uma conta você anuncia seus serviços. Para buscar e ver contatos, não precisa de cadastro."}
         </p>
 
         <form action={registerAction} className="mt-7 flex flex-col gap-4">
@@ -47,8 +54,12 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
               required
               minLength={8}
               autoComplete="new-password"
+              aria-describedby="password-hint"
               className={inputClass}
             />
+            <span id="password-hint" className="text-xs font-normal text-[var(--color-muted)]">
+              Pelo menos 8 caracteres.
+            </span>
           </label>
 
           <fieldset className="mt-1 flex flex-col gap-2">
@@ -70,7 +81,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
                 required
                 className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
               />
-              <span>Li e aceito o termo de consentimento acima. *</span>
+              <span>Li e aceito o termo de consentimento acima.</span>
             </label>
           </fieldset>
 
@@ -82,7 +93,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
         </form>
 
         <p className="mt-6 text-sm text-[var(--color-muted)]">
-          Ja tem conta?{" "}
+          Já tem conta?{" "}
           <Link href="/login" className="font-bold text-[var(--color-primary)] hover:underline">
             Entrar
           </Link>

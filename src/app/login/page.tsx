@@ -18,7 +18,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Acesso</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight">Entrar</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-          Acesse sua conta para avaliar profissionais.
+          Entre para avaliar profissionais e gerenciar seus anúncios.
         </p>
 
         <form action={loginAction} className="mt-7 flex flex-col gap-4">
@@ -54,7 +54,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </form>
 
         <p className="mt-6 text-sm text-[var(--color-muted)]">
-          Ainda nao tem conta?{" "}
+          Ainda não tem conta?{" "}
           <Link href="/register" className="font-bold text-[var(--color-primary)] hover:underline">
             Criar conta gratuita
           </Link>
