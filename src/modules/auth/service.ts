@@ -8,6 +8,7 @@ import {
   resetTokenExpiry,
 } from "@/lib/auth/reset-token";
 import { ROLES } from "@/lib/constants";
+import { REGISTER_CREATE_ERROR } from "./register-errors";
 import type {
   ForgotPasswordInput,
   LoginInput,
@@ -45,7 +46,7 @@ export async function registerUser(input: RegisterInput): Promise<AuthResult> {
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return { ok: false, error: "Não foi possível criar a conta com esses dados." };
+    return { ok: false, error: REGISTER_CREATE_ERROR };
   }
 
   const user = await prisma.user.create({

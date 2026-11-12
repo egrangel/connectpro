@@ -12,6 +12,7 @@ import {
   resetPassword,
 } from "./service";
 import { sendPasswordResetEmail } from "./reset-email";
+import { RATE_LIMIT_ERROR } from "./register-errors";
 
 async function clientKey(scope: string): Promise<string> {
   const headerList = await headers();
@@ -57,7 +58,7 @@ export async function registerAction(formData: FormData): Promise<void> {
     backTo("/register", parsed.error.issues[0]?.message ?? "Dados inválidos");
   }
   if (!checkRateLimit(await clientKey("register"), RATE_LIMITS.register)) {
-    backTo("/register", "Muitas tentativas. Aguarde alguns minutos.");
+    backTo("/register", RATE_LIMIT_ERROR);
   }
 
   const result = await registerUser(parsed.data);
