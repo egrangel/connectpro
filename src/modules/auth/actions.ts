@@ -12,7 +12,7 @@ import {
   resetPassword,
 } from "./service";
 import { sendPasswordResetEmail } from "./reset-email";
-import { RATE_LIMIT_ERROR } from "./register-errors";
+import { INVALID_LINK_ERROR, RATE_LIMIT_ERROR } from "./auth-errors";
 
 async function clientKey(scope: string): Promise<string> {
   const headerList = await headers();
@@ -34,7 +34,7 @@ export async function loginAction(formData: FormData): Promise<void> {
     backTo("/login", parsed.error.issues[0]?.message ?? "Dados inválidos");
   }
   if (!checkRateLimit(await clientKey("login"), RATE_LIMITS.login)) {
-    backTo("/login", "Muitas tentativas. Aguarde alguns minutos.");
+    backTo("/login", RATE_LIMIT_ERROR);
   }
 
   const result = await authenticateUser(parsed.data);
@@ -100,7 +100,7 @@ export async function forgotPasswordAction(formData: FormData): Promise<void> {
       RATE_LIMITS.passwordReset,
     );
   if (throttled) {
-    backToForgotPassword("Muitas tentativas. Aguarde alguns minutos.", email);
+    backToForgotPassword(RATE_LIMIT_ERROR, email);
   }
 
   const grant = await createPasswordResetGrant(parsed.data);
@@ -127,12 +127,12 @@ export async function resetPasswordAction(formData: FormData): Promise<void> {
     backToResetPassword(token, message);
   }
   if (!checkRateLimit(await clientKey("reset-password"), RATE_LIMITS.passwordReset)) {
-    backToResetPassword(token, "Muitas tentativas. Aguarde alguns minutos.");
+    backToResetPassword(token, RATE_LIMIT_ERROR);
   }
 
   const result = await resetPassword(parsed.data);
   if (!result.ok || !result.userId) {
-    backToForgotPassword(result.error ?? "Link inválido ou expirado.", "");
+    backToForgotPassword(result.error ?? INVALID_LINK_ERROR, "");
   }
 
   // resetPassword revoked every existing session; this one is brand new.

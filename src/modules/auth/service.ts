@@ -8,7 +8,7 @@ import {
   resetTokenExpiry,
 } from "@/lib/auth/reset-token";
 import { ROLES } from "@/lib/constants";
-import { REGISTER_CREATE_ERROR } from "./register-errors";
+import { GENERIC_LOGIN_ERROR, INVALID_RESET_ERROR, REGISTER_CREATE_ERROR } from "./auth-errors";
 import type {
   ForgotPasswordInput,
   LoginInput,
@@ -29,9 +29,6 @@ export interface PasswordResetGrant {
   token: string;
   expiresAt: Date;
 }
-
-const GENERIC_LOGIN_ERROR = "E-mail ou senha incorretos.";
-const INVALID_RESET_ERROR = "Link inválido ou expirado. Solicite um novo.";
 
 /**
  * Always creates a USER — role is deliberately not an input anywhere in the
