@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { registerAction } from "@/modules/auth/actions";
-import { resolveRegisterError } from "@/modules/auth/register-errors";
+import { resolveAuthError } from "@/modules/auth/auth-errors";
 import { getConsentTerms, getSiteConfig } from "@/modules/settings/service";
 
 export const metadata: Metadata = { title: "Criar conta" };
@@ -23,7 +23,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
       termsText={terms.text}
       branding={config.branding}
       reviewsEnabled={config.features.reviewsEnabled}
-      error={resolveRegisterError(error)}
+      error={resolveAuthError("register", error)}
     />
   );
 }

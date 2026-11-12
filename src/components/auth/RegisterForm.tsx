@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useFormStatus } from "react-dom";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { MemberCard } from "@/components/auth/MemberCard";
-import type { RegisterError } from "@/modules/auth/register-errors";
+import { AuthErrorBanner } from "@/components/auth/AuthErrorBanner";
+import type { AuthError } from "@/modules/auth/auth-errors";
 import type { BrandingConfig } from "@/modules/settings/schema";
 
 interface RegisterFormProps {
@@ -13,7 +14,7 @@ interface RegisterFormProps {
   termsText: string;
   branding: BrandingConfig;
   reviewsEnabled: boolean;
-  error: RegisterError | null;
+  error: AuthError | null;
 }
 
 const NAME_MIN_LENGTH = 2;
@@ -32,30 +33,6 @@ function SubmitButton() {
     >
       {pending ? "Criando conta…" : "Criar conta"}
     </button>
-  );
-}
-
-function ErrorBanner({ error }: { error: RegisterError }) {
-  return (
-    <div
-      role="alert"
-      className="mt-5 rounded-[var(--radius)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-    >
-      <p className="font-semibold">{error.message}</p>
-      {error.offerRecovery && (
-        <p className="mt-1">
-          Se você já tem conta,{" "}
-          <Link href="/login" className="font-bold underline underline-offset-2">
-            entre
-          </Link>{" "}
-          ou{" "}
-          <Link href="/forgot-password" className="font-bold underline underline-offset-2">
-            recupere a senha
-          </Link>
-          .
-        </p>
-      )}
-    </div>
   );
 }
 
@@ -111,7 +88,7 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
           {reviewsEnabled ? "Ela serve para avaliar e para anunciar." : "Ela serve para anunciar o seu serviço."}
         </p>
 
-        {error && <ErrorBanner error={error} />}
+        {error && <AuthErrorBanner error={error} />}
 
         <form action={action} className="mt-6 flex flex-col gap-4">
           <label className="flex flex-col gap-1.5 text-sm font-bold">

@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { isResetTokenFormat } from "@/lib/auth/reset-token";
+import { AuthErrorBanner } from "@/components/auth/AuthErrorBanner";
 import { resetPasswordAction } from "@/modules/auth/actions";
+import { resolveAuthError } from "@/modules/auth/auth-errors";
 
 export const metadata: Metadata = { title: "Nova senha" };
 
@@ -11,7 +13,8 @@ interface ResetPasswordPageProps {
 }
 
 export default async function ResetPasswordPage({ searchParams }: ResetPasswordPageProps) {
-  const { token, error } = await searchParams;
+  const { token, error: rawError } = await searchParams;
+  const error = resolveAuthError("resetPassword", rawError);
   // Shape check only — whether the token is real (and unexpired) is decided by
   // the server action, so this page never confirms a token's validity.
   const hasUsableToken = Boolean(token && isResetTokenFormat(token));
@@ -27,6 +30,8 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
               Escolha uma senha de no mínimo 8 caracteres. Ao concluir, todas as sessões abertas
               nesta conta serão encerradas.
             </p>
+
+            {error && <AuthErrorBanner error={error} />}
 
             <form action={resetPasswordAction} className="mt-7 flex flex-col gap-4">
               <input type="hidden" name="token" value={token} />
@@ -52,8 +57,6 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
                   className={inputClass}
                 />
               </label>
-
-              {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 
               <button type="submit" className={primaryButtonClass}>
                 Salvar nova senha

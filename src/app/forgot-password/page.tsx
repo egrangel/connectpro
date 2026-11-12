@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { PASSWORD_RESET_TOKEN_TTL_MINUTES } from "@/lib/constants";
+import { AuthErrorBanner } from "@/components/auth/AuthErrorBanner";
 import { forgotPasswordAction } from "@/modules/auth/actions";
+import { resolveAuthError } from "@/modules/auth/auth-errors";
 
 export const metadata: Metadata = { title: "Esqueci minha senha" };
 
@@ -11,7 +13,8 @@ interface ForgotPasswordPageProps {
 }
 
 export default async function ForgotPasswordPage({ searchParams }: ForgotPasswordPageProps) {
-  const { error, sent, email } = await searchParams;
+  const { error: rawError, sent, email } = await searchParams;
+  const error = resolveAuthError("forgotPassword", rawError);
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16">
@@ -38,6 +41,8 @@ export default async function ForgotPasswordPage({ searchParams }: ForgotPasswor
               Informe o e-mail da sua conta e enviaremos um link para redefinir a senha.
             </p>
 
+            {error && <AuthErrorBanner error={error} />}
+
             <form action={forgotPasswordAction} className="mt-7 flex flex-col gap-4">
               <label className="flex flex-col gap-1.5 text-sm font-bold">
                 E-mail
@@ -50,8 +55,6 @@ export default async function ForgotPasswordPage({ searchParams }: ForgotPasswor
                   className={inputClass}
                 />
               </label>
-
-              {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 
               <button type="submit" className={primaryButtonClass}>
                 Enviar link de recuperação
