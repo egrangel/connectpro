@@ -72,7 +72,11 @@ export function ReviewForm({
         className="w-full resize-y rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-3 py-2 text-sm outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_16%,transparent)]"
       />
 
-      {error && <p className="text-sm font-bold text-red-600">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm font-bold text-red-600">
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"

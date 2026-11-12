@@ -7,6 +7,7 @@ import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { getSiteFeatures } from "@/modules/settings/service";
 import { reviewInputSchema } from "./schema";
 import { deleteOwnReview, submitReview } from "./service";
+import { REVIEW_DELETE_ERROR, REVIEW_RATE_LIMIT_ERROR, REVIEW_SAVE_ERROR } from "./review-errors";
 
 function backToListing(slug: string, error?: string): never {
   const suffix = error ? `?reviewError=${encodeURIComponent(error)}` : "";
@@ -35,12 +36,12 @@ export async function submitReviewAction(formData: FormData): Promise<void> {
     backToListing(slug, parsed.error.issues[0]?.message ?? "Dados inválidos");
   }
   if (!checkRateLimit(`review:${user.id}`, RATE_LIMITS.review)) {
-    backToListing(slug, "Muitas avaliações em pouco tempo. Tente mais tarde.");
+    backToListing(slug, REVIEW_RATE_LIMIT_ERROR);
   }
 
   const result = await submitReview(parsed.data, user.id);
   if (!result.ok) {
-    backToListing(slug, result.error ?? "Não foi possível salvar a avaliação.");
+    backToListing(slug, result.error ?? REVIEW_SAVE_ERROR);
   }
   revalidatePath(`/p/${slug}`);
   backToListing(slug);
@@ -56,7 +57,7 @@ export async function deleteReviewAction(formData: FormData): Promise<void> {
 
   const result = await deleteOwnReview(reviewId, user.id);
   if (!result.ok) {
-    backToListing(slug, result.error ?? "Não foi possível excluir a avaliação.");
+    backToListing(slug, result.error ?? REVIEW_DELETE_ERROR);
   }
   revalidatePath(`/p/${slug}`);
   backToListing(slug);

@@ -3,6 +3,7 @@ import { LISTING_STATUS, REVIEW_STATUS } from "@/lib/constants";
 import { computeRatingAggregate } from "./aggregate";
 import type { ReviewInput } from "./schema";
 import type { Prisma } from "@prisma/client";
+import { REVIEW_NOT_FOUND_ERROR, REVIEW_UNAVAILABLE_ERROR } from "./review-errors";
 
 type Tx = Prisma.TransactionClient;
 
@@ -35,7 +36,7 @@ export async function submitReview(
 ): Promise<ReviewResult> {
   const listing = await prisma.listing.findUnique({ where: { id: input.listingId } });
   if (!listing || listing.status !== LISTING_STATUS.PUBLISHED) {
-    return { ok: false, error: "Este anúncio não está disponível para avaliação." };
+    return { ok: false, error: REVIEW_UNAVAILABLE_ERROR };
   }
 
   await prisma.$transaction(async (tx) => {
@@ -65,7 +66,7 @@ export async function deleteOwnReview(
 ): Promise<ReviewResult> {
   const review = await prisma.review.findUnique({ where: { id: reviewId } });
   if (!review || review.userId !== userId) {
-    return { ok: false, error: "Avaliação não encontrada." };
+    return { ok: false, error: REVIEW_NOT_FOUND_ERROR };
   }
   await prisma.$transaction(async (tx) => {
     await tx.review.delete({ where: { id: reviewId } });
@@ -81,7 +82,7 @@ export async function setReviewStatus(
 ): Promise<ReviewResult> {
   const review = await prisma.review.findUnique({ where: { id: reviewId } });
   if (!review) {
-    return { ok: false, error: "Avaliação não encontrada." };
+    return { ok: false, error: REVIEW_NOT_FOUND_ERROR };
   }
   await prisma.$transaction(async (tx) => {
     await tx.review.update({ where: { id: reviewId }, data: { status } });

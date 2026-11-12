@@ -15,6 +15,7 @@ import { StarRating } from "@/components/ui/StarRating";
 import { instagramProfileUrl } from "@/modules/listings/instagram";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getPublishedListingBySlug } from "@/modules/listings/service";
+import { resolveReviewError } from "@/modules/reviews/review-errors";
 import { getSiteFeatures } from "@/modules/settings/service";
 import {
   getUserReviewForListing,
@@ -75,7 +76,8 @@ function ContactRow({ icon, label, value, href }: ContactRowProps) {
 }
 
 export default async function ListingPage({ params, searchParams }: ListingPageProps) {
-  const [{ slug }, { reviewError }] = await Promise.all([params, searchParams]);
+  const [{ slug }, { reviewError: rawReviewError }] = await Promise.all([params, searchParams]);
+  const reviewError = resolveReviewError(rawReviewError) ?? undefined;
   const listing = await getPublishedListingBySlug(slug);
   if (!listing) notFound();
 
