@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-12T00:00:00.000Z",
+  "title": "Design System: Rede Connect UPP",
+  "extensions": {
+    "runtimeTheme": {
+      "note": "Public colours and radius are runtime-configurable defaults. Admins set them in admin -> Configurações; src/app/layout.tsx injects them as inline CSS custom properties over the :root defaults in src/app/globals.css (mirrored by DEFAULT_THEME in src/modules/settings/schema.ts). The admin portal is not themed.",
+      "variables": {
+        "--color-primary": "#1A3D8A",
+        "--color-accent": "#C8880A",
+        "--color-surface": "#F4F7FF",
+        "--color-text": "#0F1E40",
+        "--radius": "10px"
+      },
+      "radiusOptions": { "none": "0px", "sm": "4px", "md": "10px", "lg": "18px", "full": "9999px" },
+      "derived": {
+        "--color-panel": "color-mix(in srgb, var(--color-surface) 54%, white)",
+        "--color-muted": "color-mix(in srgb, var(--color-text) 62%, white)",
+        "--color-line": "color-mix(in srgb, var(--color-text) 10%, transparent)"
+      },
+      "configurableBranding": ["siteName", "logoKey", "footerText"]
+    },
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Emblem Navy", "canonical": "var(--color-primary)", "tonalRamp": ["#0C1C42", "#13296A", "#1A3D8A", "#2E56AE", "#5579C4", "#8AA2D8", "#BFCDEC", "#E6ECF8"] },
+      "accent": { "role": "secondary", "displayName": "Ring Gold", "canonical": "var(--color-accent)", "tonalRamp": ["#4A3204", "#7A5206", "#A56F08", "#C8880A", "#DDA53A", "#E8C073", "#F2DAAA", "#FAF0DC"] },
+      "surface": { "role": "neutral", "displayName": "Pale Field", "canonical": "var(--color-surface)", "tonalRamp": ["#1D2433", "#3A4558", "#66728A", "#98A3B9", "#C4CDE0", "#E1E7F5", "#F4F7FF", "#FAFBFF"] },
+      "text": { "role": "neutral", "displayName": "Night Ink", "canonical": "var(--color-text)", "tonalRamp": ["#0F1E40", "#233358", "#3D4C70", "#5E6B8A", "#8792AA", "#B2BAC9", "#D9DDE6", "#F1F3F7"] },
+      "panel": { "role": "neutral", "displayName": "Panel White", "canonical": "color-mix(in srgb, var(--color-surface) 54%, white)", "tonalRamp": ["#3A4558", "#66728A", "#98A3B9", "#C4CDE0", "#E1E7F5", "#F4F7FF", "#F9FBFF", "#FFFFFF"] },
+      "muted": { "role": "neutral", "displayName": "Slate Muted", "canonical": "color-mix(in srgb, var(--color-text) 62%, white)", "tonalRamp": ["#2A3550", "#3D4C70", "#535F7C", "#6A7389", "#8792AA", "#A9B0C1", "#CDD2DC", "#ECEEF3"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "color-mix(in srgb, var(--color-text) 10%, transparent)", "tonalRamp": ["rgba(15,30,64,0.60)", "rgba(15,30,64,0.45)", "rgba(15,30,64,0.32)", "rgba(15,30,64,0.22)", "rgba(15,30,64,0.16)", "rgba(15,30,64,0.10)", "rgba(15,30,64,0.06)", "rgba(15,30,64,0.03)"] },
+      "white": { "role": "neutral", "displayName": "White", "canonical": "#FFFFFF", "tonalRamp": ["#1F1F1F", "#474747", "#707070", "#999999", "#C2C2C2", "#E0E0E0", "#F5F5F5", "#FFFFFF"] },
+      "star-empty": { "role": "neutral", "displayName": "Unlit Star", "canonical": "#D7DBE0", "tonalRamp": ["#2B2F35", "#4A5058", "#6C737D", "#9098A2", "#B5BBC3", "#D7DBE0", "#E8EBEE", "#F5F6F8"] },
+      "error-bg": { "role": "status", "displayName": "Error Wash", "canonical": "#FEF2F2", "tonalRamp": ["#7F1D1D", "#B91C1C", "#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#FECACA", "#FEF2F2"] },
+      "error-text": { "role": "status", "displayName": "Error Red", "canonical": "#B91C1C", "tonalRamp": ["#7F1D1D", "#B91C1C", "#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#FECACA", "#FEF2F2"] },
+      "success-bg": { "role": "status", "displayName": "Success Wash", "canonical": "#ECFDF5", "tonalRamp": ["#064E3B", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0", "#ECFDF5"] },
+      "success-text": { "role": "status", "displayName": "Success Green", "canonical": "#047857", "tonalRamp": ["#064E3B", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0", "#ECFDF5"] },
+      "pending-bg": { "role": "status", "displayName": "Pending Wash", "canonical": "#FFFBEB", "tonalRamp": ["#78350F", "#92400E", "#D97706", "#F59E0B", "#FBBF24", "#FCD34D", "#FDE68A", "#FFFBEB"] },
+      "pending-text": { "role": "status", "displayName": "Pending Amber", "canonical": "#92400E", "tonalRamp": ["#78350F", "#92400E", "#D97706", "#F59E0B", "#FBBF24", "#FCD34D", "#FDE68A", "#FFFBEB"] },
+      "admin-ink": { "role": "admin", "displayName": "Admin Slate 900", "canonical": "#0F172A", "tonalRamp": ["#0F172A", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9"] },
+      "admin-body": { "role": "admin", "displayName": "Admin Slate 600", "canonical": "#475569", "tonalRamp": ["#0F172A", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9"] },
+      "admin-muted": { "role": "admin", "displayName": "Admin Slate 500", "canonical": "#64748B", "tonalRamp": ["#0F172A", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9"] },
+      "admin-border": { "role": "admin", "displayName": "Admin Slate 300", "canonical": "#CBD5E1", "tonalRamp": ["#0F172A", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9"] },
+      "admin-hairline": { "role": "admin", "displayName": "Admin Slate 200", "canonical": "#E2E8F0", "tonalRamp": ["#0F172A", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero carousel headlines only; 2.25rem base, 3.75rem from sm." },
+      "headline": { "displayName": "Headline", "purpose": "Page titles (register 2.25rem to 2.75rem; listing 1.875rem to 2.25rem)." },
+      "section": { "displayName": "Section", "purpose": "Section heads; 1.5rem base, 1.875rem from sm." },
+      "title": { "displayName": "Title", "purpose": "Card and panel titles." },
+      "body": { "displayName": "Body", "purpose": "Lead and description copy, usually muted." },
+      "body-sm": { "displayName": "Body small", "purpose": "Default size for card copy, hints and metadata." },
+      "label": { "displayName": "Label", "purpose": "Form labels and button text." },
+      "caption": { "displayName": "Caption", "purpose": "Chips, badges, fine print." }
+    },
+    "radiusMeta": {
+      "control": "var(--radius)",
+      "card-listing": "calc(var(--radius) + 6px)",
+      "card": "calc(var(--radius) + 8px)",
+      "media": "calc(var(--radius) + 10px)",
+      "member-card": "calc(var(--radius) + 14px)",
+      "pill": "9999px"
+    },
+    "shadows": [
+      { "name": "card", "value": "0 10px 30px color-mix(in srgb, var(--color-text) 9%, transparent)", "purpose": "Every card-surface panel at rest (--shadow-card)." },
+      { "name": "soft", "value": "0 18px 55px color-mix(in srgb, var(--color-primary) 13%, transparent)", "purpose": "Listing card hover and photo carousel frame (--shadow-soft)." },
+      { "name": "action-glow", "value": "0 14px 30px color-mix(in srgb, var(--color-primary) 22%, transparent)", "purpose": "Primary buttons." },
+      { "name": "header", "value": "0 8px 28px color-mix(in srgb, var(--color-text) 6%, transparent)", "purpose": "Sticky site header." },
+      { "name": "member-card", "value": "0 28px 60px color-mix(in srgb, var(--color-text) 28%, transparent), 0 6px 16px color-mix(in srgb, var(--color-text) 14%, transparent)", "purpose": "Register member card at rest." },
+      { "name": "member-card-active", "value": "0 36px 70px color-mix(in srgb, var(--color-text) 32%, transparent), 0 8px 20px color-mix(in srgb, var(--color-text) 16%, transparent)", "purpose": "Member card while the name field has focus." },
+      { "name": "over-imagery", "value": "0 18px 40px rgba(0,0,0,.22)", "purpose": "White CTA on hero photography." }
+    ],
+    "focus": [
+      { "name": "global-focus", "value": "outline: 3px solid color-mix(in srgb, var(--color-accent) 64%, white); outline-offset: 3px", "purpose": "Every :focus-visible on the public site." },
+      { "name": "input-focus", "value": "border-color: var(--color-primary); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 16%, transparent)", "purpose": "Text inputs (18% on the search field)." },
+      { "name": "selection", "value": "background: color-mix(in srgb, var(--color-accent) 32%, white)", "purpose": "Text selection." }
+    ],
+    "motion": [
+      { "name": "ease-settle", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Member card straighten/settle, 420ms on transform and shadow." },
+      { "name": "lift-action", "value": "translateY(-2px); opacity 0.95", "purpose": "Primary and CTA button hover." },
+      { "name": "lift-card", "value": "translateY(-4px), 200ms", "purpose": "Listing card hover; cover image scales to 1.04 over 500ms." },
+      { "name": "hero-crossfade", "value": "opacity 700ms (images), 500ms (copy)", "purpose": "Hero carousel slide change; autoplay 5500ms, paused on hover/focus, off under reduced motion." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) { transition: none }", "purpose": "Required for every signature motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Navy filled action with tinted glow; lifts 2px on hover.",
+      "html": "<button class=\"ds-btn-primary\">Criar conta</button>",
+      "css": ".ds-btn-primary { border: 0; border-radius: var(--radius, 10px); background: var(--color-primary, #1A3D8A); color: #fff; padding: 12px 20px; font: 700 14px/1.25 var(--font-geist-sans, Geist), system-ui, sans-serif; box-shadow: 0 14px 30px color-mix(in srgb, var(--color-primary, #1A3D8A) 22%, transparent); cursor: pointer; transition: transform 150ms, opacity 150ms; } .ds-btn-primary:hover { transform: translateY(-2px); opacity: .95; } .ds-btn-primary:focus-visible { outline: 3px solid color-mix(in srgb, var(--color-accent, #C8880A) 64%, white); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Translucent white with hairline; pagination, empty-state actions, Sair.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#\">Ver todos os profissionais</a>",
+      "css": ".ds-btn-secondary { display: inline-flex; border: 1px solid color-mix(in srgb, var(--color-text, #0F1E40) 10%, transparent); border-radius: var(--radius, 10px); background: rgba(255,255,255,.8); color: var(--color-primary, #1A3D8A); padding: 8px 16px; font: 700 14px/1.25 var(--font-geist-sans, Geist), system-ui, sans-serif; text-decoration: none; transition: background 150ms; } .ds-btn-secondary:hover { background: #fff; } .ds-btn-secondary:focus-visible { outline: 3px solid color-mix(in srgb, var(--color-accent, #C8880A) 64%, white); outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label-wrapped field with hairline and navy focus ring.",
+      "html": "<label class=\"ds-field\">Nome<input class=\"ds-input\" type=\"text\" placeholder=\"Seu nome\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font: 700 14px/1.25 var(--font-geist-sans, Geist), system-ui, sans-serif; color: var(--color-text, #0F1E40); } .ds-input { border: 1px solid color-mix(in srgb, var(--color-text, #0F1E40) 10%, transparent); border-radius: var(--radius, 10px); background: rgba(255,255,255,.86); padding: 10px 12px; font: 400 16px/1.5 inherit; color: inherit; caret-color: var(--color-primary, #1A3D8A); outline: none; transition: border-color 150ms, box-shadow 150ms; } .ds-input:focus { border-color: var(--color-primary, #1A3D8A); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary, #1A3D8A) 16%, transparent); }"
+    },
+    {
+      "name": "Filter Chips",
+      "kind": "chip",
+      "refersTo": "chip-filter",
+      "description": "Category pills; selected is navy-filled.",
+      "html": "<div class=\"ds-chips\"><a class=\"ds-chip ds-chip--active\" href=\"#\">Todas</a><a class=\"ds-chip\" href=\"#\">Eletricistas</a><a class=\"ds-chip\" href=\"#\">Aulas</a></div>",
+      "css": ".ds-chips { display: flex; gap: 8px; flex-wrap: wrap; } .ds-chip { border: 1px solid color-mix(in srgb, var(--color-text, #0F1E40) 10%, transparent); border-radius: 9999px; background: rgba(255,255,255,.7); color: color-mix(in srgb, var(--color-text, #0F1E40) 62%, white); padding: 8px 16px; font: 600 14px/1.25 var(--font-geist-sans, Geist), system-ui, sans-serif; text-decoration: none; transition: background 150ms, color 150ms; } .ds-chip:hover { background: #fff; color: var(--color-text, #0F1E40); } .ds-chip--active, .ds-chip--active:hover { border-color: transparent; background: var(--color-primary, #1A3D8A); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.05); } .ds-chip:focus-visible { outline: 3px solid color-mix(in srgb, var(--color-accent, #C8880A) 64%, white); outline-offset: 3px; }"
+    },
+    {
+      "name": "Card Surface",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The standard white panel: hairline, panel fill, soft card shadow.",
+      "html": "<section class=\"ds-card\"><h2 class=\"ds-card__title\">Sobre o profissional</h2><p class=\"ds-card__body\">Eletricista residencial com dez anos de experiência na região.</p></section>",
+      "css": ".ds-card { border: 1px solid color-mix(in srgb, var(--color-text, #0F1E40) 10%, transparent); border-radius: calc(var(--radius, 10px) + 8px); background: color-mix(in srgb, color-mix(in srgb, var(--color-surface, #F4F7FF) 54%, white) 92%, white); box-shadow: 0 10px 30px color-mix(in srgb, var(--color-text, #0F1E40) 9%, transparent); padding: 20px; font-family: var(--font-geist-sans, Geist), system-ui, sans-serif; color: var(--color-text, #0F1E40); } .ds-card__title { margin: 0 0 12px; font-size: 18px; font-weight: 700; letter-spacing: -0.025em; } .ds-card__body { margin: 0; font-size: 16px; line-height: 2; color: color-mix(in srgb, var(--color-text, #0F1E40) 62%, white); }"
+    },
+    {
+      "name": "Listing Card",
+      "kind": "card",
+      "refersTo": "listing-card",
+      "description": "Directory tile: photo with category badge, title, muted copy; lifts 4px and takes the soft shadow on hover.",
+      "html": "<a class=\"ds-listing\" href=\"#\"><div class=\"ds-listing__media\"><span class=\"ds-listing__badge\">Elétrica</span></div><div class=\"ds-listing__body\"><h3 class=\"ds-listing__title\">João Elétrica</h3><p class=\"ds-listing__copy\">Instalações, reparos e quadros de luz.</p><span class=\"ds-listing__more\">Ver profissional</span></div></a>",
+      "css": ".ds-listing { display: flex; flex-direction: column; width: 280px; overflow: hidden; text-decoration: none; color: var(--color-text, #0F1E40); font-family: var(--font-geist-sans, Geist), system-ui, sans-serif; border: 1px solid color-mix(in srgb, var(--color-text, #0F1E40) 10%, transparent); border-radius: calc(var(--radius, 10px) + 6px); background: #fbfcff; box-shadow: 0 10px 30px color-mix(in srgb, var(--color-text, #0F1E40) 9%, transparent); transition: transform 200ms, box-shadow 200ms; } .ds-listing:hover { transform: translateY(-4px); box-shadow: 0 18px 55px color-mix(in srgb, var(--color-primary, #1A3D8A) 13%, transparent); } .ds-listing:focus-visible { outline: 3px solid color-mix(in srgb, var(--color-accent, #C8880A) 64%, white); outline-offset: 3px; } .ds-listing__media { position: relative; aspect-ratio: 4/3; background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary, #1A3D8A) 92%, black), color-mix(in srgb, var(--color-accent, #C8880A) 82%, white)); } .ds-listing__badge { position: absolute; left: 12px; top: 12px; border-radius: 9999px; background: rgba(255,255,255,.92); color: var(--color-primary, #1A3D8A); padding: 4px 12px; font-size: 12px; font-weight: 700; } .ds-listing__body { display: flex; flex-direction: column; gap: 12px; padding: 20px; } .ds-listing__title { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.375; letter-spacing: -0.025em; } .ds-listing:hover .ds-listing__title { color: var(--color-primary, #1A3D8A); } .ds-listing__copy { margin: 0; font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--color-text, #0F1E40) 62%, white); } .ds-listing__more { font-size: 14px; font-weight: 700; color: var(--color-primary, #1A3D8A); }"
+    },
+    {
+      "name": "Site Header",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Sticky translucent header with site name, ghost links and the primary register action.",
+      "html": "<header class=\"ds-header\"><a class=\"ds-header__brand\" href=\"#\"><span class=\"ds-header__mark\">R</span>Rede Connect UPP</a><nav class=\"ds-header__nav\"><a class=\"ds-header__link\" href=\"#\">Entrar</a><a class=\"ds-header__cta\" href=\"#\">Criar conta</a></nav></header>",
+      "css": ".ds-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--color-text, #0F1E40) 10%, transparent); background: color-mix(in srgb, color-mix(in srgb, var(--color-surface, #F4F7FF) 84%, white) 90%, transparent); backdrop-filter: blur(24px); box-shadow: 0 8px 28px color-mix(in srgb, var(--color-text, #0F1E40) 6%, transparent); font-family: var(--font-geist-sans, Geist), system-ui, sans-serif; color: var(--color-text, #0F1E40); } .ds-header__brand { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 600; letter-spacing: -0.025em; color: inherit; text-decoration: none; } .ds-header__mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius, 10px); background: var(--color-primary, #1A3D8A); color: #fff; font-size: 14px; font-weight: 700; } .ds-header__nav { display: flex; align-items: center; gap: 4px; font-size: 14px; } .ds-header__link { border-radius: var(--radius, 10px); padding: 8px 12px; font-weight: 600; color: inherit; text-decoration: none; transition: background 150ms; } .ds-header__link:hover { background: rgba(255,255,255,.7); } .ds-header__cta { border-radius: var(--radius, 10px); background: var(--color-primary, #1A3D8A); color: #fff; padding: 8px 16px; font-weight: 600; text-decoration: none; box-shadow: 0 10px 24px color-mix(in srgb, var(--color-primary, #1A3D8A) 22%, transparent); transition: transform 150ms, opacity 150ms; } .ds-header__cta:hover { transform: translateY(-2px); opacity: .95; } .ds-header a:focus-visible { outline: 3px solid color-mix(in srgb, var(--color-accent, #C8880A) 64%, white); outline-offset: 3px; }"
+    },
+    {
+      "name": "Member Card",
+      "kind": "custom",
+      "refersTo": "member-card",
+      "description": "Register-page account preview: primary-tinted network art, emblem, site name, live name line; tilted -2deg, straightens on name focus.",
+      "html": "<div class=\"ds-member\" tabindex=\"0\"><div class=\"ds-member__brand\"><span class=\"ds-member__ring\">R</span>Rede Connect UPP</div><div class=\"ds-member__foot\"><p class=\"ds-member__name\">Seu nome</p><p class=\"ds-member__meta\"><span>Conta na rede</span>desde nov. 2026</p></div></div>",
+      "css": ".ds-member { position: relative; width: 416px; aspect-ratio: 13/8; padding: 32px; overflow: hidden; color: #fff; font-family: var(--font-geist-sans, Geist), system-ui, sans-serif; border-radius: calc(var(--radius, 10px) + 14px); background: radial-gradient(circle at 78% 40%, color-mix(in srgb, var(--color-accent, #C8880A) 45%, transparent), transparent 45%), linear-gradient(115deg, color-mix(in srgb, var(--color-primary, #1A3D8A) 100%, black 10%), color-mix(in srgb, var(--color-primary, #1A3D8A) 70%, white)); box-shadow: 0 28px 60px color-mix(in srgb, var(--color-text, #0F1E40) 28%, transparent), 0 6px 16px color-mix(in srgb, var(--color-text, #0F1E40) 14%, transparent); transform: rotate(-2deg); transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 420ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-member:hover, .ds-member:focus-visible { outline: none; transform: rotate(0deg) translateY(-4px); box-shadow: 0 36px 70px color-mix(in srgb, var(--color-text, #0F1E40) 32%, transparent), 0 8px 20px color-mix(in srgb, var(--color-text, #0F1E40) 16%, transparent); } .ds-member__brand { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; letter-spacing: -0.025em; } .ds-member__ring { display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid var(--color-accent, #C8880A); border-radius: 9999px; font-size: 14px; font-weight: 700; } .ds-member__foot { position: absolute; left: 32px; right: 32px; bottom: 28px; } .ds-member__name { margin: 0; font-size: 2.15rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.025em; opacity: .75; } .ds-member__meta { margin: 16px 0 0; font-size: 14px; color: rgba(255,255,255,.8); } .ds-member__meta span { display: block; font-weight: 600; color: #fff; } @media (prefers-reduced-motion: reduce) { .ds-member { transition: none; } }"
+    },
+    {
+      "name": "Admin Input and Button",
+      "kind": "input",
+      "refersTo": "admin-input",
+      "description": "The unthemed admin world: slate, 6px corners, no tinted shadows.",
+      "html": "<div class=\"ds-admin\"><label class=\"ds-admin__field\">Nome do site<input class=\"ds-admin__input\" value=\"Rede Connect UPP\"></label><button class=\"ds-admin__btn\">Salvar</button></div>",
+      "css": ".ds-admin { display: flex; align-items: flex-end; gap: 12px; padding: 20px; border: 1px solid #E2E8F0; border-radius: 8px; background: #fff; font-family: var(--font-geist-sans, Geist), system-ui, sans-serif; } .ds-admin__field { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 500; color: #334155; } .ds-admin__input { border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; padding: 8px 12px; font-size: 14px; color: #0F172A; outline: none; } .ds-admin__input:focus { border-color: #64748B; box-shadow: 0 0 0 2px #E2E8F0; } .ds-admin__btn { border: 0; border-radius: 6px; background: #0F172A; color: #fff; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; } .ds-admin__btn:hover { background: #334155; } .ds-admin__btn:focus-visible { outline: 2px solid #64748B; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Network's Own Noticeboard",
+    "overview": "The public site is a calm, pale directory lit by one navy voice and a thread of gold: the palette of the Connect UPP emblem (navy globe, gold ring). Pages are white panels with soft, tinted shadows resting on a pale blue-white ground, set in Geist alone, with hierarchy carried by bold weight and tight tracking rather than a second face. Photography and the generated network artwork (warm points joined by gold lines on navy) appear under a primary tint, so imagery always speaks in the site's own colour.\n\nThe system is white-label by construction. Every public colour and the base corner radius are runtime-configurable defaults: admins set primary, accent, surface, text, radius (none / sm / md / lg / full), logo and site name in admin → Configurações, and the root layout injects them as CSS custom properties (--color-primary, --color-accent, --color-surface, --color-text, --radius) over the :root defaults in globals.css (mirrored by DEFAULT_THEME in src/modules/settings/schema.ts). Panel, muted text, hairlines and both shadows are derived from those four colours with color-mix(), so a re-branded site stays coherent without anyone touching code. The hex values in the frontmatter are the shipped defaults (derived tokens are their resolved approximations), not fixed brand law.\n\nThe admin portal (src/app/admin/**) is a separate, deliberately unthemed world: plain Tailwind slate on white, small radii, no tinted shadows. A broken theme must never break the tool used to fix it.",
+    "keyCharacteristics": [
+      "Four runtime theme colours plus a radius; everything else is mixed from them.",
+      "One family (Geist), bold and tightly tracked for every heading.",
+      "White panels with a soft card shadow on a pale gradient ground.",
+      "Corners all derive from one --radius by fixed offsets.",
+      "Primary actions lift 2px on hover; cards lift 4px.",
+      "Gold marks rating, focus and selection; navy carries action.",
+      "Admin is unthemed slate, on purpose."
+    ],
+    "rules": [
+      { "name": "The Runtime Palette Rule", "body": "Public surfaces reference only var(--color-primary|accent|surface|text), the derived --color-panel|muted|line, white, or color-mix() of these. A literal brand hex on a public surface breaks re-branding.", "section": "colors" },
+      { "name": "The Gold Signal Rule", "body": "Accent marks rating, focus, selection and the current sort; it never fills a button. Action is always navy.", "section": "colors" },
+      { "name": "The Unthemed Workshop Rule", "body": "Admin pages use slate and never read theme variables (the settings preview, which uses its own --preview-* vars, is the one sanctioned exception).", "section": "colors" },
+      { "name": "The One Family Rule", "body": "Geist only on the public site. No display face, no serif; emphasis is weight and tracking.", "section": "typography" },
+      { "name": "The Tinted Shadow Rule", "body": "Shadows are diffuse and colour-mixed from the theme; no hard offsets, no neutral grey except over photographs.", "section": "elevation" },
+      { "name": "The Radius Offset Rule", "body": "Never hard-code a public radius; use var(--radius) or calc(var(--radius) + n) so the admin's choice reaches every corner.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do reference theme colours through var(--color-*) and color-mix() on every public surface; the frontmatter hexes are defaults an admin can replace.",
+      "Do derive every public corner from var(--radius) with the established offsets (+6, +8, +10, +14, pill).",
+      "Do wrap content panels in the card surface: hairline border, panel fill, Card shadow, --radius + 8px.",
+      "Do tint imagery and artwork with primary so it holds under any theme, as the hero and member card do.",
+      "Do give primary actions the navy fill, action glow and 2px hover lift.",
+      "Do honour prefers-reduced-motion for every transition and autoplay.",
+      "Do use inline SVG for icons, coloured with currentColor or theme vars.",
+      "Do keep admin on the slate palette and 6px / 8px radii."
+    ],
+    "donts": [
+      "Don't write literal brand hex or slate utilities into public or member-area components; that silently breaks re-branding.",
+      "Don't fill buttons with the gold accent; gold is for rating, focus, selection and current state.",
+      "Don't add a second typeface to the public site.",
+      "Don't use hard offset or neutral grey shadows on public surfaces outside photographs.",
+      "Don't read theme variables in admin pages."
+    ]
+  }
+}
