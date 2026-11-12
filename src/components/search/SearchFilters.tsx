@@ -5,8 +5,6 @@ import type { ListingQuery } from "@/modules/listings/schema";
 interface SearchFiltersProps {
   categories: Category[];
   query: ListingQuery;
-  /** Hides the "Melhor avaliados" sort when the review system is off. */
-  showRatingSort?: boolean;
 }
 
 function buildHref(query: ListingQuery, overrides: Partial<ListingQuery>): string {
@@ -23,7 +21,6 @@ function buildHref(query: ListingQuery, overrides: Partial<ListingQuery>): strin
 export function SearchFilters({
   categories,
   query,
-  showRatingSort = true,
 }: SearchFiltersProps) {
   const chipBase =
     "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition";
@@ -39,7 +36,7 @@ export function SearchFilters({
           type="search"
           name="q"
           defaultValue={query.q ?? ""}
-          placeholder="Buscar por serviço, categoria, nome ou cidade"
+          placeholder="Buscar serviço, nome ou cidade"
           className="min-h-12 w-full rounded-[var(--radius)] border border-[var(--color-line)] bg-white/86 px-4 text-sm shadow-inner outline-none transition placeholder:text-[var(--color-muted)]/70 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]"
         />
         <button
@@ -50,7 +47,9 @@ export function SearchFilters({
         </button>
       </form>
 
-      <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1">
+      {/* Phones scroll the chips sideways; wider screens wrap them so no
+          category hides past the edge. */}
+      <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
         <Link
           href={buildHref(query, { category: undefined })}
           className={`${chipBase} ${
@@ -77,34 +76,43 @@ export function SearchFilters({
             </Link>
           );
         })}
-
-        {/* With reviews off, "Recentes" is the only order left — drop the group. */}
-        {showRatingSort && (
-          <>
-            <span className="mx-2 h-6 w-px shrink-0 bg-[var(--color-line)]" aria-hidden />
-            <Link
-              href={buildHref(query, { sort: "recent" })}
-              className={`${chipBase} ${
-                query.sort === "recent"
-                  ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
-                  : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
-              }`}
-            >
-              Recentes
-            </Link>
-            <Link
-              href={buildHref(query, { sort: "rating" })}
-              className={`${chipBase} ${
-                query.sort === "rating"
-                  ? "border-[color-mix(in_srgb,var(--color-accent)_55%,white)] bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
-                  : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
-              }`}
-            >
-              Melhor avaliados
-            </Link>
-          </>
-        )}
       </div>
     </div>
+  );
+}
+
+interface SortOptionsProps {
+  query: ListingQuery;
+}
+
+const SORT_OPTIONS = [
+  { value: "recent", label: "Recentes" },
+  { value: "rating", label: "Melhor avaliados" },
+] as const;
+
+/** Sort order next to the result count. Render only when reviews are on:
+ *  without ratings, "Recentes" is the only order left. */
+export function SortOptions({ query }: SortOptionsProps) {
+  return (
+    <nav aria-label="Ordenar anúncios" className="flex items-center gap-1 text-sm">
+      <span className="mr-1 text-[var(--color-muted)]">Ordenar:</span>
+      {SORT_OPTIONS.map((option) => {
+        const isActive = query.sort === option.value;
+        return (
+          <Link
+            key={option.value}
+            href={buildHref(query, { sort: option.value })}
+            aria-current={isActive ? "true" : undefined}
+            className={`rounded-full px-3 py-1.5 font-semibold transition ${
+              isActive
+                ? "bg-[color-mix(in_srgb,var(--color-accent)_18%,white)] text-[var(--color-text)]"
+                : "text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
+            }`}
+          >
+            {option.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

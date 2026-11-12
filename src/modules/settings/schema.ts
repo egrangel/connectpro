@@ -135,7 +135,7 @@ export const DEFAULT_BRANDING: BrandingConfig = {
   siteName: "Rede Connect UPP",
   logoKey: "/branding/connect-upp-logo.png",
   footerText:
-    "Uma iniciativa da Rede Connect UPP para conectar você aos melhores profissionais da sua região.",
+    "Profissionais e serviços da nossa comunidade, reunidos em um só lugar.",
 };
 
 export interface SiteConfig {

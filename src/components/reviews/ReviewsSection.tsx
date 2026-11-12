@@ -39,9 +39,8 @@ export function ReviewsSection({
   return (
     <section id="avaliacoes" className="mt-12" aria-label="Avaliações">
       <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Experiências</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight">Avaliações</h2>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Avaliações</h2>
         </div>
       </div>
 

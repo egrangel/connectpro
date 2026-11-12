@@ -21,8 +21,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16">
       <div className="card-surface rounded-[calc(var(--radius)+10px)] p-6 sm:p-8">
-        <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Conta gratuita</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight">Criar conta</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Criar conta</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
           {reviewsEnabled
             ? "Com uma conta você avalia profissionais e anuncia seus serviços. Para buscar e ver contatos, não precisa de cadastro."

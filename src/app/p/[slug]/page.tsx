@@ -165,7 +165,7 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
                 <span className="flex items-center gap-1.5 font-semibold">
                   <StarRating value={listing.ratingAvg} />
                   {listing.ratingCount > 0
-                    ? `${listing.ratingAvg.toFixed(1)} - ${listing.ratingCount} ${
+                    ? `${listing.ratingAvg.toFixed(1)} · ${listing.ratingCount} ${
                         listing.ratingCount === 1 ? "avaliação" : "avaliações"
                       }`
                     : "Sem avaliações ainda"}
@@ -184,7 +184,8 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
           </p>
         </section>
 
-        <aside className="card-surface h-fit rounded-[calc(var(--radius)+8px)] p-5">
+        {/* First on phones: reaching the professional is why visitors come. */}
+        <aside className="card-surface order-first h-fit rounded-[calc(var(--radius)+8px)] p-5 md:order-none">
           <h2 className="mb-4 text-lg font-bold tracking-tight">Contato</h2>
           <div className="flex flex-col gap-3 text-sm">
             {contacts.map((contact) => (

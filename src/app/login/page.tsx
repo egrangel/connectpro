@@ -15,8 +15,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16">
       <div className="card-surface rounded-[calc(var(--radius)+10px)] p-6 sm:p-8">
-        <p className="text-xs font-bold uppercase text-[var(--color-primary)]">Acesso</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight">Entrar</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Entrar</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
           Entre para avaliar profissionais e gerenciar seus anúncios.
         </p>

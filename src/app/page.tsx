@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { after } from "next/server";
 import { HeroBanner } from "@/components/site/HeroBanner";
-import { SearchFilters } from "@/components/search/SearchFilters";
+import { SearchFilters, SortOptions } from "@/components/search/SearchFilters";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { searchTerms } from "@/lib/text";
 import { listActiveCategories } from "@/modules/categories/service";
@@ -49,7 +49,7 @@ function EmptyResults({ query, isFiltered }: EmptyResultsProps) {
       }
     : query
       ? {
-          title: `Nada encontrado para "${query}".`,
+          title: `Nada encontrado para “${query}”.`,
           hint: "Confira a grafia ou busque pelo nome do serviço, como “eletricista” ou “aulas”.",
           action: seeAll,
         }
@@ -99,24 +99,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <HeroBanner banner={config.banner} />
 
       <section id="listagens" className="mx-auto max-w-6xl px-4 py-12 sm:py-14">
-        <SearchFilters
-          categories={categories}
-          query={query}
-          showRatingSort={reviewsEnabled}
-        />
+        <SearchFilters categories={categories} query={query} />
 
-        <div className="mt-10 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase text-[var(--color-primary)]">
-              Profissionais selecionados
-            </p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-              {query.q ? `Resultados para "${query.q}"` : "Encontre quem resolve"}
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {query.q ? `Resultados para “${query.q}”` : "Encontre quem resolve"}
             </h2>
+            <p className="mt-1 text-sm font-semibold text-[var(--color-muted)]">
+              {results.total} {results.total === 1 ? "anúncio" : "anúncios"}
+            </p>
           </div>
-          <span className="text-sm font-semibold text-[var(--color-muted)]">
-            {results.total} {results.total === 1 ? "anúncio" : "anúncios"}
-          </span>
+          {reviewsEnabled && results.total > 1 && <SortOptions query={query} />}
         </div>
 
         {results.items.length === 0 ? (

@@ -18,7 +18,7 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={branding.logoKey}
-              alt={branding.siteName}
+              alt=""
               className="h-11 w-auto max-w-42 object-contain sm:max-w-52"
             />
           ) : (
@@ -29,7 +29,10 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
               {branding.siteName.charAt(0)}
             </span>
           )}
-          {!branding.logoKey && <span className="truncate text-lg">{branding.siteName}</span>}
+          {/* An emblem alone doesn't say whose site this is; the name does. */}
+          <span className={`truncate text-lg ${branding.logoKey ? "sr-only sm:not-sr-only" : ""}`}>
+            {branding.siteName}
+          </span>
         </Link>
 
         <nav className="flex shrink-0 items-center gap-1 text-sm">

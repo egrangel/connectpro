@@ -39,7 +39,7 @@ export function PhotoCarousel({ photos, title }: PhotoCarouselProps) {
     return (
       <div
         aria-hidden
-        className="grid aspect-[16/9] w-full place-items-center rounded-[calc(var(--radius)+10px)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_92%,black),color-mix(in_srgb,var(--color-accent)_82%,white))] text-7xl font-bold text-white/92 shadow-[var(--shadow-soft)]"
+        className="grid aspect-[16/9] w-full place-items-center sm:aspect-[3/1] rounded-[calc(var(--radius)+10px)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-primary)_92%,black),color-mix(in_srgb,var(--color-accent)_82%,white))] text-7xl font-bold text-white/92 shadow-[var(--shadow-soft)]"
       >
         {title.charAt(0).toUpperCase()}
       </div>
