@@ -8,6 +8,8 @@ import { ROLES } from "@/lib/constants";
 import { deleteImageUpload, saveImageUpload } from "@/modules/media/storage";
 import { getSiteFeatures } from "@/modules/settings/service";
 import { canManageListing } from "./authorization";
+import type { PhotoErrorCode } from "./photo-errors";
+import type { UploadErrorCode } from "@/modules/media/upload-errors";
 
 /**
  * Photo actions shared by the admin panel and the author's own pages. Both
@@ -49,6 +51,11 @@ async function requireListingAccess(listingId: string): Promise<ListingAccess> {
   return { isAdmin, backUrl: listingUrl(listingId, isAdmin) };
 }
 
+/** Back to the listing page with an error code; the page turns it into text. */
+function backWithError(backUrl: string, code: PhotoErrorCode | UploadErrorCode): never {
+  redirect(`${backUrl}?error=${code}`);
+}
+
 function revalidatePublic(): void {
   revalidatePath("/", "layout");
 }
@@ -64,11 +71,7 @@ export async function uploadPhotoAction(formData: FormData): Promise<void> {
   const remaining = maxPhotosPerListing - photoCount;
 
   if (remaining <= 0) {
-    redirect(
-      `${backUrl}?error=${encodeURIComponent(
-        `Limite de ${maxPhotosPerListing} fotos por anúncio atingido.`,
-      )}`,
-    );
+    backWithError(backUrl, "photo-limit");
   }
 
   const files = formData
@@ -77,16 +80,16 @@ export async function uploadPhotoAction(formData: FormData): Promise<void> {
     .slice(0, remaining);
 
   if (files.length === 0) {
-    redirect(`${backUrl}?error=${encodeURIComponent("Selecione ao menos uma imagem.")}`);
+    backWithError(backUrl, "no-photo");
   }
 
-  let firstError: string | undefined;
+  let firstError: UploadErrorCode | undefined;
   let sortOrder = photoCount;
 
   for (const file of files) {
     const saved = await saveImageUpload(file);
     if (!saved.ok || !saved.storageKey) {
-      firstError ??= saved.error ?? "Falha no upload.";
+      firstError ??= saved.errorCode ?? "upload-failed";
       continue;
     }
     await prisma.listingPhoto.create({
@@ -97,7 +100,7 @@ export async function uploadPhotoAction(formData: FormData): Promise<void> {
 
   revalidatePublic();
   if (firstError) {
-    redirect(`${backUrl}?error=${encodeURIComponent(firstError)}`);
+    backWithError(backUrl, firstError);
   }
   redirect(backUrl);
 }

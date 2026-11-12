@@ -2,15 +2,10 @@ import { listActiveCategories } from "@/modules/categories/service";
 import { ListingForm } from "@/components/listings/ListingForm";
 import { saveListingAction } from "../actions";
 
-interface NewListingPageProps {
-  searchParams: Promise<{ error?: string }>;
-}
-
-export default async function NewListingPage({ searchParams }: NewListingPageProps) {
-  const [{ error }, categories] = await Promise.all([
-    searchParams,
-    listActiveCategories(),
-  ]);
+// Save errors come back through the form's own state, so this page reads
+// nothing from the URL: a ?error= here could only be someone else's text.
+export default async function NewListingPage() {
+  const categories = await listActiveCategories();
 
   return (
     <div>
@@ -19,7 +14,7 @@ export default async function NewListingPage({ searchParams }: NewListingPagePro
         Preencha os dados, escolha o status e salve. Como rascunho o anúncio não
         aparece no site; as fotos são enviadas na tela seguinte.
       </p>
-      <ListingForm categories={categories} error={error} action={saveListingAction} />
+      <ListingForm categories={categories} action={saveListingAction} />
     </div>
   );
 }

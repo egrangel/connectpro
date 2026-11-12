@@ -8,6 +8,7 @@ import { LISTING_STATUS } from "@/lib/constants";
 import { listActiveCategories } from "@/modules/categories/service";
 import { canManageListing, canPublishListing } from "@/modules/listings/authorization";
 import { deletePhotoAction } from "@/modules/listings/photo-actions";
+import { photoErrorMessage } from "@/modules/listings/photo-errors";
 import { getListingById } from "@/modules/listings/service";
 import { getSiteFeatures } from "@/modules/settings/service";
 import { saveOwnListingAction } from "../actions";
@@ -82,7 +83,7 @@ export default async function EditOwnListingPage({
         <ListingForm
           categories={categories}
           listing={listing}
-          error={error}
+          error={photoErrorMessage(error, maxPhotosPerListing) ?? undefined}
           saved={saved === "1"}
           action={saveOwnListingAction}
           canChangeStatus={canChangeStatus}

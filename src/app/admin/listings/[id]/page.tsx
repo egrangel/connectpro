@@ -8,6 +8,7 @@ import { ListingForm } from "@/components/listings/ListingForm";
 import { PhotoUploadForm } from "@/components/listings/PhotoUploadForm";
 import { deletePhotoAction } from "@/modules/listings/photo-actions";
 import { archiveListingAction, saveListingAction } from "../actions";
+import { photoErrorMessage } from "@/modules/listings/photo-errors";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
@@ -61,7 +62,7 @@ export default async function EditListingPage({ params, searchParams }: EditList
         <ListingForm
           categories={categories}
           listing={listing}
-          error={error}
+          error={photoErrorMessage(error, maxPhotosPerListing) ?? undefined}
           saved={saved === "1"}
           action={saveListingAction}
         />

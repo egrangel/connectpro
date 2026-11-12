@@ -8,16 +8,10 @@ import { saveOwnListingAction } from "../actions";
 
 export const metadata: Metadata = { title: "Novo anúncio" };
 
-interface NewOwnListingPageProps {
-  searchParams: Promise<{ error?: string }>;
-}
-
-export default async function NewOwnListingPage({ searchParams }: NewOwnListingPageProps) {
-  const [{ error }, user, categories] = await Promise.all([
-    searchParams,
-    requireUser(),
-    listActiveCategories(),
-  ]);
+// Save errors come back through the form's own state, so this page reads
+// nothing from the URL: a ?error= here could only be someone else's text.
+export default async function NewOwnListingPage() {
+  const [user, categories] = await Promise.all([requireUser(), listActiveCategories()]);
 
   // An admin reaching this page from the site header is still an admin: they
   // pick the status here instead of publishing their own listing from /admin.
@@ -41,7 +35,6 @@ export default async function NewOwnListingPage({ searchParams }: NewOwnListingP
       <div className="card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6 max-w-2xl">
         <ListingForm
           categories={categories}
-          error={error}
           action={saveOwnListingAction}
           canChangeStatus={canChangeStatus}
           variant="site"

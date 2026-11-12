@@ -9,6 +9,7 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { del as blobDel, put as blobPut } from "@vercel/blob";
 import { MAX_PHOTO_SIZE_BYTES } from "@/lib/constants";
+import { UPLOAD_ERROR_MESSAGES, type UploadErrorCode } from "./upload-errors";
 
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 const UPLOADS_PREFIX = "/uploads/";
@@ -69,27 +70,34 @@ const SIGNATURES: MagicSignature[] = [
 export interface SaveResult {
   ok: boolean;
   storageKey?: string;
+  /** Message to show; derived from errorCode. */
   error?: string;
+  /** Why the upload was refused, for callers that pass it through a URL. */
+  errorCode?: UploadErrorCode;
+}
+
+function uploadFailure(code: UploadErrorCode): SaveResult {
+  return { ok: false, error: UPLOAD_ERROR_MESSAGES[code], errorCode: code };
 }
 
 export async function saveImageUpload(file: File): Promise<SaveResult> {
   if (file.size === 0) {
-    return { ok: false, error: "Arquivo vazio." };
+    return uploadFailure("empty-file");
   }
   if (file.size > MAX_PHOTO_SIZE_BYTES) {
-    return { ok: false, error: "Imagem acima de 10 MB." };
+    return uploadFailure("too-large");
   }
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const signature = SIGNATURES.find((s) => s.matches(bytes));
   if (!signature) {
-    return { ok: false, error: "Formato não suportado — use JPEG, PNG, WebP ou SVG." };
+    return uploadFailure("unsupported");
   }
 
   if (signature.ext === "svg") {
     const content = new TextDecoder().decode(bytes);
     if (/<script/i.test(content)) {
-      return { ok: false, error: "SVG com scripts não é permitido." };
+      return uploadFailure("svg-script");
     }
   }
 
@@ -105,7 +113,7 @@ export async function saveImageUpload(file: File): Promise<SaveResult> {
       });
       return { ok: true, storageKey: blob.url };
     } catch {
-      return { ok: false, error: "Falha ao enviar a imagem. Tente novamente." };
+      return uploadFailure("upload-failed");
     }
   }
 
