@@ -55,7 +55,7 @@ export default async function EditOwnListingPage({
       <h1 className="mt-3 text-2xl font-bold tracking-tight">{listing.title}</h1>
 
       {isJustCreated && (
-        <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div role="status" className="mt-4 max-w-2xl rounded-[var(--radius)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <p className="font-semibold">
             {isPublished ? "Anúncio criado e publicado." : "Anúncio enviado para análise."}
           </p>
@@ -72,13 +72,13 @@ export default async function EditOwnListingPage({
       )}
 
       {isPublished && !canChangeStatus && (
-        <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <p className="mt-4 max-w-2xl rounded-[var(--radius)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Este anúncio está publicado. Se você editar os dados, ele volta para
           análise e sai do site até ser aprovado de novo.
         </p>
       )}
 
-      <div className="mt-6">
+      <div className="mt-6 max-w-2xl card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6">
         <ListingForm
           categories={categories}
           listing={listing}
@@ -86,19 +86,18 @@ export default async function EditOwnListingPage({
           saved={saved === "1"}
           action={saveOwnListingAction}
           canChangeStatus={canChangeStatus}
+          variant="site"
         />
       </div>
 
       <section
         id="photos"
-        className={`mt-10 max-w-2xl scroll-mt-6 ${
-          isJustCreated
-            ? "rounded-lg ring-2 ring-emerald-300 ring-offset-4 ring-offset-[var(--color-surface)]"
-            : ""
+        className={`mt-8 max-w-2xl scroll-mt-24 card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6 ${
+          isJustCreated ? "ring-2 ring-emerald-300 ring-offset-4 ring-offset-[var(--color-surface)]" : ""
         }`}
         aria-label="Fotos"
       >
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-bold tracking-tight">
           Fotos ({listing.photos.length}/{maxPhotosPerListing})
         </h2>
         {listing.photos.length > maxPhotosPerListing && (
@@ -112,7 +111,7 @@ export default async function EditOwnListingPage({
           {listing.photos.map((photo) => (
             <div
               key={photo.id}
-              className="group relative overflow-hidden rounded-md border border-[var(--color-line)]"
+              className="group relative overflow-hidden rounded-[var(--radius)] border border-[var(--color-line)]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -125,7 +124,8 @@ export default async function EditOwnListingPage({
                 <button
                   type="submit"
                   aria-label="Excluir foto"
-                  className="rounded-full bg-black/60 px-2 py-1 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100"
+                  // Always visible on touch screens, which have no hover.
+                  className="rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-black/80 focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
                 >
                   Excluir
                 </button>
@@ -139,6 +139,7 @@ export default async function EditOwnListingPage({
             key={listing.photos.length}
             listingId={listing.id}
             remaining={maxPhotosPerListing - listing.photos.length}
+            variant="site"
           />
         )}
       </section>

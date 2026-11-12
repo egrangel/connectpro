@@ -10,19 +10,22 @@ import {
   PHOTO_RECOMMENDED_WIDTH,
 } from "@/lib/constants";
 import { uploadPhotoAction } from "@/modules/listings/photo-actions";
+import { PHOTO_FORM_STYLES, type FormVariant } from "./form-styles";
 
 interface PhotoUploadFormProps {
   listingId: string;
   remaining: number;
+  /** "site" follows the public theme (member pages); "admin" stays unthemed. */
+  variant?: FormVariant;
 }
 
-function SubmitButton({ hasFiles }: { hasFiles: boolean }) {
+function SubmitButton({ hasFiles, className }: { hasFiles: boolean; className: string }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
       disabled={!hasFiles || pending}
-      className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+      className={className}
     >
       {pending ? "Enviando…" : "Enviar fotos"}
     </button>
@@ -31,15 +34,16 @@ function SubmitButton({ hasFiles }: { hasFiles: boolean }) {
 
 const MAX_PHOTO_SIZE_MB = Math.round(MAX_PHOTO_SIZE_BYTES / (1024 * 1024));
 
-export function PhotoUploadForm({ listingId, remaining }: PhotoUploadFormProps) {
+export function PhotoUploadForm({ listingId, remaining, variant = "admin" }: PhotoUploadFormProps) {
+  const styles = PHOTO_FORM_STYLES[variant];
   const [fileNames, setFileNames] = useState<string[]>([]);
 
   return (
     <form action={uploadPhotoAction} className="mt-4 flex flex-col gap-3">
       <input type="hidden" name="listingId" value={listingId} />
 
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-600">
-        <p className="font-semibold text-slate-700">Resolução recomendada</p>
+      <div className={styles.guide}>
+        <p className={styles.guideTitle}>Resolução recomendada</p>
         <ul className="mt-1 list-disc space-y-0.5 pl-4">
           <li>
             Ideal: <strong>{PHOTO_RECOMMENDED_WIDTH} × {PHOTO_RECOMMENDED_HEIGHT} px</strong>{" "}
@@ -57,10 +61,10 @@ export function PhotoUploadForm({ listingId, remaining }: PhotoUploadFormProps) 
         </ul>
       </div>
 
-      <label className="group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-slate-300 bg-white px-4 py-8 text-center transition hover:border-slate-400 hover:bg-slate-50 focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200">
+      <label className={styles.dropzone}>
         <svg
           aria-hidden="true"
-          className="h-8 w-8 text-slate-400 transition group-hover:text-slate-500"
+          className={styles.dropzoneIcon}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -72,10 +76,10 @@ export function PhotoUploadForm({ listingId, remaining }: PhotoUploadFormProps) 
             d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
           />
         </svg>
-        <span className="text-sm font-semibold text-slate-700">
+        <span className={styles.dropzoneTitle}>
           Clique para escolher as fotos
         </span>
-        <span className="text-xs text-slate-400">
+        <span className={styles.dropzoneHint}>
           JPEG, PNG ou WebP · máx. {MAX_PHOTO_SIZE_MB} MB cada · até {remaining}{" "}
           {remaining === 1 ? "foto restante" : "fotos restantes"}
         </span>
@@ -93,16 +97,16 @@ export function PhotoUploadForm({ listingId, remaining }: PhotoUploadFormProps) 
       </label>
 
       {fileNames.length > 0 && (
-        <p className="text-xs text-slate-500">
+        <p className={styles.selected}>
           {fileNames.length === 1
             ? "1 foto selecionada: "
             : `${fileNames.length} fotos selecionadas: `}
-          <span className="font-medium text-slate-700">{fileNames.join(", ")}</span>
+          <span className={styles.selectedNames}>{fileNames.join(", ")}</span>
         </p>
       )}
 
       <div>
-        <SubmitButton hasFiles={fileNames.length > 0} />
+        <SubmitButton hasFiles={fileNames.length > 0} className={styles.submit} />
       </div>
     </form>
   );

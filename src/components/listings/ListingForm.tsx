@@ -11,6 +11,7 @@ import {
 } from "@/lib/constants";
 import { INSTAGRAM_INPUT_MAX_LENGTH } from "@/modules/listings/instagram";
 import type { SaveListingState } from "@/modules/listings/form-state";
+import { LISTING_FORM_STYLES, type FormVariant } from "./form-styles";
 
 interface ListingFormProps {
   categories: Category[];
@@ -24,10 +25,9 @@ interface ListingFormProps {
    * is published, so the field is not rendered for them at all.
    */
   canChangeStatus?: boolean;
+  /** "site" follows the public theme (member pages); "admin" stays unthemed. */
+  variant?: FormVariant;
 }
-
-const inputClass =
-  "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200";
 
 const initialState: SaveListingState = { error: null, values: null };
 
@@ -40,10 +40,12 @@ function CharacterCounter({
   length,
   min,
   max,
+  idleClass,
 }: {
   length: number;
   min: number;
   max: number;
+  idleClass: string;
 }) {
   const isTooShort = length < min;
   const isAtLimit = length >= max;
@@ -53,11 +55,11 @@ function CharacterCounter({
     ? "text-amber-700"
     : isNearLimit
       ? "text-amber-600"
-      : "text-slate-400";
+      : idleClass;
 
   return (
     <span className="flex justify-between gap-3 text-xs font-normal">
-      <span className={isTooShort ? "text-slate-500" : "text-transparent"}>
+      <span className={isTooShort ? idleClass : "text-transparent"}>
         {isTooShort ? `Mínimo de ${min} caracteres` : "."}
       </span>
       <span className={countClass}>
@@ -74,7 +76,10 @@ export function ListingForm({
   saved,
   action,
   canChangeStatus = true,
+  variant = "admin",
 }: ListingFormProps) {
+  const styles = LISTING_FORM_STYLES[variant];
+  const inputClass = styles.input;
   const [state, formAction, pending] = useActionState(action, initialState);
 
   // On a failed save, repopulate from what the user submitted; otherwise
@@ -94,20 +99,20 @@ export function ListingForm({
       {listing && <input type="hidden" name="id" value={listing.id} />}
 
       {saved && !state.error && (
-        <p className="rounded-md bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+        <p role="status" className={styles.success}>
           Anúncio salvo com sucesso.
         </p>
       )}
       {errorMessage && (
         <p
           aria-live="polite"
-          className="rounded-md bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+          className={styles.error}
         >
           {errorMessage}
         </p>
       )}
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+      <label className={styles.label}>
         Título *
         <input
           type="text"
@@ -123,10 +128,11 @@ export function ListingForm({
           length={titleLength}
           min={LISTING_TITLE_MIN_LENGTH}
           max={LISTING_TITLE_MAX_LENGTH}
+          idleClass={styles.counterIdle}
         />
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+      <label className={styles.label}>
         Descrição *
         <textarea
           name="description"
@@ -142,11 +148,12 @@ export function ListingForm({
           length={descriptionLength}
           min={LISTING_DESCRIPTION_MIN_LENGTH}
           max={LISTING_DESCRIPTION_MAX_LENGTH}
+          idleClass={styles.counterIdle}
         />
       </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           Categoria *
           <select
             name="categoryId"
@@ -165,7 +172,7 @@ export function ListingForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           Cidade
           <input
             type="text"
@@ -176,7 +183,7 @@ export function ListingForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           WhatsApp
           <input
             type="text"
@@ -188,7 +195,7 @@ export function ListingForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           Telefone
           <input
             type="text"
@@ -199,7 +206,7 @@ export function ListingForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           E-mail de contato
           <input
             type="email"
@@ -209,7 +216,7 @@ export function ListingForm({
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           Instagram
           <input
             type="text"
@@ -222,12 +229,12 @@ export function ListingForm({
             }
             className={inputClass}
           />
-          <span className="text-xs font-normal text-slate-500">
+          <span className={styles.hint}>
             Cole o @ ou o link — o link do perfil é montado automaticamente.
           </span>
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           Site
           <input
             type="url"
@@ -240,7 +247,7 @@ export function ListingForm({
       </div>
 
       {canChangeStatus && (
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+        <label className={styles.label}>
           Status *
           <select
             name="status"
@@ -259,7 +266,7 @@ export function ListingForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-60"
+          className={styles.submit}
         >
           {pending ? "Salvando…" : listing ? "Salvar alterações" : "Criar anúncio"}
         </button>

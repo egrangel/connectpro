@@ -32,18 +32,21 @@ export default async function NewOwnListingPage({ searchParams }: NewOwnListingP
         ← Meus anúncios
       </Link>
       <h1 className="mt-3 text-2xl font-bold tracking-tight">Novo anúncio</h1>
-      <p className="mt-1 mb-6 text-sm text-[var(--color-muted)]">
+      <p className="mt-1 mb-6 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
         {canChangeStatus
           ? "Preencha os dados, escolha o status e salve. As fotos são enviadas na tela seguinte."
           : "Preencha os dados e salve. O anúncio fica em análise e só aparece no site depois que a nossa equipe aprovar. As fotos são enviadas na tela seguinte."}
       </p>
 
-      <ListingForm
-        categories={categories}
-        error={error}
-        action={saveOwnListingAction}
-        canChangeStatus={canChangeStatus}
-      />
+      <div className="card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6 max-w-2xl">
+        <ListingForm
+          categories={categories}
+          error={error}
+          action={saveOwnListingAction}
+          canChangeStatus={canChangeStatus}
+          variant="site"
+        />
+      </div>
     </div>
   );
 }
