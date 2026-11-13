@@ -23,6 +23,16 @@ export function SiteFooter({ branding }: SiteFooterProps) {
             </a>
             .
           </p>
+          <p className="mt-3 text-xs">
+            <a
+              href="https://wapit.com.br"
+              target="_blank"
+              rel="noopener"
+              className="underline-offset-4 hover:text-[var(--color-primary)] hover:underline"
+            >
+              desenvolvido por wapit
+            </a>
+          </p>
         </div>
         <nav aria-label="Redes da igreja" className="flex gap-3 text-xs font-semibold">
           <a
