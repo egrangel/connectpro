@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { after } from "next/server";
 import { HeroBanner } from "@/components/site/HeroBanner";
-import { SearchFilters, SortOptions } from "@/components/search/SearchFilters";
+import { DirectoryCategories, DirectorySearch, SortOptions } from "@/components/search/SearchFilters";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { searchTerms } from "@/lib/text";
 import { listActiveCategories } from "@/modules/categories/service";
@@ -60,9 +60,9 @@ function EmptyResults({ query, isFiltered }: EmptyResultsProps) {
         };
 
   return (
-    <div className="card-surface mt-8 rounded-[calc(var(--radius)+8px)] p-12 text-center text-[var(--color-muted)]">
+    <div className="directory-empty">
       <p className="font-bold text-[var(--color-text)]">{title}</p>
-      <p className="mx-auto mt-1 max-w-md text-sm leading-6">{hint}</p>
+      <p className="mt-2 max-w-md text-sm leading-6">{hint}</p>
       <Link href={action.href} className={emptyLinkClass}>
         {action.label}
       </Link>
@@ -94,65 +94,76 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   const { reviewsEnabled } = config.features;
 
+  const hasBanner = config.banner.enabled && config.banner.slides.length > 0;
+  const ResultsHeading = hasBanner ? "h2" : "h1";
+
   return (
     <>
-      <HeroBanner banner={config.banner} />
-
-      <section id="listagens" className="mx-auto max-w-6xl px-4 py-12 sm:py-14">
-        <SearchFilters categories={categories} query={query} />
-
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {query.q ? `Resultados para “${query.q}”` : "Encontre quem resolve"}
-            </h2>
-            <p className="mt-1 text-sm font-semibold text-[var(--color-muted)]">
-              {results.total} {results.total === 1 ? "anúncio" : "anúncios"}
-            </p>
-          </div>
-          {reviewsEnabled && results.total > 1 && <SortOptions query={query} />}
+      {hasBanner && (
+        <div className="site-frame">
+          <HeroBanner banner={config.banner} />
         </div>
+      )}
 
-        {results.items.length === 0 ? (
-          <EmptyResults query={query.q} isFiltered={Boolean(query.q || query.category)} />
-        ) : (
-          <div className="mt-7 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {results.items.map((listing) => (
-              <ListingCard
-                key={listing.id}
-                listing={listing}
-                showRating={reviewsEnabled}
-              />
-            ))}
+      <section id="listagens" className="site-frame directory-section">
+        <DirectorySearch query={query} />
+        <div className="directory-layout">
+          <DirectoryCategories categories={categories} query={query} />
+          <div className="min-w-0">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <ResultsHeading className="section-title">
+                  {query.q ? `Resultados para “${query.q}”` : "Profissionais da rede"}
+                </ResultsHeading>
+                <p className="mt-1 text-sm font-semibold text-[var(--color-muted)]">
+                  {results.total} {results.total === 1 ? "anúncio" : "anúncios"}
+                </p>
+              </div>
+              {reviewsEnabled && results.total > 1 && <SortOptions query={query} />}
+            </div>
+
+            {results.items.length === 0 ? (
+              <EmptyResults query={query.q} isFiltered={Boolean(query.q || query.category)} />
+            ) : (
+              <div className="directory-results">
+                {results.items.map((listing) => (
+                  <ListingCard
+                    key={listing.id}
+                    listing={listing}
+                    showRating={reviewsEnabled}
+                  />
+                ))}
+              </div>
+            )}
+
+            {results.pageCount > 1 && (
+              <nav
+                aria-label="Paginação"
+                className="mt-12 flex items-center justify-center gap-3 text-sm"
+              >
+                {results.page > 1 && (
+                  <Link
+                    href={pageHref(params, results.page - 1)}
+                    className="rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-4 py-2 font-bold transition hover:bg-white"
+                  >
+                    Anterior
+                  </Link>
+                )}
+                <span className="text-[var(--color-muted)]">
+                  Página {results.page} de {results.pageCount}
+                </span>
+                {results.page < results.pageCount && (
+                  <Link
+                    href={pageHref(params, results.page + 1)}
+                    className="rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-4 py-2 font-bold transition hover:bg-white"
+                  >
+                    Próxima
+                  </Link>
+                )}
+              </nav>
+            )}
           </div>
-        )}
-
-        {results.pageCount > 1 && (
-          <nav
-            aria-label="Paginação"
-            className="mt-12 flex items-center justify-center gap-3 text-sm"
-          >
-            {results.page > 1 && (
-              <Link
-                href={pageHref(params, results.page - 1)}
-                className="rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-4 py-2 font-bold transition hover:bg-white"
-              >
-                Anterior
-              </Link>
-            )}
-            <span className="text-[var(--color-muted)]">
-              Página {results.page} de {results.pageCount}
-            </span>
-            {results.page < results.pageCount && (
-              <Link
-                href={pageHref(params, results.page + 1)}
-                className="rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 px-4 py-2 font-bold transition hover:bg-white"
-              >
-                Próxima
-              </Link>
-            )}
-          </nav>
-        )}
+        </div>
       </section>
     </>
   );

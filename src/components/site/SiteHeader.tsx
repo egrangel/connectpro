@@ -11,15 +11,15 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ branding, user }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[color-mix(in_srgb,var(--color-surface)_84%,white)]/90 shadow-[0_8px_28px_color-mix(in_srgb,var(--color-text)_6%,transparent)] backdrop-blur-xl">
-      <div className="mx-auto flex min-h-18 max-w-6xl items-center justify-between gap-4 px-4 py-3">
+    <header className="site-header">
+      <div className="site-frame site-header-inner">
         <Link href="/" className="flex min-w-0 items-center gap-3 font-semibold tracking-tight">
           {branding.logoKey ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={branding.logoKey}
               alt=""
-              className="h-11 w-auto max-w-42 object-contain sm:max-w-52"
+              className="h-10 w-auto max-w-24 object-contain sm:max-w-42"
             />
           ) : (
             <span
@@ -35,13 +35,13 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
           </span>
         </Link>
 
-        <nav className="flex shrink-0 items-center gap-1 text-sm">
+        <nav className="site-nav" aria-label="Navegação principal">
           {user?.role === ROLES.ADMIN && (
             <Link
               href="/admin"
               className="rounded-[var(--radius)] px-3 py-2 font-semibold text-[var(--color-primary)] transition hover:bg-[color-mix(in_srgb,var(--color-primary)_10%,white)]"
             >
-              Painel admin
+              Administração
             </Link>
           )}
           {user && (
@@ -74,7 +74,7 @@ export function SiteHeader({ branding, user }: SiteHeaderProps) {
               </Link>
               <Link
                 href="/register"
-                className="rounded-[var(--radius)] bg-[var(--color-primary)] px-4 py-2 font-semibold text-white shadow-[0_10px_24px_color-mix(in_srgb,var(--color-primary)_22%,transparent)] transition hover:-translate-y-0.5 hover:opacity-95"
+                className="site-button"
               >
                 Criar conta
               </Link>

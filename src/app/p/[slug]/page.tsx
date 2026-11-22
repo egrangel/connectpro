@@ -143,7 +143,7 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
   );
 
   return (
-    <article className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
+    <article className="site-frame listing-profile">
       <nav className="mb-5 text-sm font-semibold text-[var(--color-muted)]">
         <Link href="/" className="hover:text-[var(--color-primary)]">Início</Link>
         {" / "}
@@ -152,15 +152,10 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
         </Link>
       </nav>
 
-      <PhotoCarousel photos={listing.photos} title={listing.title} />
-
-      <header className="card-surface mt-6 rounded-[calc(var(--radius)+8px)] p-5 sm:p-6">
+      <header className="mb-8 border-b border-[var(--color-line)] pb-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <span className="inline-flex rounded-full bg-[color-mix(in_srgb,var(--color-primary)_12%,white)] px-3 py-1 text-xs font-bold text-[var(--color-primary)]">
-              {listing.category.name}
-            </span>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{listing.title}</h1>
+            <h1 className="display-title mt-3">{listing.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--color-muted)]">
               {listing.city && <span className="font-semibold">{listing.city}</span>}
               {reviewsEnabled && (
@@ -178,16 +173,8 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
         </div>
       </header>
 
-      <div className="mt-6 grid gap-6 md:grid-cols-[1fr_320px]">
-        <section aria-label="Descrição" className="card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6">
-          <h2 className="mb-3 text-lg font-bold tracking-tight">Sobre o profissional</h2>
-          <p className="whitespace-pre-line leading-8 text-[var(--color-muted)]">
-            {listing.description}
-          </p>
-        </section>
-
-        {/* First on phones: reaching the professional is why visitors come. */}
-        <aside className="card-surface order-first h-fit rounded-[calc(var(--radius)+8px)] p-5 md:order-none">
+      <div className="listing-profile-grid">
+        <aside className="listing-contact">
           <h2 className="mb-4 text-lg font-bold tracking-tight">Contato</h2>
           <div className="flex flex-col gap-3 text-sm">
             {contacts.map((contact) => (
@@ -198,6 +185,14 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
             )}
           </div>
         </aside>
+        {listing.photos.length > 0 && <PhotoCarousel photos={listing.photos} title={listing.title} />}
+        <section aria-label="Descrição" className="min-w-0">
+          <h2 className="mb-3 text-lg font-bold tracking-tight">Sobre o profissional</h2>
+          <p className="whitespace-pre-line leading-8 text-[var(--color-muted)]">
+            {listing.description}
+          </p>
+        </section>
+
       </div>
 
       {reviewsEnabled && (

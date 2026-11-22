@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminNav } from "./AdminNav";
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth/session";
 
@@ -22,25 +23,18 @@ export default async function AdminLayout({
   const admin = await requireAdmin();
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 md:flex-row">
-      <aside className="shrink-0 md:w-52">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Administração
-        </p>
-        <p className="mb-4 truncate text-sm text-slate-500">{admin.email}</p>
-        <nav className="flex gap-1 overflow-x-auto md:flex-col">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="shrink-0 rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200/60 hover:text-slate-900"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+    <div className="admin-workspace">
+      <aside className="admin-rail">
+        <div className="mb-5">
+          <p className="text-lg font-semibold">Administração</p>
+          <p className="mt-1 break-all text-xs text-slate-300">{admin.email}</p>
+        </div>
+        <AdminNav items={NAV_ITEMS} />
+        <Link href="/" className="mt-5 inline-block text-sm text-slate-200 underline underline-offset-4">
+          Voltar ao diretório
+        </Link>
       </aside>
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="admin-content">{children}</div>
     </div>
   );
 }

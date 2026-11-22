@@ -6,10 +6,10 @@ interface SiteFooterProps {
 
 export function SiteFooter({ branding }: SiteFooterProps) {
   return (
-    <footer className="mt-20 border-t border-[var(--color-line)] bg-[color-mix(in_srgb,var(--color-primary)_8%,white)]">
-      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 text-sm text-[var(--color-muted)] sm:grid-cols-[1fr_auto] sm:items-end">
+    <footer className="site-footer">
+      <div className="site-frame grid gap-6 py-10 text-sm text-[var(--color-muted)] sm:grid-cols-[1fr_auto] sm:items-end">
         <div>
-          <p className="text-base font-bold text-[var(--color-text)]">{branding.siteName}</p>
+          <p className="section-title text-[var(--color-text)]">{branding.siteName}</p>
           {branding.footerText && <p className="mt-2 max-w-2xl leading-6">{branding.footerText}</p>}
           <p className="mt-4 max-w-2xl text-xs leading-5">
             Este portal pertence à Rede Connect UPP, da{" "}

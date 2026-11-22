@@ -35,7 +35,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
         </Link>
       </div>
 
-      <div className="mt-4 flex gap-2 text-sm">
+      <div className="mt-4 flex flex-wrap gap-2 text-sm">
         <Link
           href="/admin/listings"
           className={`rounded-full px-3 py-1 ${!validStatus ? "bg-slate-900 text-white" : "bg-white text-slate-600 border border-slate-200"}`}

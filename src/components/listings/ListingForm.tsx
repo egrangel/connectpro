@@ -112,139 +112,148 @@ export function ListingForm({
         </p>
       )}
 
-      <label className={styles.label}>
-        Título *
-        <input
-          type="text"
-          name="title"
-          required
-          minLength={LISTING_TITLE_MIN_LENGTH}
-          maxLength={LISTING_TITLE_MAX_LENGTH}
-          defaultValue={initialTitle}
-          onChange={(event) => setTitleLength(event.target.value.length)}
-          className={inputClass}
-        />
-        <CharacterCounter
-          length={titleLength}
-          min={LISTING_TITLE_MIN_LENGTH}
-          max={LISTING_TITLE_MAX_LENGTH}
-          idleClass={styles.counterIdle}
-        />
-      </label>
-
-      <label className={styles.label}>
-        Descrição *
-        <textarea
-          name="description"
-          required
-          minLength={LISTING_DESCRIPTION_MIN_LENGTH}
-          maxLength={LISTING_DESCRIPTION_MAX_LENGTH}
-          rows={6}
-          defaultValue={initialDescription}
-          onChange={(event) => setDescriptionLength(event.target.value.length)}
-          className={`${inputClass} resize-y`}
-        />
-        <CharacterCounter
-          length={descriptionLength}
-          min={LISTING_DESCRIPTION_MIN_LENGTH}
-          max={LISTING_DESCRIPTION_MAX_LENGTH}
-          idleClass={styles.counterIdle}
-        />
-      </label>
-
-      <div className="grid gap-4 sm:grid-cols-2">
+      <fieldset className="listing-form-group">
+        <legend>Dados do anúncio</legend>
         <label className={styles.label}>
-          Categoria *
-          <select
-            name="categoryId"
+          Título *
+          <input
+            type="text"
+            name="title"
             required
-            defaultValue={values?.categoryId ?? listing?.categoryId ?? ""}
+            minLength={LISTING_TITLE_MIN_LENGTH}
+            maxLength={LISTING_TITLE_MAX_LENGTH}
+            defaultValue={initialTitle}
+            onChange={(event) => setTitleLength(event.target.value.length)}
             className={inputClass}
-          >
-            <option value="" disabled>
-              Selecione…
-            </option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
+          />
+          <CharacterCounter
+            length={titleLength}
+            min={LISTING_TITLE_MIN_LENGTH}
+            max={LISTING_TITLE_MAX_LENGTH}
+            idleClass={styles.counterIdle}
+          />
+        </label>
+
+        <label className={styles.label}>
+          Descrição *
+          <textarea
+            name="description"
+            required
+            minLength={LISTING_DESCRIPTION_MIN_LENGTH}
+            maxLength={LISTING_DESCRIPTION_MAX_LENGTH}
+            rows={6}
+            defaultValue={initialDescription}
+            onChange={(event) => setDescriptionLength(event.target.value.length)}
+            className={`${inputClass} resize-y`}
+          />
+          <CharacterCounter
+            length={descriptionLength}
+            min={LISTING_DESCRIPTION_MIN_LENGTH}
+            max={LISTING_DESCRIPTION_MAX_LENGTH}
+            idleClass={styles.counterIdle}
+          />
+        </label>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className={styles.label}>
+            Categoria *
+            <select
+              name="categoryId"
+              required
+              defaultValue={values?.categoryId ?? listing?.categoryId ?? ""}
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Selecione…
               </option>
-            ))}
-          </select>
-        </label>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label className={styles.label}>
-          Cidade
-          <input
-            type="text"
-            name="city"
-            maxLength={80}
-            defaultValue={values?.city ?? listing?.city ?? ""}
-            className={inputClass}
-          />
-        </label>
+          <label className={styles.label}>
+            Cidade
+            <input
+              type="text"
+              name="city"
+              maxLength={80}
+              defaultValue={values?.city ?? listing?.city ?? ""}
+              className={inputClass}
+            />
+          </label>
 
-        <label className={styles.label}>
-          WhatsApp
-          <input
-            type="text"
-            name="contactWhatsapp"
-            maxLength={30}
-            placeholder="+55 11 99999-0000"
-            defaultValue={values?.contactWhatsapp ?? listing?.contactWhatsapp ?? ""}
-            className={inputClass}
-          />
-        </label>
+        </div>
+      </fieldset>
 
-        <label className={styles.label}>
-          Telefone
-          <input
-            type="text"
-            name="contactPhone"
-            maxLength={30}
-            defaultValue={values?.contactPhone ?? listing?.contactPhone ?? ""}
-            className={inputClass}
-          />
-        </label>
+      <fieldset className="listing-form-group">
+        <legend>Como entrar em contato</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className={styles.label}>
+            WhatsApp
+            <input
+              type="tel"
+              name="contactWhatsapp"
+              maxLength={30}
+              placeholder="+55 11 99999-0000"
+              defaultValue={values?.contactWhatsapp ?? listing?.contactWhatsapp ?? ""}
+              className={inputClass}
+            />
+          </label>
 
-        <label className={styles.label}>
-          E-mail de contato
-          <input
-            type="email"
-            name="contactEmail"
-            defaultValue={values?.contactEmail ?? listing?.contactEmail ?? ""}
-            className={inputClass}
-          />
-        </label>
+          <label className={styles.label}>
+            Telefone
+            <input
+              type="tel"
+              name="contactPhone"
+              maxLength={30}
+              defaultValue={values?.contactPhone ?? listing?.contactPhone ?? ""}
+              className={inputClass}
+            />
+          </label>
 
-        <label className={styles.label}>
-          Instagram
-          <input
-            type="text"
-            name="instagram"
-            maxLength={INSTAGRAM_INPUT_MAX_LENGTH}
-            placeholder="@perfil ou link do perfil"
-            defaultValue={
-              values?.instagram ??
-              (listing?.instagram ? `@${listing.instagram}` : "")
-            }
-            className={inputClass}
-          />
-          <span className={styles.hint}>
-            Cole o @ ou o link — o link do perfil é montado automaticamente.
-          </span>
-        </label>
+          <label className={styles.label}>
+            E-mail de contato
+            <input
+              type="email"
+              name="contactEmail"
+              defaultValue={values?.contactEmail ?? listing?.contactEmail ?? ""}
+              className={inputClass}
+            />
+          </label>
 
-        <label className={styles.label}>
-          Site
-          <input
-            type="url"
-            name="websiteUrl"
-            placeholder="https://…"
-            defaultValue={values?.websiteUrl ?? listing?.websiteUrl ?? ""}
-            className={inputClass}
-          />
-        </label>
-      </div>
+          <label className={styles.label}>
+            Instagram
+            <input
+              type="text"
+              name="instagram"
+              maxLength={INSTAGRAM_INPUT_MAX_LENGTH}
+              placeholder="@perfil ou link do perfil"
+              defaultValue={
+                values?.instagram ??
+                (listing?.instagram ? `@${listing.instagram}` : "")
+              }
+              className={inputClass}
+            />
+            <span className={styles.hint}>
+              Cole o @ ou o link — o link do perfil é montado automaticamente.
+            </span>
+          </label>
+
+          <label className={styles.label}>
+            Site
+            <input
+              type="url"
+              name="websiteUrl"
+              placeholder="https://…"
+              defaultValue={values?.websiteUrl ?? listing?.websiteUrl ?? ""}
+              className={inputClass}
+            />
+          </label>
+        </div>
+      </fieldset>
 
       {canChangeStatus && (
         <label className={styles.label}>

@@ -43,14 +43,14 @@ function AccountUses({ reviewsEnabled }: { reviewsEnabled: boolean }) {
     <dl className="grid gap-5 xl:grid-cols-2 xl:gap-8">
       {reviewsEnabled && (
         <div>
-          <dt className="text-[0.95rem] font-bold">Avaliar</dt>
+          <dt className="text-base font-bold">Avaliar</dt>
           <dd className="mt-1 text-sm leading-6 text-[var(--color-muted)]">
             Dê de 1 a 5 estrelas a quem você contratou e conte como foi.
           </dd>
         </div>
       )}
       <div>
-        <dt className="text-[0.95rem] font-bold">Anunciar</dt>
+        <dt className="text-base font-bold">Anunciar</dt>
         <dd className="mt-1 text-sm leading-6 text-[var(--color-muted)]">
           Cadastre o seu serviço. Um administrador revisa o anúncio antes de ele aparecer na busca.
         </dd>
@@ -74,13 +74,9 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
   );
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:py-10 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] lg:gap-16">
-      {/* Phones get a compact card above the form; it is decorative, so the
-          form stays first for assistive tech either way. */}
-      <div className="order-first lg:hidden">{card(true)}</div>
-
-      <div className="min-w-0">
-        <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-[2.75rem] sm:leading-[1.05]">
+    <div className="site-frame grid gap-8 py-8 sm:py-12 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:gap-20">
+      <div className="account-panel min-w-0 p-5 sm:p-8">
+        <h1 className="section-title">
           Criar a sua conta
         </h1>
         <p className="mt-3 max-w-md text-base leading-7 text-[var(--color-muted)]">
@@ -107,6 +103,7 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
               className={inputClass}
             />
           </label>
+          {name.trim() && <div className="lg:hidden">{card(true)}</div>}
           <label className="flex flex-col gap-1.5 text-sm font-bold">
             E-mail
             <input type="email" name="email" required autoComplete="email" className={inputClass} />
@@ -136,7 +133,7 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
               tabIndex={0}
               role="region"
               aria-label="Termo de consentimento"
-              className="terms-scroll max-h-56 overflow-y-auto whitespace-pre-line rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 p-4 text-[0.8rem] leading-6 text-[var(--color-muted)] lg:max-h-36"
+              className="terms-scroll max-h-56 overflow-y-auto whitespace-pre-line rounded-[var(--radius)] border border-[var(--color-line)] bg-white/80 p-4 text-sm leading-6 text-[var(--color-muted)] lg:max-h-36"
             >
               {termsText}
             </div>
@@ -161,15 +158,10 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
           </Link>
         </p>
 
-        <div className="mt-10 border-t border-[var(--color-line)] pt-8 lg:hidden">
-          <AccountUses reviewsEnabled={reviewsEnabled} />
-        </div>
       </div>
 
-      {/* Sticks beside the form, so the card stays in view while the visitor
-          scrolls through the agreement. */}
-      <aside className="hidden h-fit lg:sticky lg:top-28 lg:block lg:pt-4" aria-label="O que a conta permite">
-        <div className="card-stage">{card(false)}</div>
+      <aside className="min-w-0 lg:sticky lg:top-8 lg:h-fit" aria-label="O que a conta permite">
+        <div className="card-stage hidden lg:block">{card(false)}</div>
         <div className="mt-10 border-t border-[var(--color-line)] pt-8">
           <AccountUses reviewsEnabled={reviewsEnabled} />
         </div>

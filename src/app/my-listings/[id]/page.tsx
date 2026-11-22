@@ -46,7 +46,7 @@ export default async function EditOwnListingPage({
   const canChangeStatus = canPublishListing(user);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <div className="site-frame member-workspace">
       <Link
         href="/my-listings"
         className="text-sm font-semibold text-[var(--color-muted)] hover:text-[var(--color-primary)]"

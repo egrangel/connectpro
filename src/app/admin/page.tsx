@@ -13,7 +13,7 @@ export default async function AdminDashboardPage() {
   ]);
 
   const cards = [
-    { label: "Anúncios publicados", value: published, href: "/admin/listings" },
+    { label: "Anúncios publicados", value: published, href: "/admin/listings?status=PUBLISHED" },
     { label: "Rascunhos", value: drafts, href: "/admin/listings?status=DRAFT" },
     { label: "Categorias ativas", value: categories, href: "/admin/categories" },
     { label: "Usuários", value: users, href: "/admin/users" },
@@ -23,25 +23,20 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight">Visão geral</h1>
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-3">
-        {cards.map((card) => (
-          <Link
-            key={card.label}
-            href={card.href}
-            className="rounded-lg border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-sm"
-          >
-            <p className="text-3xl font-bold text-slate-800">{card.value}</p>
-            <p className="mt-1 text-sm text-slate-500">{card.label}</p>
-          </Link>
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <h1>Visão geral</h1>
+        <Link href="/admin/listings/new" className="inline-flex rounded-md bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-700">
+          Novo anúncio
+        </Link>
+      </header>
+      <dl className="mt-8 divide-y divide-slate-200 border-y border-slate-200">
+        {cards.map(({ label, value, href }) => (
+          <div key={label} className="grid grid-cols-[1fr_auto] items-center gap-4 py-3">
+            <dt><Link href={href} className="text-sm font-semibold underline-offset-4 hover:underline">{label}</Link></dt>
+            <dd className="text-xl font-semibold tabular-nums">{value}</dd>
+          </div>
         ))}
-      </div>
-      <Link
-        href="/admin/listings/new"
-        className="mt-8 inline-block rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-700"
-      >
-        + Novo anúncio
-      </Link>
+      </dl>
     </div>
   );
 }

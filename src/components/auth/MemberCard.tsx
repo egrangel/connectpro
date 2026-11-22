@@ -56,8 +56,8 @@ export function MemberCard({ name, branding, reviewsEnabled, isActive, compact =
 
       <div className={`absolute inset-x-0 ${compact ? "bottom-4 px-5" : "bottom-7 px-8"}`}>
         <p
-          className={`truncate font-bold tracking-tight transition-opacity duration-200 ${
-            compact ? "text-2xl" : "text-[2.15rem] leading-tight"
+          className={`member-card-name truncate transition-opacity duration-200 ${
+            compact ? "text-2xl" : "text-3xl leading-tight"
           } ${isPlaceholder ? "opacity-75" : "opacity-100"}`}
         >
           {shownName}

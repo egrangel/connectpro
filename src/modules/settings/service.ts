@@ -28,6 +28,25 @@ function parseOrDefault<T>(json: string, schema: ZodType<T>, fallback: T): T {
   }
 }
 
+// Existing settings can still point to previous built-in artwork.
+const bundledBannerReplacements = new Map([
+  ["/branding/slide-1.svg", "/branding/banner-oficina.webp"],
+  ["/branding/hero-rede-1.webp", "/branding/banner-oficina.webp"],
+  ["/branding/slide-2.svg", "/branding/banner-comunidade.webp"],
+  ["/branding/hero-rede-2.webp", "/branding/banner-comunidade.webp"],
+]);
+
+function getConfiguredBanner(json: string): BannerConfig {
+  const banner = parseOrDefault(json, bannerSchema, DEFAULT_BANNER);
+  return {
+    ...banner,
+    slides: banner.slides.map((slide) => ({
+      ...slide,
+      imageKey: slide.imageKey ? bundledBannerReplacements.get(slide.imageKey) ?? slide.imageKey : null,
+    })),
+  };
+}
+
 /** Reads the singleton settings row, falling back to defaults per section. */
 export async function getSiteConfig(): Promise<SiteConfig> {
   const row = await prisma.siteSettings.findUnique({ where: { id: 1 } });
@@ -41,7 +60,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     };
   }
   return {
-    banner: parseOrDefault(row.bannerJson, bannerSchema, DEFAULT_BANNER),
+    banner: getConfiguredBanner(row.bannerJson),
     theme: parseOrDefault(row.themeJson, themeSchema, DEFAULT_THEME),
     branding: parseOrDefault(row.brandingJson, brandingSchema, DEFAULT_BRANDING),
     features: parseOrDefault(row.featuresJson, featuresSchema, DEFAULT_FEATURES),

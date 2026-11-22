@@ -17,8 +17,8 @@ export default async function ForgotPasswordPage({ searchParams }: ForgotPasswor
   const error = resolveAuthError("forgotPassword", rawError);
 
   return (
-    <div className="mx-auto flex max-w-md flex-col px-4 py-16">
-      <div className="card-surface rounded-[calc(var(--radius)+10px)] p-6 sm:p-8">
+    <div className="mx-auto flex max-w-lg flex-col px-4 py-16">
+      <div className="account-panel p-6 sm:p-8">
         <h1 className="text-3xl font-bold tracking-tight">Esqueci minha senha</h1>
 
         {sent ? (

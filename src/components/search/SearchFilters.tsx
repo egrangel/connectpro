@@ -18,66 +18,55 @@ function buildHref(query: ListingQuery, overrides: Partial<ListingQuery>): strin
 }
 
 /** Search + filters as GET form and links: state lives in the URL. */
-export function SearchFilters({
-  categories,
-  query,
-}: SearchFiltersProps) {
-  const chipBase =
-    "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition";
+export function DirectorySearch({ query }: Pick<SearchFiltersProps, "query">) {
 
   return (
-    <div className="card-surface rounded-[calc(var(--radius)+8px)] p-3 sm:p-4">
-      <form action="/#listagens" method="get" className="grid gap-3 sm:grid-cols-[1fr_auto]">
+    <form action="/#listagens" method="get" role="search" className="directory-search">
         {query.category && <input type="hidden" name="category" value={query.category} />}
         {query.sort !== "recent" && <input type="hidden" name="sort" value={query.sort} />}
         <label className="sr-only" htmlFor="search-listings">Buscar profissionais</label>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7">
+          <circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" />
+        </svg>
         <input
           id="search-listings"
           type="search"
           name="q"
           defaultValue={query.q ?? ""}
-          placeholder="Buscar serviço, nome ou cidade"
-          className="min-h-12 w-full rounded-[var(--radius)] border border-[var(--color-line)] bg-white/86 px-4 text-sm shadow-inner outline-none transition placeholder:text-[var(--color-muted)]/70 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]"
+          placeholder="Serviço, nome ou cidade"
         />
         <button
           type="submit"
-          className="min-h-12 rounded-[var(--radius)] bg-[var(--color-primary)] px-6 text-sm font-bold text-white shadow-[0_12px_28px_color-mix(in_srgb,var(--color-primary)_24%,transparent)] transition hover:-translate-y-0.5 hover:opacity-95"
+          className="site-button"
         >
           Buscar
         </button>
-      </form>
+    </form>
+  );
+}
 
-      {/* Phones scroll the chips sideways; wider screens wrap them so no
-          category hides past the edge. */}
-      <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
-        <Link
-          href={buildHref(query, { category: undefined })}
-          className={`${chipBase} ${
-            !query.category
-              ? "border-transparent bg-[var(--color-primary)] text-white shadow-sm"
-              : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
-          }`}
-        >
-          Todas
-        </Link>
-        {categories.map((category) => {
-          const isActive = query.category === category.slug;
-          return (
+export function DirectoryCategories({ categories, query }: SearchFiltersProps) {
+  return (
+    <nav className="directory-categories" aria-labelledby="category-heading">
+      <h2 id="category-heading">Categorias</h2>
+      <ul>
+        <li>
+          <Link href={buildHref(query, { category: undefined })} aria-current={!query.category ? "true" : undefined}>
+            Todas as categorias
+          </Link>
+        </li>
+        {categories.map((category) => (
+          <li key={category.id}>
             <Link
-              key={category.id}
-              href={buildHref(query, { category: isActive ? undefined : category.slug })}
-              className={`${chipBase} ${
-                isActive
-                  ? "border-transparent bg-[var(--color-primary)] text-white shadow-sm"
-                  : "border-[var(--color-line)] bg-white/70 text-[var(--color-muted)] hover:bg-white hover:text-[var(--color-text)]"
-              }`}
+              href={buildHref(query, { category: query.category === category.slug ? undefined : category.slug })}
+              aria-current={query.category === category.slug ? "true" : undefined}
             >
               {category.name}
             </Link>
-          );
-        })}
-      </div>
-    </div>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 
