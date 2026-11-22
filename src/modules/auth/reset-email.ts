@@ -1,3 +1,4 @@
+import { authHref } from "./destination";
 import { escapeHtml, sendMail, type MailMessage, type MailResult } from "@/lib/mail/mailer";
 import { PASSWORD_RESET_TOKEN_TTL_MINUTES } from "@/lib/constants";
 import { resolveBaseUrl } from "@/lib/url";
@@ -5,8 +6,8 @@ import type { PasswordResetGrant } from "./service";
 
 const SUBJECT = "Redefinição de senha — Connect";
 
-export function buildResetUrl(token: string, baseUrl: string): string {
-  return `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+export function buildResetUrl(token: string, baseUrl: string, next?: string): string {
+  return `${baseUrl}${authHref("/reset-password", next, { token })}`;
 }
 
 /** Pure message builder — no I/O, so the copy and the link stay testable. */
@@ -44,10 +45,10 @@ export function buildPasswordResetEmail(
   return { to: grant.email, subject: SUBJECT, text, html };
 }
 
-export async function sendPasswordResetEmail(grant: PasswordResetGrant): Promise<MailResult> {
+export async function sendPasswordResetEmail(grant: PasswordResetGrant, next?: string): Promise<MailResult> {
   const baseUrl = resolveBaseUrl({
     APP_BASE_URL: process.env.APP_BASE_URL,
     VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
   });
-  return sendMail(buildPasswordResetEmail(grant, buildResetUrl(grant.token, baseUrl)));
+  return sendMail(buildPasswordResetEmail(grant, buildResetUrl(grant.token, baseUrl, next)));
 }

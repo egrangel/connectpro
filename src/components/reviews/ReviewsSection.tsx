@@ -1,3 +1,4 @@
+import { authHref } from "@/modules/auth/destination";
 import Link from "next/link";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
 import { StarRating } from "@/components/ui/StarRating";
@@ -39,7 +40,8 @@ export function ReviewsSection({
   return (
     <section id="avaliacoes" className="mt-12" aria-label="Avaliações">
       <div className="flex items-end justify-between gap-4">
-        <div>
+        <div>
+
           <h2 className="text-2xl font-bold tracking-tight">Avaliações</h2>
         </div>
       </div>
@@ -86,7 +88,7 @@ export function ReviewsSection({
         ) : (
           <p className="card-surface rounded-[calc(var(--radius)+8px)] p-5 text-sm text-[var(--color-muted)]">
             <Link
-              href={`/login?next=${encodeURIComponent(`/p/${listingSlug}`)}`}
+              href={authHref("/login", `/p/${listingSlug}#avaliacoes`)}
               className="font-bold text-[var(--color-primary)] hover:underline"
             >
               Entre na sua conta

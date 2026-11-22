@@ -3,6 +3,7 @@
 import { MemberPage } from "@/components/site/MemberPage";
 import { useState } from "react";
 import Link from "next/link";
+import { authHref } from "@/modules/auth/destination";
 import { useFormStatus } from "react-dom";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
 import { MemberCard } from "@/components/auth/MemberCard";
@@ -16,6 +17,7 @@ interface RegisterFormProps {
   branding: BrandingConfig;
   reviewsEnabled: boolean;
   error: AuthError | null;
+  next?: string;
 }
 
 const NAME_MIN_LENGTH = 2;
@@ -60,7 +62,7 @@ function AccountUses({ reviewsEnabled }: { reviewsEnabled: boolean }) {
   );
 }
 
-export function RegisterForm({ action, termsText, branding, reviewsEnabled, error }: RegisterFormProps) {
+export function RegisterForm({ action, termsText, branding, reviewsEnabled, error, next }: RegisterFormProps) {
   const [name, setName] = useState("");
   const [isNameFocused, setIsNameFocused] = useState(false);
 
@@ -89,9 +91,10 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
         </aside>
       )}
     >
-      {error && <AuthErrorBanner error={error} />}
+      {error && <AuthErrorBanner error={error} next={next} />}
 
       <form action={action} className="mt-6 flex flex-col gap-4">
+        {next && <input type="hidden" name="next" value={next} />}
         <label className="flex flex-col gap-1.5 text-sm font-bold">
           Nome
           <input
@@ -158,7 +161,7 @@ export function RegisterForm({ action, termsText, branding, reviewsEnabled, erro
 
       <p className="mt-5 text-sm text-[var(--color-muted)]">
         Já tem conta?{" "}
-        <Link href="/login" className={linkClass}>
+        <Link href={authHref("/login", next)} className={linkClass}>
           Entrar
         </Link>
       </p>

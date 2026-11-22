@@ -1,3 +1,4 @@
+import { authHref } from "@/modules/auth/destination";
 import Link from "next/link";
 import { after } from "next/server";
 import { HeroBanner } from "@/components/site/HeroBanner";
@@ -45,7 +46,7 @@ function EmptyResults({ query, isFiltered }: EmptyResultsProps) {
     ? {
         title: "Ainda não há profissionais publicados.",
         hint: "Presta algum serviço? Crie sua conta e cadastre seu anúncio. Ele aparece aqui depois de aprovado.",
-        action: { href: "/register", label: "Criar conta e anunciar" },
+        action: { href: authHref("/register", "/my-listings/new"), label: "Criar conta e anunciar" },
       }
     : query
       ? {
@@ -99,6 +100,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <>
+      <div className="site-frame directory-entry">
+        <p className="mb-2 text-sm text-[var(--color-muted)]">Os anúncios passam por revisão antes de entrar no diretório.</p>
+        <DirectorySearch query={query} />
+      </div>
       {hasBanner && (
         <div className="site-frame">
           <HeroBanner banner={config.banner} />
@@ -106,7 +111,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       )}
 
       <section id="listagens" className="site-frame directory-section">
-        <DirectorySearch query={query} />
         <div className="directory-layout">
           <DirectoryCategories categories={categories} query={query} />
           <div className="min-w-0">

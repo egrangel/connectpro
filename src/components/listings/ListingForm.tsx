@@ -190,6 +190,7 @@ export function ListingForm({
 
       <fieldset className="listing-form-group">
         <legend>Como entrar em contato</legend>
+        <p className={styles.hint}>Informe pelo menos um canal para publicar. Em números do Brasil, inclua o DDD. Para números de outros países, inclua o código do país com +.</p>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className={styles.label}>
             WhatsApp
@@ -197,7 +198,7 @@ export function ListingForm({
               type="tel"
               name="contactWhatsapp"
               maxLength={30}
-              placeholder="+55 11 99999-0000"
+              placeholder="(44) 99999-0000"
               defaultValue={values?.contactWhatsapp ?? listing?.contactWhatsapp ?? ""}
               className={inputClass}
             />
@@ -208,6 +209,7 @@ export function ListingForm({
             <input
               type="tel"
               name="contactPhone"
+              placeholder="(44) 3333-0000"
               maxLength={30}
               defaultValue={values?.contactPhone ?? listing?.contactPhone ?? ""}
               className={inputClass}
@@ -264,7 +266,7 @@ export function ListingForm({
             defaultValue={values?.status ?? listing?.status ?? LISTING_STATUS.DRAFT}
             className={inputClass}
           >
-            <option value={LISTING_STATUS.DRAFT}>Rascunho (não aparece no site)</option>
+            <option value={LISTING_STATUS.DRAFT}>Em análise (não aparece no site)</option>
             <option value={LISTING_STATUS.PUBLISHED}>Publicado</option>
             <option value={LISTING_STATUS.ARCHIVED}>Arquivado</option>
           </select>

@@ -7,12 +7,21 @@ const validListing = {
   description: "Instalacoes eletricas residenciais com garantia.",
   categoryId: "cat-1",
   status: "PUBLISHED",
+  contactPhone: "(44) 3333-5555",
 };
 
 describe("listingInputSchema", () => {
   test("accepts a minimal valid listing", () => {
     const result = listingInputSchema.safeParse(validListing);
     expect(result.success).toBe(true);
+  });
+
+  test("requires a usable contact to publish while allowing drafts without one", () => {
+    const noContacts = { ...validListing, contactPhone: "" };
+    expect(listingInputSchema.safeParse(noContacts).success).toBe(false);
+    expect(listingInputSchema.safeParse({ ...noContacts, status: "DRAFT" }).success).toBe(true);
+    expect(listingInputSchema.safeParse({ ...noContacts, contactWhatsapp: "(44) 99999-0000" }).success).toBe(true);
+    expect(listingInputSchema.safeParse({ ...noContacts, contactWhatsapp: "99999-0000" }).success).toBe(false);
   });
 
   test("converts empty optional strings to null", () => {

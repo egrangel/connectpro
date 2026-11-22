@@ -1,3 +1,4 @@
+import { authDestination, authHref } from "@/modules/auth/destination";
 import { MemberPage } from "@/components/site/MemberPage";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -10,11 +11,12 @@ import { resolveAuthError } from "@/modules/auth/auth-errors";
 export const metadata: Metadata = { title: "Esqueci minha senha" };
 
 interface ForgotPasswordPageProps {
-  searchParams: Promise<{ error?: string; sent?: string; email?: string }>;
+  searchParams: Promise<{ next?: string; error?: string; sent?: string; email?: string }>;
 }
 
 export default async function ForgotPasswordPage({ searchParams }: ForgotPasswordPageProps) {
-  const { error: rawError, sent, email } = await searchParams;
+  const { next: rawNext, error: rawError, sent, email } = await searchParams;
+  const next = authDestination(rawNext);
   const error = resolveAuthError("forgotPassword", rawError);
 
   return (
@@ -28,7 +30,7 @@ export default async function ForgotPasswordPage({ searchParams }: ForgotPasswor
             {PASSWORD_RESET_TOKEN_TTL_MINUTES} minutos.
           </p>
           <Link
-            href="/login"
+            href={authHref("/login", next)}
             className="mt-7 inline-block font-bold text-[var(--color-primary)] hover:underline"
           >
             Voltar para o login
@@ -40,9 +42,10 @@ export default async function ForgotPasswordPage({ searchParams }: ForgotPasswor
             Informe o e-mail da sua conta e enviaremos um link para redefinir a senha.
           </p>
 
-          {error && <AuthErrorBanner error={error} />}
+          {error && <AuthErrorBanner error={error} next={next} />}
 
           <form action={forgotPasswordAction} className="mt-7 flex flex-col gap-4">
+            {next && <input type="hidden" name="next" value={next} />}
             <label className="flex flex-col gap-1.5 text-sm font-bold">
               E-mail
               <input
@@ -62,7 +65,7 @@ export default async function ForgotPasswordPage({ searchParams }: ForgotPasswor
 
           <p className="mt-6 text-sm text-[var(--color-muted)]">
             Lembrou a senha?{" "}
-            <Link href="/login" className="font-bold text-[var(--color-primary)] hover:underline">
+            <Link href={authHref("/login", next)} className="font-bold text-[var(--color-primary)] hover:underline">
               Entrar
             </Link>
           </p>

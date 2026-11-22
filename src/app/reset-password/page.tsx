@@ -1,3 +1,4 @@
+import { authDestination, authHref } from "@/modules/auth/destination";
 import { MemberPage } from "@/components/site/MemberPage";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -10,11 +11,12 @@ import { resolveAuthError } from "@/modules/auth/auth-errors";
 export const metadata: Metadata = { title: "Nova senha" };
 
 interface ResetPasswordPageProps {
-  searchParams: Promise<{ token?: string; error?: string }>;
+  searchParams: Promise<{ next?: string; token?: string; error?: string }>;
 }
 
 export default async function ResetPasswordPage({ searchParams }: ResetPasswordPageProps) {
-  const { token, error: rawError } = await searchParams;
+  const { next: rawNext, token, error: rawError } = await searchParams;
+  const next = authDestination(rawNext);
   const error = resolveAuthError("resetPassword", rawError);
   // Shape check only — whether the token is real (and unexpired) is decided by
   // the server action, so this page never confirms a token's validity.
@@ -30,9 +32,10 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
             nesta conta serão encerradas.
           </p>
 
-          {error && <AuthErrorBanner error={error} />}
+          {error && <AuthErrorBanner error={error} next={next} />}
 
           <form action={resetPasswordAction} className="mt-7 flex flex-col gap-4">
+            {next && <input type="hidden" name="next" value={next} />}
             <input type="hidden" name="token" value={token} />
             <label className="flex flex-col gap-1.5 text-sm font-bold">
               Nova senha
@@ -68,7 +71,7 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
             Este link de redefinição é inválido ou já expirou. Peça um novo para continuar.
           </p>
           <Link
-            href="/forgot-password"
+            href={authHref("/forgot-password", next)}
             className="mt-7 inline-block font-bold text-[var(--color-primary)] hover:underline"
           >
             Solicitar novo link

@@ -1,5 +1,6 @@
 "use server";
 
+import { authDestination, authHref, type LoginState } from "./destination";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSession, destroySession } from "@/lib/auth/session";
@@ -20,32 +21,27 @@ async function clientKey(scope: string): Promise<string> {
   return `${scope}:${ip}`;
 }
 
-function backTo(path: string, error: string): never {
-  redirect(`${path}?error=${encodeURIComponent(error)}`);
+function backTo(path: string, error: string, next?: string): never {
+  redirect(authHref(path, next, { error }));
 }
 
-export async function loginAction(formData: FormData): Promise<void> {
-  const next = String(formData.get("next") ?? "") || "/";
-  const parsed = loginSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-  if (!parsed.success) {
-    backTo("/login", parsed.error.issues[0]?.message ?? "Dados inválidos");
-  }
-  if (!checkRateLimit(await clientKey("login"), RATE_LIMITS.login)) {
-    backTo("/login", RATE_LIMIT_ERROR);
-  }
+export async function loginAction(_state: LoginState, formData: FormData): Promise<LoginState> {
+  const next = authDestination(formData.get("next"));
+  const email = String(formData.get("email") ?? "").slice(0, 254);
+  const parsed = loginSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
+
+  if (!parsed.success) return { email, error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
+  if (!checkRateLimit(await clientKey("login"), RATE_LIMITS.login)) return { email, error: RATE_LIMIT_ERROR };
 
   const result = await authenticateUser(parsed.data);
-  if (!result.ok || !result.userId) {
-    backTo("/login", result.error ?? "E-mail ou senha incorretos.");
-  }
+  if (!result.ok || !result.userId) return { email, error: result.error ?? "E-mail ou senha incorretos." };
+
   await createSession(result.userId);
-  redirect(next.startsWith("/") ? next : "/");
+  redirect(next ?? "/");
 }
 
 export async function registerAction(formData: FormData): Promise<void> {
+  const next = authDestination(formData.get("next"));
   const parsed = registerSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -55,29 +51,26 @@ export async function registerAction(formData: FormData): Promise<void> {
     acceptedTerms: formData.get("acceptTerms") === "on",
   });
   if (!parsed.success) {
-    backTo("/register", parsed.error.issues[0]?.message ?? "Dados inválidos");
+    backTo("/register", parsed.error.issues[0]?.message ?? "Dados inválidos", next);
   }
   if (!checkRateLimit(await clientKey("register"), RATE_LIMITS.register)) {
-    backTo("/register", RATE_LIMIT_ERROR);
+    backTo("/register", RATE_LIMIT_ERROR, next);
   }
 
   const result = await registerUser(parsed.data);
   if (!result.ok || !result.userId) {
-    backTo("/register", result.error ?? "Não foi possível criar a conta.");
+    backTo("/register", result.error ?? "Não foi possível criar a conta.", next);
   }
   await createSession(result.userId);
-  redirect("/");
+  redirect(next ?? "/");
 }
 
-function backToForgotPassword(error: string, email: string): never {
-  const params = new URLSearchParams({ error });
-  if (email) params.set("email", email);
-  redirect(`/forgot-password?${params}`);
+function backToForgotPassword(error: string, email: string, next?: string): never {
+  redirect(authHref("/forgot-password", next, email ? { error, email } : { error }));
 }
 
-function backToResetPassword(token: string, error: string): never {
-  const params = new URLSearchParams({ token, error });
-  redirect(`/reset-password?${params}`);
+function backToResetPassword(token: string, error: string, next?: string): never {
+  redirect(authHref("/reset-password", next, { token, error }));
 }
 
 /**
@@ -87,10 +80,11 @@ function backToResetPassword(token: string, error: string): never {
  * reason — surfacing them would only ever happen for real accounts.
  */
 export async function forgotPasswordAction(formData: FormData): Promise<void> {
+  const next = authDestination(formData.get("next"));
   const email = String(formData.get("email") ?? "");
   const parsed = forgotPasswordSchema.safeParse({ email });
   if (!parsed.success) {
-    backToForgotPassword(parsed.error.issues[0]?.message ?? "Dados inválidos", email);
+    backToForgotPassword(parsed.error.issues[0]?.message ?? "Dados inválidos", email, next);
   }
 
   const throttled =
@@ -100,17 +94,18 @@ export async function forgotPasswordAction(formData: FormData): Promise<void> {
       RATE_LIMITS.passwordReset,
     );
   if (throttled) {
-    backToForgotPassword(RATE_LIMIT_ERROR, email);
+    backToForgotPassword(RATE_LIMIT_ERROR, email, next);
   }
 
   const grant = await createPasswordResetGrant(parsed.data);
   if (grant) {
-    await sendPasswordResetEmail(grant);
+    await sendPasswordResetEmail(grant, next);
   }
-  redirect("/forgot-password?sent=1");
+  redirect(authHref("/forgot-password", next, { sent: "1" }));
 }
 
 export async function resetPasswordAction(formData: FormData): Promise<void> {
+  const next = authDestination(formData.get("next"));
   const token = String(formData.get("token") ?? "");
   const parsed = resetPasswordSchema.safeParse({
     token,
@@ -122,22 +117,22 @@ export async function resetPasswordAction(formData: FormData): Promise<void> {
     const message = issue?.message ?? "Dados inválidos";
     // A bad token cannot be fixed on the reset form — send them to request a new link.
     if (issue?.path[0] === "token") {
-      backToForgotPassword(message, "");
+      backToForgotPassword(message, "", next);
     }
-    backToResetPassword(token, message);
+    backToResetPassword(token, message, next);
   }
   if (!checkRateLimit(await clientKey("reset-password"), RATE_LIMITS.passwordReset)) {
-    backToResetPassword(token, RATE_LIMIT_ERROR);
+    backToResetPassword(token, RATE_LIMIT_ERROR, next);
   }
 
   const result = await resetPassword(parsed.data);
   if (!result.ok || !result.userId) {
-    backToForgotPassword(result.error ?? INVALID_LINK_ERROR, "");
+    backToForgotPassword(result.error ?? INVALID_LINK_ERROR, "", next);
   }
 
   // resetPassword revoked every existing session; this one is brand new.
   await createSession(result.userId);
-  redirect("/");
+  redirect(next ?? "/");
 }
 
 export async function logoutAction(): Promise<void> {

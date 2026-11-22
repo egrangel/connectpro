@@ -46,6 +46,22 @@ export function DirectorySearch({ query }: Pick<SearchFiltersProps, "query">) {
 }
 
 export function DirectoryCategories({ categories, query }: SearchFiltersProps) {
+  const firstCategories = categories.slice(0, 3);
+  const activeCategory = categories.find((category) => category.slug === query.category);
+  if (activeCategory && !firstCategories.includes(activeCategory)) firstCategories.push(activeCategory);
+  const remaining = categories.filter((category) => !firstCategories.includes(category));
+
+  const categoryLink = (category: Category) => {
+    const selected = category.slug === query.category;
+    return (
+      <li key={category.id}>
+        <Link href={buildHref(query, { category: selected ? undefined : category.slug })} aria-current={selected ? "true" : undefined}>
+          {category.name}
+        </Link>
+      </li>
+    );
+  };
+
   return (
     <nav className="directory-categories" aria-labelledby="category-heading">
       <h2 id="category-heading">Categorias</h2>
@@ -55,17 +71,14 @@ export function DirectoryCategories({ categories, query }: SearchFiltersProps) {
             Todas as categorias
           </Link>
         </li>
-        {categories.map((category) => (
-          <li key={category.id}>
-            <Link
-              href={buildHref(query, { category: query.category === category.slug ? undefined : category.slug })}
-              aria-current={query.category === category.slug ? "true" : undefined}
-            >
-              {category.name}
-            </Link>
-          </li>
-        ))}
+        {firstCategories.map(categoryLink)}
       </ul>
+      {remaining.length > 0 && (
+        <details className="mt-2">
+          <summary className="cursor-pointer py-2 text-sm font-semibold">Mais categorias ({remaining.length})</summary>
+          <ul>{remaining.map(categoryLink)}</ul>
+        </details>
+      )}
     </nav>
   );
 }

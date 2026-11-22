@@ -1,3 +1,4 @@
+import { normalizeContactPhone } from "@/modules/listings/contact-phone";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -93,7 +94,8 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
       : Promise.resolve(null),
   ]);
 
-  const whatsappDigits = listing.contactWhatsapp?.replace(/\D/g, "");
+  const whatsappDigits = normalizeContactPhone(listing.contactWhatsapp);
+  const phoneDigits = normalizeContactPhone(listing.contactPhone);
 
   const iconClass = "h-6 w-6";
   const contactEntries: Array<ContactRowProps | null> = [
@@ -105,12 +107,12 @@ export default async function ListingPage({ params, searchParams }: ListingPageP
           href: `https://wa.me/${whatsappDigits}`,
         }
       : null,
-    listing.contactPhone
+    phoneDigits && listing.contactPhone
       ? {
           icon: <PhoneIcon className={iconClass} />,
           label: "Telefone",
           value: listing.contactPhone,
-          href: `tel:${listing.contactPhone}`,
+          href: `tel:+${phoneDigits}`,
         }
       : null,
     listing.contactEmail

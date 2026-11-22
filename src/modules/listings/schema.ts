@@ -1,3 +1,4 @@
+import { normalizeContactPhone } from "./contact-phone";
 import { z } from "zod";
 import {
   LISTING_DESCRIPTION_MAX_LENGTH,
@@ -42,6 +43,11 @@ const instagramHandle = z
   .nullable()
   .optional();
 
+const optionalContactNumber = optionalTrimmed(30).refine(
+  (value) => !value || normalizeContactPhone(value) !== null,
+  "Informe um número válido com DDD ou inclua o código do país, como +55 44 99999-0000.",
+);
+
 export const listingInputSchema = z.object({
   title: z
     .string()
@@ -54,13 +60,13 @@ export const listingInputSchema = z.object({
     .min(LISTING_DESCRIPTION_MIN_LENGTH, "Descreva o profissional")
     .max(LISTING_DESCRIPTION_MAX_LENGTH),
   categoryId: z.string().min(1, "Selecione uma categoria"),
-  contactPhone: optionalTrimmed(30),
+  contactPhone: optionalContactNumber,
   contactEmail: z
     .union([z.literal(""), z.email("E-mail de contato inválido")])
     .transform((v) => (v === "" ? null : v))
     .nullable()
     .optional(),
-  contactWhatsapp: optionalTrimmed(30),
+  contactWhatsapp: optionalContactNumber,
   instagram: instagramHandle,
   websiteUrl: optionalHttpUrl,
   city: optionalTrimmed(80),
@@ -69,7 +75,12 @@ export const listingInputSchema = z.object({
     LISTING_STATUS.PUBLISHED,
     LISTING_STATUS.ARCHIVED,
   ]),
-});
+}).refine(
+  (listing) => listing.status !== LISTING_STATUS.PUBLISHED || Boolean(
+    listing.contactPhone || listing.contactWhatsapp || listing.contactEmail || listing.instagram || listing.websiteUrl
+  ),
+  { message: "Informe pelo menos um canal de contato para publicar o anúncio." },
+);
 export type ListingInput = z.infer<typeof listingInputSchema>;
 
 // Every field degrades instead of throwing: these come straight from the URL,

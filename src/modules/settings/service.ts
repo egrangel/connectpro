@@ -42,12 +42,14 @@ function getConfiguredBanner(json: string): BannerConfig {
     ...banner,
     slides: banner.slides.map((slide) => {
       const replacement = slide.imageKey ? bundledBannerReplacements.get(slide.imageKey) : undefined;
-      if (!replacement) return slide;
 
       return {
         ...slide,
-        imageKey: replacement,
-        subheadline: slide.subheadline === "Profissionais verificados e avaliados pela comunidade — contrate com confiança."
+        imageKey: replacement ?? slide.imageKey,
+        subheadline: [
+          "Profissionais verificados e avaliados pela comunidade — contrate com confiança.",
+          "Eletricistas, professores, desenvolvedores e muito mais - avaliados por quem já contratou.",
+        ].includes(slide.subheadline)
           ? "Cada anúncio é revisado antes de ir ao ar. Encontre um profissional e fale direto com ele."
           : slide.subheadline,
       };
