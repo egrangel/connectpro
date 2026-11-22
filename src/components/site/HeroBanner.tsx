@@ -44,11 +44,17 @@ export function HeroBanner({ banner }: HeroBannerProps) {
       }}
     >
       <div className="directory-hero-copy">
-        <h1 className="display-title">{slide.headline}</h1>
-        {slide.subheadline && <p>{slide.subheadline}</p>}
-        {slide.ctaText && (
-          <a className="site-button" href={slide.ctaUrl || "#listagens"}>{slide.ctaText}</a>
-        )}
+        <div className="hero-slides">
+          {slides.map((entry, slideIndex) => (
+            <div className="hero-slide" key={slideIndex} aria-hidden={slideIndex !== index || undefined}>
+              <h1 className="display-title">{entry.headline}</h1>
+              {entry.subheadline && <p>{entry.subheadline}</p>}
+              {entry.ctaText && (
+                <a className="site-button" href={entry.ctaUrl || "#listagens"}>{entry.ctaText}</a>
+              )}
+            </div>
+          ))}
+        </div>
         {slides.length > 1 && (
           <div className="hero-controls" role="group" aria-label="Controles do carrossel">
             <button type="button" onClick={() => step(-1)} aria-label="Destaque anterior">
@@ -64,10 +70,12 @@ export function HeroBanner({ banner }: HeroBannerProps) {
           </div>
         )}
       </div>
-      {slide.imageKey && (
+      {slides.some((entry) => entry.imageKey) && (
         <div className="directory-hero-media">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={slide.imageKey} alt="" fetchPriority="high" />
+          {slide.imageKey && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={slide.imageKey} alt="" fetchPriority="high" />
+          )}
         </div>
       )}
     </section>

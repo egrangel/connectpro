@@ -144,4 +144,4 @@ Inputs, primary actions and image thumbnails share the configured base radius. H
 
 ## Default banner photography
 
-The two bundled banner slides use original illustrative photography generated for this directory. The workshop scene accompanies discovery and the courtyard scene accompanies community. Each optimized WebP has a provenance sidecar with its full prompt. Stored references to earlier bundled banner artwork resolve to the new assets.
+The two bundled banner slides use original illustrative photography generated for this directory. The workshop scene accompanies discovery and the courtyard scene accompanies community. Both optimized WebPs are 2880 × 1080, matching the previous defaults, and each has a provenance sidecar with its full prompt. The banner frame reserves room for the tallest slide copy at every viewport. Stored references to earlier bundled banner artwork resolve to the new assets.

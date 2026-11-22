@@ -40,10 +40,18 @@ function getConfiguredBanner(json: string): BannerConfig {
   const banner = parseOrDefault(json, bannerSchema, DEFAULT_BANNER);
   return {
     ...banner,
-    slides: banner.slides.map((slide) => ({
-      ...slide,
-      imageKey: slide.imageKey ? bundledBannerReplacements.get(slide.imageKey) ?? slide.imageKey : null,
-    })),
+    slides: banner.slides.map((slide) => {
+      const replacement = slide.imageKey ? bundledBannerReplacements.get(slide.imageKey) : undefined;
+      if (!replacement) return slide;
+
+      return {
+        ...slide,
+        imageKey: replacement,
+        subheadline: slide.subheadline === "Profissionais verificados e avaliados pela comunidade — contrate com confiança."
+          ? "Cada anúncio é revisado antes de ir ao ar. Encontre um profissional e fale direto com ele."
+          : slide.subheadline,
+      };
+    }),
   };
 }
 

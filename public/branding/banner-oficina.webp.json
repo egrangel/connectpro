@@ -1,5 +1,7 @@
 {
-  "prompt": "Photorealistic editorial website banner for a local professional directory in Maringá, Brazil. In a modest neighborhood joinery workshop, a Brazilian craftswoman in a deep indigo utility overshirt measures a piece of warm wood at a worn workbench, with a pencil and a brass square. Observed in the middle of real work, no eye contact. Native Brazilian light and textures, warm timber, cream plaster and a hint of green outside, late-morning window light, true skin texture, fine subtle editorial grain. Landscape 3:2 photograph, position the subject and gesture near the center and safe within the central horizontal band for wide mobile and near-square desktop cropping. No typography, signage, watermark, logos or synthetic overlays.",
-  "createdAt": "2026-11-22T00:29:18.995178+00:00",
-  "origin": "OpenAI ImageGen"
+  "prompt": "Generate a panoramic editorial photograph for a website banner in an 8:3 (2880 × 1080) target frame. Candid Brazilian craftswoman in indigo utility overshirt measures wood at a workbench in a small Maringá joinery workshop, warm wood, cream plaster, green leaves and morning light. Shoot from farther back so head, hands and the part of the workbench in use all comfortably fit within the central 48% of the full image height and the central 45% of the width. Allow generous expendable space above, below and at both sides because the output will be cropped to a very wide 8:3 photo, then used in responsive cover frames. Authentic editorial photography with warm tones and natural skin. No text, logos, watermarks, borders, multiple panels or overlays.",
+  "origin": "OpenAI ImageGen",
+  "createdAt": "2026-11-22T00:33:20.698Z",
+  "width": 2880,
+  "height": 1080
 }
