@@ -1,3 +1,4 @@
+import { MemberPage } from "@/components/site/MemberPage";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth/session";
@@ -26,51 +27,39 @@ export default async function MyListingsPage() {
   const listings = await listListingsByOwner(user.id);
 
   return (
-    <div className="site-frame member-workspace">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Meus anúncios</h1>
-          <p className="mt-1 text-sm text-[var(--color-muted)]">
-            Anúncios novos ou editados passam pela análise de um administrador antes de
-            aparecerem no site.
-          </p>
-        </div>
-        <Link
-          href="/my-listings/new"
-          className="rounded-[var(--radius)] bg-[var(--color-primary)] px-5 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:opacity-95"
-        >
-          + Novo anúncio
-        </Link>
-      </div>
-
+    <MemberPage
+      title="Meus anúncios"
+      description="Anúncios novos ou editados passam pela análise de um administrador antes de aparecerem no site."
+      action={listings.length > 0 ? <Link href="/my-listings/new" className="site-button">Novo anúncio</Link> : null}
+    >
       {listings.length === 0 ? (
-        <div className="card-surface mt-8 rounded-[calc(var(--radius)+8px)] p-10 text-center text-sm text-[var(--color-muted)]">
+        <div className="text-sm text-[var(--color-muted)]">
           <p className="font-bold text-[var(--color-text)]">Você ainda não tem anúncios.</p>
-          <p className="mx-auto mt-1 max-w-sm leading-6">
+          <p className="mt-1 max-w-sm leading-6">
             Cadastre seu serviço com descrição, contatos e fotos. Ele vai para análise e aparece
             no site depois de aprovado.
           </p>
           <Link
             href="/my-listings/new"
-            className="mt-5 inline-flex font-bold text-[var(--color-primary)] hover:underline"
+            className="site-button mt-5"
           >
             Criar meu primeiro anúncio
           </Link>
         </div>
       ) : (
-        <ul className="mt-8 space-y-3">
+        <ul className="divide-y divide-[var(--color-line)]">
           {listings.map((listing) => {
             const badge = STATUS_LABEL[listing.status] ?? STATUS_LABEL[LISTING_STATUS.DRAFT];
             return (
               <li
                 key={listing.id}
-                className="card-surface rounded-[calc(var(--radius)+8px)] p-4"
+                className="py-4 first:pt-0 last:pb-0"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
                     <Link
                       href={`/my-listings/${listing.id}`}
-                      className="font-bold hover:text-[var(--color-primary)] hover:underline"
+                      className="break-words font-bold hover:text-[var(--color-primary)] hover:underline"
                     >
                       {listing.title}
                     </Link>
@@ -100,6 +89,6 @@ export default async function MyListingsPage() {
           })}
         </ul>
       )}
-    </div>
+    </MemberPage>
   );
 }

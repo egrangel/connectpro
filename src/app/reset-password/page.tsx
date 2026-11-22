@@ -1,3 +1,4 @@
+import { MemberPage } from "@/components/site/MemberPage";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { inputClass, primaryButtonClass } from "@/components/ui/form-classes";
@@ -20,63 +21,60 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
   const hasUsableToken = Boolean(token && isResetTokenFormat(token));
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col px-4 py-16">
-      <div className="account-panel p-6 sm:p-8">
-        <h1 className="text-3xl font-bold tracking-tight">Criar nova senha</h1>
+    <MemberPage title="Criar nova senha">
 
-        {hasUsableToken ? (
-          <>
-            <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-              Escolha uma senha de no mínimo 8 caracteres. Ao concluir, todas as sessões abertas
-              nesta conta serão encerradas.
-            </p>
+      {hasUsableToken ? (
+        <>
+          <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+            Escolha uma senha de no mínimo 8 caracteres. Ao concluir, todas as sessões abertas
+            nesta conta serão encerradas.
+          </p>
 
-            {error && <AuthErrorBanner error={error} />}
+          {error && <AuthErrorBanner error={error} />}
 
-            <form action={resetPasswordAction} className="mt-7 flex flex-col gap-4">
-              <input type="hidden" name="token" value={token} />
-              <label className="flex flex-col gap-1.5 text-sm font-bold">
-                Nova senha
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  minLength={8}
-                  autoComplete="new-password"
-                  className={inputClass}
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 text-sm font-bold">
-                Confirmar nova senha
-                <input
-                  type="password"
-                  name="passwordConfirm"
-                  required
-                  minLength={8}
-                  autoComplete="new-password"
-                  className={inputClass}
-                />
-              </label>
+          <form action={resetPasswordAction} className="mt-7 flex flex-col gap-4">
+            <input type="hidden" name="token" value={token} />
+            <label className="flex flex-col gap-1.5 text-sm font-bold">
+              Nova senha
+              <input
+                type="password"
+                name="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className={inputClass}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5 text-sm font-bold">
+              Confirmar nova senha
+              <input
+                type="password"
+                name="passwordConfirm"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className={inputClass}
+              />
+            </label>
 
-              <button type="submit" className={primaryButtonClass}>
-                Salvar nova senha
-              </button>
-            </form>
-          </>
-        ) : (
-          <>
-            <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">
-              Este link de redefinição é inválido ou já expirou. Peça um novo para continuar.
-            </p>
-            <Link
-              href="/forgot-password"
-              className="mt-7 inline-block font-bold text-[var(--color-primary)] hover:underline"
-            >
-              Solicitar novo link
-            </Link>
-          </>
-        )}
-      </div>
-    </div>
+            <button type="submit" className={primaryButtonClass}>
+              Salvar nova senha
+            </button>
+          </form>
+        </>
+      ) : (
+        <>
+          <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">
+            Este link de redefinição é inválido ou já expirou. Peça um novo para continuar.
+          </p>
+          <Link
+            href="/forgot-password"
+            className="mt-7 inline-block font-bold text-[var(--color-primary)] hover:underline"
+          >
+            Solicitar novo link
+          </Link>
+        </>
+      )}
+    </MemberPage>
   );
 }

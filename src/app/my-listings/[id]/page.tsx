@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { MemberPage } from "@/components/site/MemberPage";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ListingForm } from "@/components/listings/ListingForm";
@@ -46,15 +46,7 @@ export default async function EditOwnListingPage({
   const canChangeStatus = canPublishListing(user);
 
   return (
-    <div className="site-frame member-workspace">
-      <Link
-        href="/my-listings"
-        className="text-sm font-semibold text-[var(--color-muted)] hover:text-[var(--color-primary)]"
-      >
-        ← Meus anúncios
-      </Link>
-      <h1 className="mt-3 text-2xl font-bold tracking-tight">{listing.title}</h1>
-
+    <MemberPage title={listing.title} backToListings>
       {isJustCreated && (
         <div role="status" className="mt-4 max-w-2xl rounded-[var(--radius)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <p className="font-semibold">
@@ -79,7 +71,7 @@ export default async function EditOwnListingPage({
         </p>
       )}
 
-      <div className="mt-6 max-w-2xl card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6">
+      <div className="mt-5">
         <ListingForm
           categories={categories}
           listing={listing}
@@ -93,7 +85,7 @@ export default async function EditOwnListingPage({
 
       <section
         id="photos"
-        className={`mt-8 max-w-2xl scroll-mt-24 card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6 ${
+        className={`mt-8 scroll-mt-24 border-t border-[var(--color-line)] pt-5 ${
           isJustCreated ? "ring-2 ring-emerald-300 ring-offset-4 ring-offset-[var(--color-surface)]" : ""
         }`}
         aria-label="Fotos"
@@ -144,6 +136,6 @@ export default async function EditOwnListingPage({
           />
         )}
       </section>
-    </div>
+    </MemberPage>
   );
 }

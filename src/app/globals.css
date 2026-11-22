@@ -93,14 +93,14 @@ body {
 .site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; font-size: .875rem; }
 .site-nav > a:hover { text-decoration: underline; text-underline-offset: .25em; }
 .site-footer { margin-top: 4rem; border-top: 1px solid var(--color-line); background: var(--color-panel); }
-.display-title, .section-title, .account-panel h1, .member-workspace h1 {
+.display-title, .section-title {
   font-family: var(--font-display);
   font-weight: 400;
   letter-spacing: -.035em;
   overflow-wrap: anywhere;
 }
 .display-title { font-size: clamp(2.5rem, 1.63rem + 3.5vw, 5.25rem); line-height: .99; text-wrap: balance; }
-.section-title, .account-panel h1, .member-workspace h1 { font-size: clamp(1.875rem, 1.35rem + 1.6vw, 3.125rem); line-height: 1.08; }
+.section-title { font-size: clamp(1.875rem, 1.35rem + 1.6vw, 3.125rem); line-height: 1.08; }
 .site-button {
   display: inline-flex;
   min-height: 2.75rem;
@@ -176,8 +176,27 @@ body {
 .listing-profile { padding-block: 2rem; }
 .listing-profile-grid { display: grid; align-items: start; gap: 2rem; }
 .listing-contact { border-block: 1px solid var(--color-line); padding-block: 1rem; }
-.account-panel { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); background: var(--color-panel); }
-.member-workspace { padding-block: clamp(2rem, 6vw, 5rem); }
+.member-page {
+  display: grid;
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding-block: clamp(1.5rem, 4vw, 3.5rem);
+}
+.member-page-panel {
+  min-width: 0;
+  width: min(100%, 44rem);
+  border-block: 1px solid var(--color-line);
+  background: var(--color-panel);
+  padding: clamp(1rem, 3vw, 2rem);
+}
+.member-page-heading { margin-bottom: 1.5rem; }
+.member-page-back { display: inline-block; margin-bottom: .75rem; font-size: .875rem; color: var(--color-muted); }
+.member-page-back:hover { color: var(--color-primary); text-decoration: underline; }
+.member-page-aside { min-width: 0; }
+@media (min-width: 64rem) {
+  .member-page { grid-template-columns: minmax(0, 44rem) minmax(0, 1fr); }
+  .member-page-aside { position: sticky; top: 2rem; }
+}
 
 @media (min-width: 48rem) {
   .directory-hero:has(.directory-hero-media) { grid-template-columns: 1fr .9fr; }

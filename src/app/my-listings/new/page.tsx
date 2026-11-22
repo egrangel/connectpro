@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { MemberPage } from "@/components/site/MemberPage";
 import type { Metadata } from "next";
 import { ListingForm } from "@/components/listings/ListingForm";
 import { requireUser } from "@/lib/auth/session";
@@ -18,28 +18,19 @@ export default async function NewOwnListingPage() {
   const canChangeStatus = canPublishListing(user);
 
   return (
-    <div className="site-frame member-workspace">
-      <Link
-        href="/my-listings"
-        className="text-sm font-semibold text-[var(--color-muted)] hover:text-[var(--color-primary)]"
-      >
-        ← Meus anúncios
-      </Link>
-      <h1 className="mt-3 text-2xl font-bold tracking-tight">Novo anúncio</h1>
-      <p className="mt-1 mb-6 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
-        {canChangeStatus
-          ? "Preencha os dados, escolha o status e salve. As fotos são enviadas na tela seguinte."
-          : "Preencha os dados e salve. O anúncio fica em análise e só aparece no site depois que a nossa equipe aprovar. As fotos são enviadas na tela seguinte."}
-      </p>
-
-      <div className="card-surface rounded-[calc(var(--radius)+8px)] p-5 sm:p-6 max-w-2xl">
-        <ListingForm
-          categories={categories}
-          action={saveOwnListingAction}
-          canChangeStatus={canChangeStatus}
-          variant="site"
-        />
-      </div>
-    </div>
+    <MemberPage
+      title="Novo anúncio"
+      backToListings
+      description={canChangeStatus
+        ? "Preencha os dados, escolha o status e salve. As fotos são enviadas na tela seguinte."
+        : "Preencha os dados e salve. O anúncio fica em análise e as fotos são enviadas na tela seguinte."}
+    >
+      <ListingForm
+        categories={categories}
+        action={saveOwnListingAction}
+        canChangeStatus={canChangeStatus}
+        variant="site"
+      />
+    </MemberPage>
   );
 }

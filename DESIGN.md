@@ -145,3 +145,7 @@ Inputs, primary actions and image thumbnails share the configured base radius. H
 ## Default banner photography
 
 The two bundled banner slides use original illustrative photography generated for this directory. The workshop scene accompanies discovery and the courtyard scene accompanies community. Both optimized WebPs are 2880 × 1080, matching the previous defaults, and each has a provenance sidecar with its full prompt. The banner frame reserves room for the tallest slide copy at every viewport. Stored references to earlier bundled banner artwork resolve to the new assets.
+
+## Account and member listings
+
+Sign-in, registration, password recovery, and the member listing index and editors share the same site gutter, heading position, and paper panel through MemberPage. The content column caps at 44rem. Registration places optional support beside the form on desktop and after it on phones, with the live name preview beside the name field on mobile.
